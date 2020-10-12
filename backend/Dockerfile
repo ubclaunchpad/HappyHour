@@ -6,16 +6,19 @@ FROM golang:alpine AS builder
 # Enable Go modules
 ENV GO111MODULE=on
 
-# Copy files to image and set current
-# working directory to /app/src
-COPY . /app/src
 WORKDIR /app/src
 
 # Install Git and network certificates
 RUN apk add git ca-certificates
 
-# Install dependencies
+# Copy deps
+COPY go.mod .
+COPY go.sum .
 RUN go mod download
+
+# Copy files to image and set current
+# working directory to /app/src
+COPY . .
 
 # Build image with Go modules and put binary
 # in /go/bin/app
