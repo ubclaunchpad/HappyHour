@@ -21,5 +21,5 @@ func main() {
 func HelloWorldHandler(w http.ResponseWriter, r *http.Request) {
 	// return Hello World!
 	log.Info("request received")
-	w.Write([]byte("Hello World!"))
+	w.Write([]byte("Hello World!\n"))
 }

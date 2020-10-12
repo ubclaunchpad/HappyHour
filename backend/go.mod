@@ -1,4 +1,4 @@
-module github.com/jackyzha0/go-docker-example
+module github.com/ubclaunchpad/when3meet
 
 go 1.13
 
