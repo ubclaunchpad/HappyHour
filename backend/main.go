@@ -13,6 +13,9 @@ func main() {
 	r.HandleFunc("/", HelloWorldHandler)
 	http.Handle("/", r)
 
+	// test route to add data to firestore
+	r.HandleFunc("/add", AddData).Methods("POST")
+
 	// serve on port 8080
 	log.Info("server started on 8080")
 	http.ListenAndServe(":8080", r)

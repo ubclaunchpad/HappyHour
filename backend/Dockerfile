@@ -28,14 +28,20 @@ RUN CGO_ENABLED=0 GOOS=linux go build -o /go/bin/app
 # --- Stage 2 ---
 # Docker will use the last stage of your Dockerfile as the actual
 # image. In this case, use a completely empty image
-FROM scratch
+#FROM scratch -- "x509: certificate signed by unknown authority" error when accessing firebase
+FROM alpine
 
 # Copy built binary from previous stage
 COPY --from=builder /go/bin/app /go/bin/app
 
-# Expose port (more for documentation than 
+# Copy API keys from previous stage
+COPY --from=builder /app/src/ServiceAccountKey.json /go/bin/ServiceAccountKey.json
+
+# Expose port (more for documentation than
 # anything, still needs -p 8080:8080)
 EXPOSE 8080
 
+WORKDIR /go/bin
+
 # Run app
-ENTRYPOINT ["/go/bin/app"]
+ENTRYPOINT ["./app"]

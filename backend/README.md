@@ -2,6 +2,9 @@
 `main.go` - contains the actual source code for the Hello World example.
 `go.mod` - contains dependency information
 `Dockerfile` - contains instructions for how to build the Docker image
+`test_firestore.go` - contains a test endpoint
+ to save dummy data to firestore under the
+  "test" collection
 
 ## Development
 To run the app locally, do `go run .` in this directory.
