@@ -1,21 +1,19 @@
 <template>
   <div class="hello">
     <h1>{{ msg }}</h1>
-    <p>
-      Hello, world!
-    </p>
+    <p>Hello, world!</p>
   </div>
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import Vue from 'vue'
 
 export default Vue.extend({
   name: 'HelloWorld',
   props: {
     msg: String,
   },
-});
+})
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
