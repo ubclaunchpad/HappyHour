@@ -6,14 +6,14 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
+import { defineComponent } from "vue";
 
-export default Vue.extend({
-  name: 'HelloWorld',
+export default defineComponent({
+  name: "HelloWorld",
   props: {
-    msg: String,
-  },
-})
+    msg: String
+  }
+});
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
