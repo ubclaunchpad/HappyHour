@@ -1,19 +1,15 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png" />
-  <HelloWorld msg="Welcome to Your Vue.js + TypeScript App" />
-  <Counter />
+  <Calendar />
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import HelloWorld from "./components/HelloWorld.vue";
-import Counter from "./components/Counter.vue";
+import Calendar from "./components/Calendar.vue";
 
 export default defineComponent({
   name: "App",
   components: {
-    HelloWorld,
-    Counter
+    Calendar
   }
 });
 </script>
