@@ -1,15 +1,16 @@
 <template>
-  <Calendar />
+  <NavBar />
+  <router-view />
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import Calendar from "./components/Calendar.vue";
+import NavBar from "./components/NavBar.vue";
 
 export default defineComponent({
   name: "App",
   components: {
-    Calendar
+    NavBar
   }
 });
 </script>
