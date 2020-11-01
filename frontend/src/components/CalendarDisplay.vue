@@ -1,14 +1,18 @@
 <template>
-  <vue-cal
+  <VueCal
     today-button
     :time-step="30"
     :disable-views="['years']"
     :snap-to-time="15"
     editable-events
     :events="events"
+    active-view="week"
+    startWeekOnSunday
+    events-on-month-view="short"
     class="vuecal--full-height-delete"
+    style="height: 50rem"
   >
-  </vue-cal>
+  </VueCal>
 </template>
 
 <script>
@@ -20,11 +24,11 @@ export default {
   data: () => ({
     events: [
       {
-        start: "2020-11-01 11:00",
-        end: "2020-11-01 12:00",
-        title: "When3Meet Meeting #3",
+        start: "2020-11-01 9:00",
+        end: "2020-11-01 14:00",
+        title: "When3Meet Meeting",
         content:
-          '<i class="icon material-icons">block</i><br>I am not draggable, not resizable and not deletable.',
+          '<i class="emojiIcon">🚫</i><br>I am not draggable, not resizable and not deletable.',
         class: "blue-event",
         deletable: false,
         resizable: false,
@@ -60,5 +64,35 @@ export default {
 .vuecal__arrow.vuecal__arrow--highlighted,
 .vuecal__view-btn.vuecal__view-btn--highlighted {
   background-color: rgba(136, 236, 191, 0.25);
+}
+
+.vuecal__event-title {
+  font-size: 1.2em;
+  font-weight: bold;
+  margin: 4px 0 8px;
+}
+
+.vuecal__event-time {
+  display: inline-block;
+  margin-bottom: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+}
+
+.vuecal__event-content {
+  font-style: italic;
+}
+
+.vuecal__event.blue-event {
+  background-color: rgba(164, 230, 210, 0.9);
+  border: 1px solid rgb(144, 210, 190);
+}
+
+/*Not working. IDK Why */
+.vuecal__event--dragging {
+  background-color: rgba(51, 153, 0, 0.8);
+}
+
+.emojiIcon {
 }
 </style>
