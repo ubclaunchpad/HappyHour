@@ -1,7 +1,15 @@
 <template>
   <section class="day">
     <header>{{ dateText }}</header>
-    <div class="block" v-for="time in times" :key="`${dateText}-${time}`"></div>
+    <div
+      v-for="time in times"
+      :class="['block', { selected: selection.has(`${dateText}-${time}`) }]"
+      :key="`${dateText}-${time}`"
+      :data-time="`${dateText}-${time}`"
+      @mousedown="handleMouseDown"
+      @mouseover="handleMouseOver"
+      @mouseup="handleMouseUp"
+    ></div>
   </section>
 </template>
 
@@ -20,9 +28,47 @@ export default defineComponent({
       required: true
     }
   },
+  data() {
+    return {
+      dragging: false,
+      selection: new Set()
+    };
+  },
   computed: {
     dateText(): string {
       return format(new Date(this.date), "E MMM d");
+    }
+  },
+  mounted() {
+    window.addEventListener("mouseup", this.handleMouseUp);
+  },
+  beforeUnmount() {
+    window.removeEventListener("mouseup", this.handleMouseUp);
+  },
+  methods: {
+    handleMouseOver(evt: MouseEvent) {
+      if (this.dragging) {
+        evt.preventDefault();
+        const el = evt.target as HTMLElement;
+        this.toggle(el.dataset.time);
+      }
+    },
+    handleMouseDown(evt: MouseEvent) {
+      evt.preventDefault();
+      this.dragging = true;
+      const el = evt.target as HTMLElement;
+      this.toggle(el.dataset.time);
+    },
+    handleMouseUp(evt: MouseEvent) {
+      evt.preventDefault();
+      this.dragging = false;
+    },
+    toggle(key: string | undefined) {
+      if (this.selection.has(key)) {
+        this.selection.delete(key);
+      } else if (key) {
+        this.selection.add(key);
+      }
     }
   }
 });
@@ -36,5 +82,9 @@ export default defineComponent({
 .block {
   border: 0.5px solid lightgray;
   height: 2em;
+}
+
+.selected {
+  background: green;
 }
 </style>
