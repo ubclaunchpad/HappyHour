@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
 import Home from "../views/Home.vue";
 
-const routes: Array<RouteRecordRaw> = [
+export const routes: Array<RouteRecordRaw> = [
   {
     path: "/",
     name: "Home",
@@ -22,9 +22,9 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import("../components/Counter.vue")
   },
   {
-    path: "/calendar",
-    name: "Calendar",
-    component: () => import("../components/CalendarDisplay.vue")
+    path: "/event",
+    name: "Event",
+    component: () => import("../views/Event.vue")
   }
 ];
 

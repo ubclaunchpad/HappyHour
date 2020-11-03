@@ -3,38 +3,22 @@
     <router-link
       class="router"
       v-for="link in links"
-      :key="link.to"
-      :to="link.to"
-      >{{ link.title }}
+      :key="link.path"
+      :to="link.path"
+      >{{ link.name }}
     </router-link>
   </nav>
 </template>
 
 <script>
-export default {
-  data() {
-    return {
-      links: [
-        {
-          title: "Home",
-          to: "/"
-        },
-        {
-          title: "About",
-          to: "/about"
-        },
-        {
-          title: "Counter",
-          to: "/counter"
-        },
-        {
-          title: "Calendar",
-          to: "/calendar"
-        }
-      ]
-    };
+import { defineComponent } from "vue";
+import { routes } from "../router";
+
+export default defineComponent({
+  setup() {
+    return { links: routes };
   }
-};
+});
 </script>
 
 <style scoped>
