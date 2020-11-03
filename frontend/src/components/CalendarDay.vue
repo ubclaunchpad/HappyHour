@@ -6,8 +6,11 @@
       :class="['block', { selected: selection.has(`${dateText}-${time}`) }]"
       :key="`${dateText}-${time}`"
       :data-time="`${dateText}-${time}`"
+      @touchstart="handleMouseDown"
       @mousedown="handleMouseDown"
+      @touchmove="handleMouseOver"
       @mouseover="handleMouseOver"
+      @touchend="handleMouseUp"
       @mouseup="handleMouseUp"
     ></div>
   </section>
@@ -40,26 +43,26 @@ export default defineComponent({
     }
   },
   mounted() {
-    window.addEventListener("mouseup", this.handleMouseUp);
+    window.addEventListener("touchstart", this.handleMouseUp);
   },
   beforeUnmount() {
-    window.removeEventListener("mouseup", this.handleMouseUp);
+    window.removeEventListener("touchend", this.handleMouseUp);
   },
   methods: {
-    handleMouseOver(evt: MouseEvent) {
+    handleMouseOver(evt: TouchEvent) {
       if (this.dragging) {
         evt.preventDefault();
         const el = evt.target as HTMLElement;
         this.toggle(el.dataset.time);
       }
     },
-    handleMouseDown(evt: MouseEvent) {
+    handleMouseDown(evt: TouchEvent) {
       evt.preventDefault();
       this.dragging = true;
       const el = evt.target as HTMLElement;
       this.toggle(el.dataset.time);
     },
-    handleMouseUp(evt: MouseEvent) {
+    handleMouseUp(evt: TouchEvent) {
       evt.preventDefault();
       this.dragging = false;
     },
