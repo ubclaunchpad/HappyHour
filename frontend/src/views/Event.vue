@@ -3,9 +3,8 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive } from "vue";
+import { defineComponent } from "vue";
 import Calendar from "../components/Calendar.vue";
-import { Calendar as ICalendar } from "../types";
 
 const end = new Date("October 8, 2020 21:00:00");
 const start = new Date("October 1, 2020 09:00:00");
@@ -14,15 +13,20 @@ export default defineComponent({
   components: {
     Calendar
   },
-  setup() {
-    const calendar = reactive<ICalendar>({
-      blocks: []
-    });
+  data() {
     return {
-      start: start.toISOString(),
-      end: end.toISOString(),
-      calendar
+      calendar: {
+        blocks: []
+      }
     };
+  },
+  computed: {
+    start() {
+      return start.toISOString();
+    },
+    end() {
+      return end.toISOString();
+    }
   }
 });
 </script>

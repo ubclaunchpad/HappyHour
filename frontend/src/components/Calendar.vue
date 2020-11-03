@@ -2,38 +2,38 @@
   <div class="calendar">
     <div class="times">
       <header>Times</header>
-      <div class="time" v-for="time in times" :key="`calendar-${time}`">
+      <div class="time" v-for="time in timeList" :key="`calendar-${time}`">
         {{ time }}
       </div>
     </div>
     <div class="wrapper">
       <CalendarDay
-        v-for="date in dateRange"
+        v-for="{ date, blocks } in days"
         :key="date"
         :date="date"
         :times="times"
+        :blocks="blocks"
+        @update:blocks="updateCalendar"
       />
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { eachDayOfInterval, getHours } from "date-fns";
+import { eachDayOfInterval, getHours, isSameDay } from "date-fns";
 import { defineComponent, PropType } from "vue";
 
+import { Block, Calendar, Time } from "@/types";
+import { formatHour } from "@/utils/time";
 import CalendarDay from "./CalendarDay.vue";
-import { Calendar } from "../types";
+
+interface Day {
+  date: string;
+  blocks: Block[];
+}
 
 const Interval = 30; // minutes
 const MinsInHour = 60;
-
-const formatHour = (hour: number, minutes: number) => {
-  let formattedMinutes = String(minutes);
-  if (minutes < 10) {
-    formattedMinutes = `0${minutes}`;
-  }
-  return `${hour}:${formattedMinutes}`;
-};
 
 export default defineComponent({
   components: {
@@ -54,32 +54,54 @@ export default defineComponent({
     }
   },
   computed: {
-    start(): Date {
-      return new Date(this.startTime);
+    blocks(): Block[] {
+      return this.calendar.blocks;
     },
-    end(): Date {
-      return new Date(this.endTime);
-    },
-    dateRange(): string[] {
+    days(): Day[] {
       return eachDayOfInterval({
         start: this.start,
         end: this.end
-      }).map(date => date.toISOString());
+      }).map(date => {
+        return {
+          date: date.toISOString(),
+          blocks: this.blocks.filter(block => isSameDay(block.startTime, date))
+        };
+      });
     },
     earliestTime(): number {
       return getHours(this.start);
     },
+    end(): Date {
+      return new Date(this.endTime);
+    },
     latestTime(): number {
       return getHours(this.end);
     },
-    times(): string[] {
-      const hours = [] as string[];
+    start(): Date {
+      return new Date(this.startTime);
+    },
+    times(): Time[] {
+      const hours = [];
       for (let hour = this.earliestTime; hour <= this.latestTime; hour++) {
         for (let i = 0; i < MinsInHour / Interval; i++) {
-          hours.push(formatHour(hour, i * Interval));
+          hours.push({ hour, minutes: i * Interval });
         }
       }
       return hours.slice(0, hours.length - 1);
+    },
+    timeList(): string[] {
+      return this.times.map(time => formatHour(time.hour, time.minutes));
+    }
+  },
+  methods: {
+    updateCalendar({ blocks, date }: { blocks: Block[]; date: string }) {
+      const originalBlocks = this.days.find(day => day.date === date)?.blocks;
+      if (originalBlocks) {
+        const otherBlocks = this.blocks.filter(
+          block => !originalBlocks.includes(block)
+        );
+        this.$emit("update:calendar", { blocks: [...otherBlocks, ...blocks] });
+      }
     }
   }
 });
