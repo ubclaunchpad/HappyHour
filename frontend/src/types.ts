@@ -28,3 +28,8 @@ export interface Event {
   link: string;
   calendar: Calendar;
 }
+
+export interface Time {
+  hour: number;
+  minutes: number;
+}
