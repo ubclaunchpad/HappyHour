@@ -112,6 +112,7 @@ export default defineComponent({
   display: flex;
   padding-left: 4rem;
   padding-right: 4rem;
+  margin-bottom: 2rem;
   font-size: 12px;
 }
 
