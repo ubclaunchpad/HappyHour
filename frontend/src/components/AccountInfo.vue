@@ -10,13 +10,19 @@
   <div>
     <button @click="increment">Save Response</button>
     <button @click="decrement">Share Event Link</button>
+    <AppButton text="Copy Event Link" />
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
+import AppButton from "@/components/AppButton.vue";
 
-export default defineComponent({});
+export default defineComponent({
+  components: {
+    AppButton
+  }
+});
 </script>
 
 <style>
