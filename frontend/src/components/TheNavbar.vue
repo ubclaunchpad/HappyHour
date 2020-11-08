@@ -36,11 +36,12 @@ nav {
 nav a {
   font-weight: bold;
   text-decoration: none;
-  color: rgb(221, 221, 221);
+  /*color: rgb(221, 221, 221);*/
+  color: black;
 }
 
 nav a.router-link-exact-active {
-  color: #42b983;
+  color: rgb(71, 96, 243);
 }
 
 .router {
@@ -52,8 +53,9 @@ nav a.router-link-exact-active {
   align-items: center;
   justify-content: space-between;
   flex-wrap: wrap;
-  background-color: rgb(0, 43, 74);
+  background-color: white;
   padding: 1rem 1.875rem;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
 }
 
 .container {
@@ -63,13 +65,14 @@ nav a.router-link-exact-active {
 
 .logo {
   border: none;
-  color: rgb(221, 221, 221);
+  /*color: rgb(221, 221, 221);*/
+  color: black;
   background: none;
   cursor: pointer;
 }
 
 .logo:hover,
 .logo:active .logo .router-link-exact-active {
-  color: #42b983;
+  color: rgb(71, 96, 243);
 }
 </style>
