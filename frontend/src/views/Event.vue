@@ -15,8 +15,8 @@ import { defineComponent } from "vue";
 import Calendar from "../components/Calendar.vue";
 import AvailabilityToggle from "../components/AvailabilityToggle.vue";
 
-const end = new Date("October 8, 2020 21:00:00");
-const start = new Date("October 1, 2020 09:00:00");
+const start = new Date("November 8, 2020 09:00:00");
+const end = new Date("November  14, 2020 21:00:00");
 
 export default defineComponent({
   components: {
@@ -43,6 +43,7 @@ export default defineComponent({
 
 <style scoped>
 .parent {
+  padding-top: 5rem;
   display: flex;
   flex-direction: row;
 }
