@@ -5,11 +5,16 @@ import (
 
 	"cloud.google.com/go/firestore"
 	log "github.com/sirupsen/logrus"
+	"github.com/ubclaunchpad/when3meet/data/schema"
 
 	firebase "firebase.google.com/go"
 
 	"google.golang.org/api/option"
 )
+
+// module type wrapper around schemas
+type User schema.User
+type Event schema.Event
 
 // App is the firebase app struct, will be initialized on module import
 var App *firebase.App

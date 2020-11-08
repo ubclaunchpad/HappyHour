@@ -5,7 +5,7 @@ import (
 	"net/http"
 
 	log "github.com/sirupsen/logrus"
-	"github.com/ubclaunchpad/when3meet/data/schema"
+	"github.com/ubclaunchpad/when3meet/data/clients/firebase"
 )
 
 // example document definition
@@ -20,7 +20,7 @@ func AddData(w http.ResponseWriter, r *http.Request) {
 
 	// unmarshal the JSON in the request to the data struct
 	// to access the key-value pairs
-	exampleUser := schema.User{
+	exampleUser := firebase.User{
 		Username: "testUser",
 		Email:    "test@gmail.com",
 	}
