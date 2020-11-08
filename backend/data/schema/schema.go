@@ -1,4 +1,6 @@
 // Schema Definitions for Firestore Documents
+// NOTE: do not use directly, instead use exported schemas from
+// appropriate client (e.g. clients/firebase)
 package schema
 
 import "time"
@@ -6,15 +8,17 @@ import "time"
 // User describes a single when3meet user and includes their personal
 // availability calendar
 type User struct {
-	Username string
-	Email    string
-	Calendar Calendar // default user calendar
+	FirebaseID string
+	Username   string
+	Email      string
+	Calendar   Calendar // default user calendar
 }
 
 // Event describes a single event/meeting and includes.
 type Event struct {
-	Users  []User // who is in this event
-	Owners []User // who owns this event
+	FirebaseID string
+	Users      []User // who is in this event
+	Owners     []User // who owns this event
 
 	// time window during which event can be scheduled
 	ScheduleWindow struct {

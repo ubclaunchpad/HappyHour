@@ -2,6 +2,7 @@ package main
 
 import (
 	"net/http"
+
 	"github.com/gorilla/mux"
 	log "github.com/sirupsen/logrus"
 )
@@ -14,6 +15,7 @@ func main() {
 
 	// test route to add data to firestore
 	r.HandleFunc("/add", AddData).Methods("POST")
+	r.HandleFunc("/get", GetData).Methods("GET")
 
 	// serve on port 8080
 	log.Info("server started on 8080")

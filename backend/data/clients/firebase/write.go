@@ -6,18 +6,22 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-func (u User) Write() error {
+func (u *User) Write() error {
 	// todo: consider logging ref or actual document info here
 	log.Infof("writing user to firestore: %+v", u)
 
-	_, _, err := Client.Collection("users").Add(context.Background(), u)
+	ref, _, err := Client.Collection("users").Add(context.Background(), u)
+	u.FirebaseID = ref.ID
+
 	return err
 }
 
-func (e Event) Write() error {
+func (e *Event) Write() error {
 	// todo: consider logging ref or actual document info here
 	log.Infof("writing event to firestore: %+v", e)
 
-	_, _, err := Client.Collection("events").Add(context.Background(), e)
+	ref, _, err := Client.Collection("events").Add(context.Background(), e)
+	e.FirebaseID = ref.ID
+
 	return err
 }

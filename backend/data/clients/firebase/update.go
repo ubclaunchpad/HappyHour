@@ -1,11 +1,11 @@
 package firebase
 
-func (u User) Update() error {
+func (u *User) Update(documentID string) error {
 	// todo: implementation
 	return nil
 }
 
-func (e Event) Update() error {
+func (e *Event) Update(documentID string) error {
 	// todo: implementation
 	return nil
 }

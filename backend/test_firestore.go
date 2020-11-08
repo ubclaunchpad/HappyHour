@@ -18,11 +18,10 @@ func AddData(w http.ResponseWriter, r *http.Request) {
 	// return json
 	w.Header().Set("Content-type", "application/json")
 
-	// unmarshal the JSON in the request to the data struct
-	// to access the key-value pairs
-	exampleUser := firebase.User{
-		Username: "testUser",
-		Email:    "test@gmail.com",
+	// dummy data
+	exampleUser := &firebase.User{
+		Username: "yoink",
+		Email:    "yeet@yeet.com",
 	}
 
 	err := exampleUser.Write()
@@ -33,4 +32,20 @@ func AddData(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	// marshal the data struct to JSON to send as response
 	json.NewEncoder(w).Encode(exampleUser)
+}
+
+func GetData(w http.ResponseWriter, r *http.Request) {
+	// return json
+	w.Header().Set("Content-type", "application/json")
+
+	// dummy id
+	user := &firebase.User{FirebaseID: "HcaULSAvFPTRNvKqj1Hy"}
+	err := user.Get()
+	if err != nil {
+		log.Fatal("failed to get user : %v", user)
+	}
+
+	w.WriteHeader(http.StatusOK)
+	// marshal the data struct to JSON to send as response
+	json.NewEncoder(w).Encode(user)
 }
