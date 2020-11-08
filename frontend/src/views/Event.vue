@@ -16,10 +16,8 @@ import { defineComponent } from "vue";
 import Calendar from "../components/Calendar.vue";
 import AvailabilityToggle from "../components/AvailabilityToggle.vue";
 import AccountInfo from "../components/AccountInfo.vue";
-
 const start = new Date("November 8, 2020 09:00:00");
 const end = new Date("November  14, 2020 21:00:00");
-
 export default defineComponent({
   components: {
     Calendar,
