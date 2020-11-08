@@ -6,7 +6,8 @@ import (
 
 func (u *User) Get() error {
 	// get document ref
-	userDoc := Client.Collection("users").Doc(u.FirebaseID)
+	id := u.FirebaseID
+	userDoc := Client.Collection("users").Doc(id)
 
 	// get document snapshot
 	snapshot, err := userDoc.Get(context.Background())
@@ -15,12 +16,15 @@ func (u *User) Get() error {
 	}
 
 	// unmarshal to own user struct
-	return snapshot.DataTo(&u)
+	err = snapshot.DataTo(&u)
+	u.FirebaseID = id
+	return err
 }
 
 func (e *Event) Get() error {
 	// get document ref
-	userDoc := Client.Collection("users").Doc(e.FirebaseID)
+	id := e.FirebaseID
+	userDoc := Client.Collection("users").Doc(id)
 
 	// get document snapshot
 	snapshot, err := userDoc.Get(context.Background())
@@ -29,5 +33,7 @@ func (e *Event) Get() error {
 	}
 
 	// unmarshal to own event struct
-	return snapshot.DataTo(&e)
+	err = snapshot.DataTo(&e)
+	e.FirebaseID = id
+	return err
 }

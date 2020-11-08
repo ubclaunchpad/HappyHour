@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"github.com/gorilla/mux"
 	log "github.com/sirupsen/logrus"
 	"github.com/ubclaunchpad/when3meet/data/clients/firebase"
 )
@@ -18,15 +19,18 @@ func AddData(w http.ResponseWriter, r *http.Request) {
 	// return json
 	w.Header().Set("Content-type", "application/json")
 
-	// dummy data
-	exampleUser := &firebase.User{
-		Username: "yoink",
-		Email:    "yeet@yeet.com",
+	// unmarshal the JSON in the request to the data struct
+	// to access the key-value pairs
+	var exampleUser firebase.User
+	err := json.NewDecoder(r.Body).Decode(&exampleUser)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		log.Fatalf("failed to decode the request: %v", err)
 	}
 
-	err := exampleUser.Write()
+	err = exampleUser.Write()
 	if err != nil {
-		log.Fatal("failed to add data : %v", err)
+		log.Fatalf("failed to add data : %v", err)
 	}
 
 	w.WriteHeader(http.StatusOK)
@@ -38,11 +42,16 @@ func GetData(w http.ResponseWriter, r *http.Request) {
 	// return json
 	w.Header().Set("Content-type", "application/json")
 
+	vars := mux.Vars(r)
+	if vars["id"] == "" {
+		log.Fatal("no document id provided")
+	}
+
 	// dummy id
-	user := &firebase.User{FirebaseID: "HcaULSAvFPTRNvKqj1Hy"}
+	user := &firebase.User{FirebaseID: vars["id"]}
 	err := user.Get()
 	if err != nil {
-		log.Fatal("failed to get user : %v", user)
+		log.Fatalf("failed to get user : %v", user)
 	}
 
 	w.WriteHeader(http.StatusOK)
