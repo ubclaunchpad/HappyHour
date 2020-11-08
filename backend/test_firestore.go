@@ -52,3 +52,33 @@ func GetData(w http.ResponseWriter, r *http.Request) {
 	// marshal the data struct to JSON to send as response
 	json.NewEncoder(w).Encode(user)
 }
+
+func DeleteData(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	if vars["id"] == "" {
+		log.Fatal("no document id provided")
+	}
+	user := &firebase.User{FirebaseID: vars["id"]}
+	err := user.Delete()
+	if err != nil {
+		log.Fatalf("failed to delete user : %v", user)
+	}
+	w.WriteHeader(http.StatusNoContent)
+}
+
+
+func UpdateUser(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	if vars["id"] == "" {
+		log.Fatal("no document id provided")
+	}
+	user := firebase.User{FirebaseID: vars["id"]}
+	err := json.NewDecoder(r.Body).Decode(&user)
+	log.Printf("user is liek this: %+v", user)
+	err = user.Update()
+	if err != nil {
+		log.Fatalf("failed to update user : %v", user)
+	}
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(user)
+}

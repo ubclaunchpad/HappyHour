@@ -16,6 +16,8 @@ func main() {
 	// test route to add data to firestore
 	r.HandleFunc("/add", AddData).Methods("POST")
 	r.HandleFunc("/get/{id}", GetData).Methods("GET")
+	r.HandleFunc("/delete/{id}", DeleteData).Methods("DELETE")
+	r.HandleFunc("/update/{id}", UpdateUser).Methods("PATCH")
 
 	// serve on port 8080
 	log.Info("server started on 8080")

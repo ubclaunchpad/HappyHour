@@ -24,10 +24,10 @@ func (u *User) Get() error {
 func (e *Event) Get() error {
 	// get document ref
 	id := e.FirebaseID
-	userDoc := Client.Collection("users").Doc(id)
+	eventDoc := Client.Collection("events").Doc(id)
 
 	// get document snapshot
-	snapshot, err := userDoc.Get(context.Background())
+	snapshot, err := eventDoc.Get(context.Background())
 	if err != nil {
 		return err
 	}
