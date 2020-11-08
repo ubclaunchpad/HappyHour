@@ -36,7 +36,7 @@ type Calendar struct {
 // Block describes a single 30min time block along with users which are available during that time
 type Block struct {
 	StartTime Timestamp
-	users     []string // list of UserIDs of which users are free during this block
+	Users     []string // list of UserIDs of which users are free during this block
 }
 
 // TimeStamp is a thin wrapper around a timestamp string.

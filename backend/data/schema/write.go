@@ -9,7 +9,12 @@ import (
 )
 
 type FirestoreObject interface {
-	Write() error
+	Write() error // create new
+
+	// todo:
+	// Replace() error // update doc completely
+	// Update() error  // update single field
+	// Delete() error  // delete document
 }
 
 func (u User) Write() error {
@@ -21,6 +26,7 @@ func (u User) Write() error {
 }
 
 func (e Event) Write() error {
+	// todo: consider logging ref or actual document info here
 	log.Infof("writing event to firestore: %+v", e)
 
 	_, _, err := firebase.Client.Collection("events").Add(context.Background(), e)
