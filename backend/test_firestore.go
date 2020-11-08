@@ -9,12 +9,6 @@ import (
 	"github.com/ubclaunchpad/when3meet/data/clients/firebase"
 )
 
-// example document definition
-type Data struct {
-	Key   string
-	Value string
-}
-
 func AddData(w http.ResponseWriter, r *http.Request) {
 	// return json
 	w.Header().Set("Content-type", "application/json")
