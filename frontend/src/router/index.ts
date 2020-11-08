@@ -19,7 +19,7 @@ export const routes: Array<RouteRecordRaw> = [
   {
     path: "/faq",
     name: "FAQ",
-    component: () => import("../components/HelloWorld.vue")
+    component: () => import("../components/DatePicker.vue")
   },
   {
     path: "/about",
