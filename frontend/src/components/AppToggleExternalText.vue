@@ -106,6 +106,11 @@ export default {
   cursor: pointer;
 }
 
+.toggle__button button[disabled] {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
 /* Toggle Button Shape */
 
 .toggle__button .toggle__switch::after,

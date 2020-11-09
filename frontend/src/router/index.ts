@@ -12,6 +12,11 @@ export const routes: Array<RouteRecordRaw> = [
     component: () => import("../components/DatePicker.vue")
   },
   {
+    path: "/event",
+    name: "Event View",
+    component: () => import("../views/Event.vue")
+  },
+  {
     path: "/signup",
     name: "Sign Up",
     component: () => import("../views/Placeholder.vue")

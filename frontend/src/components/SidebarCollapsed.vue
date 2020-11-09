@@ -13,9 +13,9 @@ export default {};
   top: 0;
   z-index: -1;
   width: 5%;
-  height: 100vh;
+  height: 100ch;
 
-  background: #ffffff;
+  background: rgb(255, 255, 255);
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
 }
 </style>
