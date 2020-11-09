@@ -4,12 +4,17 @@
     <button @click="decrement">Login with Google account</button>
   </div> -->
   <div>
-    <p class="label">Respondants</p>
-    <div class="respondants"></div>
+    <p class="label">Respondents</p>
+    <div class="respondents">
+      <ul>
+        <li v-for="respondent in respondents" :key="respondent">
+          {{ respondent }}
+        </li>
+      </ul>
+    </div>
   </div>
   <div>
-    <button @click="increment">Save Response</button>
-    <button @click="decrement">Share Event Link</button>
+    <AppButton text="Save Response" />
     <AppButton text="Copy Event Link" />
   </div>
 </template>
@@ -19,6 +24,12 @@ import { defineComponent } from "vue";
 import AppButton from "@/components/AppButton.vue";
 
 export default defineComponent({
+  data: () => {
+    return {
+      respondents: ["Tommy", "James", "Francis", "Jill", "Nanda"]
+    };
+  },
+
   components: {
     AppButton
   }
@@ -26,7 +37,7 @@ export default defineComponent({
 </script>
 
 <style>
-.respondants {
+.respondents {
   border-radius: 25px;
   background: rgb(221, 221, 221);
   padding: 20px;
@@ -38,7 +49,7 @@ export default defineComponent({
   transition: 0.3s;
 }
 
-.respondants:hover {
+.respondents:hover {
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.1);
 }
 
