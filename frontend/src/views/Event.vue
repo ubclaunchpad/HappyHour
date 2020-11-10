@@ -6,7 +6,6 @@
       </h1>
       <div class="heading">
         <h2>Fill out your availability</h2>
-        <h2>Respondents</h2>
       </div>
     </section>
 
