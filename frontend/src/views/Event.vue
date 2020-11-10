@@ -1,7 +1,9 @@
 <template>
   <div class="container">
     <section>
-      <h1><strong>Event Name</strong></h1>
+      <h1>
+        <strong>{{ event.title }}</strong>
+      </h1>
       <div class="heading">
         <h2>Fill out your availability</h2>
         <h2>Respondents</h2>
@@ -18,7 +20,7 @@
           />
         </div>
         <div class="timezone">
-          <small>(Time displayed in PST — Vancouver)</small>
+          <small>(Time displayed in {{ event.timezone }})</small>
         </div>
         <div class="buttons">
           <AppToggleExternalText
@@ -58,6 +60,10 @@ export default defineComponent({
     return {
       calendar: {
         blocks: []
+      },
+      event: {
+        title: "Event Name",
+        timezone: "PST - Vancouver"
       }
     };
   },
