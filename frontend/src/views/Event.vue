@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <header class="heading">
-      <h3>{{ event.title }}</h3>
+      <h3>{{ title }}</h3>
     </header>
 
     <section class="main">
@@ -17,7 +17,7 @@
               :endTime="end"
             />
           </div>
-          <div class="timezone">(Time displayed in {{ event.timezone }})</div>
+          <div class="timezone">(Time displayed in {{ timezone }})</div>
           <div class="buttons">
             <AppToggleExternalText
               toggleLeftText="My Availability"
@@ -53,14 +53,23 @@ export default defineComponent({
     EventRespondents
   },
 
+  props: {
+    title: {
+      type: String,
+      required: true,
+      default: () => "Event Title"
+    },
+    timezone: {
+      type: String,
+      required: true,
+      default: () => "PST - Vancouver time"
+    }
+  },
+
   data() {
     return {
       calendar: {
         blocks: []
-      },
-      event: {
-        title: "Event Name",
-        timezone: "PST - Vancouver"
       }
     };
   },
@@ -78,7 +87,7 @@ export default defineComponent({
 
 <style scoped>
 .container {
-  margin: 1rem;
+  margin: 1rem 10rem;
 }
 
 .calendar {
@@ -101,6 +110,7 @@ export default defineComponent({
   flex-grow: 4;
   /*margin: auto;*/
   align-items: flex-start;
+  padding: 0 5rem;
 }
 
 .buttons {

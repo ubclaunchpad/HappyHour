@@ -21,9 +21,11 @@
 import { defineComponent } from "vue";
 
 export default defineComponent({
-  data: () => {
-    return {
-      respondents: [
+  props: {
+    respondents: {
+      type: Array,
+      required: false,
+      default: () => [
         "Tommy",
         "James",
         "Francis",
@@ -51,7 +53,7 @@ export default defineComponent({
         "Now",
         "?"
       ]
-    };
+    }
   },
 
   components: {}
@@ -63,7 +65,7 @@ export default defineComponent({
   border-radius: 5px;
   background: rgb(255, 255, 255);
   width: 230px;
-  height: 405px;
+  height: 300px;
   filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25));
   padding: 1rem 1.125rem;
 
