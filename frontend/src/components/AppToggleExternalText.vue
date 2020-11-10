@@ -22,17 +22,19 @@
 <script>
 export default {
   props: {
-    /*TODO: Grey out disabled toggle */
+    /* Boolean dictates the disabled state of toggle */
     disabled: {
       type: Boolean,
       default: false
     },
 
+    /* Text of the false or left state */
     toggleLeftText: {
       type: String,
       default: "«Left«"
     },
 
+    /* Text of the false or right state */
     toggleRightText: {
       type: String,
       default: "»Right»"
@@ -43,6 +45,7 @@ export default {
       default: "primary"
     },
 
+    /* Default state of the toggle (false is left) */
     defaultState: {
       type: Boolean,
       default: false
@@ -51,35 +54,37 @@ export default {
 
   data() {
     return {
-      myAvail: this.defaultState
+      currentToggleState: this.defaultState
     };
   },
 
   watch: {
     defaultState: function defaultState() {
-      this.myAvail = Boolean(this.defaultState);
+      this.currentToggleState = Boolean(this.defaultState);
     }
   },
 
   computed: {
     isActive() {
-      return this.myAvail;
+      return this.currentToggleState;
     },
 
-    enableText() {
+    /* Returns disabled / left text */
+    disabledText() {
       return this.toggledLeftText;
     },
 
-    disabledText() {
-      return this.labelDisableText;
+    /* Returns enabled / right text */
+    enabledText() {
+      return this.toggledRightText;
     },
 
     checkedValue: {
       get() {
-        return this.myAvail;
+        return this.currentToggleState;
       },
       set(newValue) {
-        this.myAvail = newValue;
+        this.currentToggleState = newValue;
         this.$emit("change", newValue);
       }
     }
@@ -88,7 +93,9 @@ export default {
 </script>
 
 <style scoped>
-/*TODO: Clean up styling */
+/* TODO: Clean up styling */
+/* TODO: Grey out disabled toggle */
+/* TODO: Create constants for the accent colours for ease of modification */
 
 .toggle__label {
   padding: 0 1rem;
