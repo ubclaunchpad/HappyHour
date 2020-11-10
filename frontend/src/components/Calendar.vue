@@ -118,8 +118,8 @@ export default defineComponent({
 
 .times {
   flex: 1;
-  text-align: right;
-  margin-right: 1rem;
+  text-align: center;
+  /*margin-right: 1rem;*/
 }
 
 .time {
