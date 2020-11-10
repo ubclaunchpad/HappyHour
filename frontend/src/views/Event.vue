@@ -2,7 +2,7 @@
   <div class="container">
     <section>
       <h1>
-        <strong>{{ event.title }}</strong>
+        <strong>{{ title }}</strong>
       </h1>
       <div class="heading">
         <h2>Fill out your availability</h2>
@@ -19,7 +19,7 @@
           />
         </div>
         <div class="timezone">
-          <small>(Time displayed in {{ event.timezone }})</small>
+          <small>(Time displayed in {{ timezone }})</small>
         </div>
         <div class="buttons">
           <AppToggleExternalText
@@ -55,14 +55,23 @@ export default defineComponent({
     EventRespondents
   },
 
+  props: {
+    title: {
+      type: String,
+      required: true,
+      default: () => "Event Title"
+    },
+    timezone: {
+      type: String,
+      required: true,
+      default: () => "PST - Vancouver time"
+    }
+  },
+
   data() {
     return {
       calendar: {
         blocks: []
-      },
-      event: {
-        title: "Event Name",
-        timezone: "PST - Vancouver"
       }
     };
   },

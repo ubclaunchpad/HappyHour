@@ -15,9 +15,11 @@
 import { defineComponent } from "vue";
 
 export default defineComponent({
-  data: () => {
-    return {
-      respondents: [
+  props: {
+    respondents: {
+      type: Array,
+      required: false,
+      default: () => [
         "Tommy",
         "James",
         "Francis",
@@ -45,7 +47,7 @@ export default defineComponent({
         "Now",
         "?"
       ]
-    };
+    }
   },
 
   components: {}
