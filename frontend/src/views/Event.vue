@@ -1,37 +1,35 @@
 <template>
   <div class="container">
-    <section>
-      <h1>
-        <strong>{{ event.title }}</strong>
-      </h1>
-      <div class="heading">
-        <h2>Fill out your availability</h2>
-      </div>
-    </section>
+    <header class="heading">
+      <h3>{{ event.title }}</h3>
+    </header>
 
-    <section class="parent">
-      <div class="child">
-        <div class="calendar">
-          <Calendar
-            v-model:calendar="calendar"
-            :startTime="start"
-            :endTime="end"
-          />
+    <section class="main">
+      <div class="parent">
+        <div class="child">
+          <div class="sub-heading">
+            <h3>Fill out your availability</h3>
+          </div>
+          <div class="calendar">
+            <Calendar
+              v-model:calendar="calendar"
+              :startTime="start"
+              :endTime="end"
+            />
+          </div>
+          <div class="timezone">(Time displayed in {{ event.timezone }})</div>
+          <div class="buttons">
+            <AppToggleExternalText
+              toggleLeftText="My Availability"
+              toggleRightText="Group Availability"
+            />
+            <AppButton text="Save Response" />
+            <AppButton text="Copy Event Link" />
+          </div>
         </div>
-        <div class="timezone">
-          <small>(Time displayed in {{ event.timezone }})</small>
+        <div class="respondents">
+          <EventRespondents />
         </div>
-        <div class="buttons">
-          <AppToggleExternalText
-            toggleLeftText="My Availability"
-            toggleRightText="Group Availability"
-          />
-          <AppButton text="Save Response" />
-          <AppButton text="Copy Event Link" />
-        </div>
-      </div>
-      <div class="child">
-        <EventRespondents />
       </div>
     </section>
   </div>
@@ -79,28 +77,24 @@ export default defineComponent({
 </script>
 
 <style scoped>
+.container {
+  margin: 1rem;
+}
+
 .calendar {
   box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
   background: rgb(255, 255, 255);
   margin: 0;
   padding: 0;
   border-radius: 10px;
+  /*
   justify-content: center;
   align-items: center;
+  */
 }
 
-.container {
-  position: absolute;
-  background: rgb(245, 246, 250);
-  z-index: -2;
-  width: 100vw;
-  height: 100vh;
-}
 .parent {
-  padding-top: 5rem;
   display: flex;
-  margin: 3rem 9rem;
-  padding: 3rem;
 }
 
 .child {
@@ -119,5 +113,13 @@ export default defineComponent({
 .timezone {
   color: rgb(129, 146, 158);
   padding: 0 0 1rem 0;
+  font-size: 12px;
+  font-family: "Open Sans";
+  margin: 0.5rem;
+}
+
+.respondents {
+  margin: 0;
+  padding: 0;
 }
 </style>
