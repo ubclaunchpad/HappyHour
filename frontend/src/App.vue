@@ -7,13 +7,11 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import TheNavbar from "./components/TheNavbar.vue";
-import SidebarCollapsed from "./components/SidebarCollapsed.vue";
 
 export default defineComponent({
   name: "App",
   components: {
-    TheNavbar,
-    SidebarCollapsed
+    TheNavbar
   }
 });
 </script>
