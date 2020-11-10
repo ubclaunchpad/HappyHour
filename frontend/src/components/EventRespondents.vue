@@ -1,8 +1,4 @@
 <template>
-  <!--<div>
-    <button @click="increment">Login with email</button>
-    <button @click="decrement">Login with Google account</button>
-  </div> -->
   <div>
     <p class="label">Respondents</p>
     <div class="respondents">
@@ -13,15 +9,10 @@
       </ul>
     </div>
   </div>
-  <div>
-    <AppButton text="Save Response" />
-    <AppButton text="Copy Event Link" />
-  </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import AppButton from "@/components/AppButton.vue";
 
 export default defineComponent({
   data: () => {
@@ -57,22 +48,20 @@ export default defineComponent({
     };
   },
 
-  components: {
-    AppButton
-  }
+  components: {}
 });
 </script>
 
-<style>
+<style scoped>
 .respondents {
-  border-radius: 25px;
-  background: rgb(221, 221, 221);
+  border-radius: 5px;
+  background: rgb(255, 255, 255);
   padding: 20px;
-  width: 50%;
-  height: 60vh;
+  width: 40%;
+  height: 50ch;
   margin: auto;
   margin-bottom: 20px;
-  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
+  filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25));
   transition: 0.3s;
 }
 
@@ -84,7 +73,7 @@ export default defineComponent({
   list-style-type: none;
   margin: 0;
   padding: 0;
-  height: 60vh;
+  height: 50ch;
 
   font-style: normal;
   font-weight: 500;
@@ -106,5 +95,6 @@ export default defineComponent({
 
   align-items: center;
   letter-spacing: -0.56px;
+  filter: drop-shadow(0px 4px 5px rgba(0, 0, 0, 0.25));
 }
 </style>

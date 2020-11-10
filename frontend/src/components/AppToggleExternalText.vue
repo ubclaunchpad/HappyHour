@@ -4,7 +4,7 @@
     :class="{ active: isActive }"
     class="toggle__button"
   >
-    <span class="toggle__label">{{ enableText }}</span>
+    <span class="toggle__label">{{ toggleLeftText }}</span>
 
     <input
       type="checkbox"
@@ -12,57 +12,68 @@
       :id="id + '_button'"
       v-model="checkedValue"
     />
+
     <span class="toggle__switch"></span>
 
-    <span class="toggle__label">{{ disabledText }}</span>
+    <span class="toggle__label">{{ toggleRightText }}</span>
   </label>
 </template>
 
 <script>
 export default {
   props: {
+    /*TODO: Grey out disabled toggle */
     disabled: {
       type: Boolean,
       default: false
     },
-    labelEnableText: {
+
+    toggleLeftText: {
       type: String,
-      default: "My Availability"
+      default: "«Left«"
     },
 
-    labelDisableText: {
+    toggleRightText: {
       type: String,
-      default: "Group Availability"
+      default: "»Right»"
     },
+
     id: {
       type: String,
       default: "primary"
     },
+
     defaultState: {
       type: Boolean,
       default: false
     }
   },
+
   data() {
     return {
       myAvail: this.defaultState
     };
   },
+
   watch: {
     defaultState: function defaultState() {
       this.myAvail = Boolean(this.defaultState);
     }
   },
+
   computed: {
     isActive() {
       return this.myAvail;
     },
+
     enableText() {
-      return this.labelEnableText;
+      return this.toggledLeftText;
     },
+
     disabledText() {
       return this.labelDisableText;
     },
+
     checkedValue: {
       get() {
         return this.myAvail;
@@ -77,9 +88,16 @@ export default {
 </script>
 
 <style scoped>
+/*TODO: Clean up styling */
+
 .toggle__label {
-  padding-left: 1rem;
-  padding-right: 1rem;
+  padding: 0 1rem;
+  font-size: 0.875em;
+}
+
+/* Hide Checkbox */
+.toggle__button input[type="checkbox"] {
+  display: none;
 }
 
 .toggle__button {
@@ -88,24 +106,12 @@ export default {
   cursor: pointer;
 }
 
-.toggle__button input[type="checkbox"] {
-  opacity: 0;
-  position: absolute;
-  width: 1px;
-  height: 1px;
+.toggle__button button[disabled] {
+  opacity: 0.5;
+  pointer-events: none;
 }
 
-.toggle__button .toggle__switch {
-  display: inline-block;
-  height: 12px;
-  border-radius: 6px;
-  width: 40px;
-  background: #b6caf7;
-  box-shadow: inset 0 0 1px #b6caf7;
-  position: relative;
-  margin-left: 10px;
-  transition: all 0.25s;
-}
+/* Toggle Button Shape */
 
 .toggle__button .toggle__switch::after,
 .toggle__button .toggle__switch::before {
@@ -121,17 +127,33 @@ export default {
   transition: all 0.25s cubic-bezier(0.5, -0.6, 0.5, 1.6);
 }
 
+.toggle__button .toggle__switch {
+  display: inline-block;
+  height: 12px;
+  border-radius: 6px;
+  width: 40px;
+  background: #b6caf7;
+  box-shadow: inset 0 0 1px #b6caf7;
+  position: relative;
+  margin-left: 10px;
+  transition: all 0.25s;
+}
+
+/* Toggle Left */
 .toggle__button .toggle__switch::after {
   background: #6791f0;
   box-shadow: 0 0 1px #666;
 }
 
+/*
 .toggle__button .toggle__switch::before {
   background: #6791f0;
   box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1);
   opacity: 0;
-}
+} 
+*/
 
+/* Toggle Right */
 .active .toggle__switch {
   background: #adedcb;
   box-shadow: inset 0 0 1px #adedcb;
