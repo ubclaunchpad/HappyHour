@@ -5,31 +5,35 @@
     </header>
 
     <section class="main">
-      <div class="parent">
-        <div class="child">
-          <div class="sub-heading">
-            <h3>Fill out your availability</h3>
-          </div>
-          <div class="calendar">
-            <Calendar
-              v-model:calendar="calendar"
-              :startTime="start"
-              :endTime="end"
-            />
-          </div>
-          <div class="timezone">(Time displayed in {{ timezone }})</div>
+      <div class="main-flex-child">
+        <div class="sub-heading">
+          <h3>Fill out your availability</h3>
+        </div>
+
+        <div class="calendar">
+          <Calendar
+            v-model:calendar="calendar"
+            :startTime="start"
+            :endTime="end"
+          />
+        </div>
+
+        <div class="timezone">(Time displayed in {{ timezone }})</div>
+
+        <section class="toggle-buttons">
+          <AppToggleExternalText
+            toggleLeftText="My Availability"
+            toggleRightText="Group Availability"
+          />
           <div class="buttons">
-            <AppToggleExternalText
-              toggleLeftText="My Availability"
-              toggleRightText="Group Availability"
-            />
-            <AppButton text="Save Response" />
-            <AppButton text="Copy Event Link" />
+            <AppButton text="Save Response" class="btn" />
+            <AppButton text="Copy Event Link" class="btn" />
           </div>
-        </div>
-        <div class="respondents">
-          <EventRespondents />
-        </div>
+        </section>
+      </div>
+
+      <div class="respondents">
+        <EventRespondents />
       </div>
     </section>
   </div>
@@ -43,7 +47,7 @@ import Calendar from "@/components/Calendar.vue";
 import EventRespondents from "@/components/EventRespondents.vue";
 
 const start = new Date("November 2, 2020 09:00:00");
-const end = new Date("November  8, 2020 16:30:00");
+const end = new Date("November  8, 2020 21:30:00");
 
 export default defineComponent({
   components: {
@@ -102,22 +106,28 @@ export default defineComponent({
   */
 }
 
-.parent {
+.main {
   display: flex;
+  justify-content: center;
 }
 
-.child {
+.main-flex-child {
   flex-grow: 4;
   /*margin: auto;*/
   align-items: flex-start;
   padding: 0 5rem;
+  justify-content: center;
 }
 
-.buttons {
+.toggle-buttons {
   display: flex;
   justify-content: space-around;
   align-items: center;
-  margin: 0 5rem;
+  margin: 0 1rem;
+}
+
+.btn {
+  margin: 0 1rem;
 }
 
 .timezone {
@@ -126,10 +136,5 @@ export default defineComponent({
   font-size: 12px;
   font-family: "Open Sans";
   margin: 0.5rem;
-}
-
-.respondents {
-  margin: 0;
-  padding: 0;
 }
 </style>
