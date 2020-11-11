@@ -41,7 +41,7 @@
       </div>
 
       <div class="respondents">
-        <EventRespondents />
+        <EventRespondents v-bind:respondents="['name1', 'name2', 'name3']" />
       </div>
       <AppNotification
         v-show="notificationVisible"

@@ -31,23 +31,7 @@ export default defineComponent({
         "Gokce",
         "Kai",
         "Henry",
-        "Tiffany",
-        "This",
-        "List",
-        "Is",
-        "Very",
-        "Long",
-        "Wow",
-        "It's",
-        "Hard",
-        "To",
-        "Saturate",
-        "Okay",
-        "Maybe",
-        "I'm",
-        "Close",
-        "Now",
-        "?"
+        "Tiffany"
       ]
     }
   }
