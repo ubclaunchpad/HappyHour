@@ -26,8 +26,16 @@
             toggleRightText="Group Availability"
           />
           <div class="buttons">
-            <AppButton @update="handleSave()" text="Save Response" />
-            <AppButton @update="copyLink()" text="Copy Event Link" />
+            <AppButton
+              class="btn"
+              @update="handleSave()"
+              text="Save Response"
+            />
+            <AppButton
+              class="btn"
+              @update="copyLink()"
+              text="Copy Event Link"
+            />
           </div>
         </section>
       </div>
@@ -35,7 +43,7 @@
       <div class="respondents">
         <EventRespondents />
       </div>
-      <Notification v-show="notificationVisible" :text="notificationText" />
+      <AppNotification v-show="notificationVisible" :text="notificationText" />
     </section>
   </div>
 </template>
@@ -46,7 +54,7 @@ import AppButton from "@/components/AppButton.vue";
 import AppToggleExternalText from "@/components/AppToggleExternalText.vue";
 import Calendar from "@/components/Calendar.vue";
 import EventRespondents from "@/components/EventRespondents.vue";
-import Notification from "@/components/Notification.vue";
+import AppNotification from "@/components/AppNotification.vue";
 
 const start = new Date("November 2, 2020 09:00:00");
 const end = new Date("November  8, 2020 21:30:00");
@@ -54,10 +62,10 @@ const end = new Date("November  8, 2020 21:30:00");
 export default defineComponent({
   components: {
     AppButton,
+    AppNotification,
     AppToggleExternalText,
     Calendar,
-    EventRespondents,
-    Notification
+    EventRespondents
   },
 
   props: {
