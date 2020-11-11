@@ -43,7 +43,11 @@
       <div class="respondents">
         <EventRespondents />
       </div>
-      <AppNotification v-show="notificationVisible" :text="notificationText" />
+      <AppNotification
+        v-show="notificationVisible"
+        @update="this.notificationVisible = false"
+        :text="notificationText"
+      />
     </section>
   </div>
 </template>
@@ -107,7 +111,7 @@ export default defineComponent({
       // and show notification with "Availability saved!"
       this.notificationVisible = true;
       this.notificationText = "Availability saved!";
-      setTimeout(() => (this.notificationVisible = false), 1000);
+      setTimeout(() => (this.notificationVisible = false), 5000);
     },
     copyLink() {
       // copy the link to the event
@@ -115,7 +119,7 @@ export default defineComponent({
       // and show notification with "Event link copied to clipboard!"
       this.notificationVisible = true;
       this.notificationText = "Event link copied to clipboard!";
-      setTimeout(() => (this.notificationVisible = false), 1000);
+      setTimeout(() => (this.notificationVisible = false), 5000);
     }
   }
 });

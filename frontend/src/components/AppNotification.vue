@@ -3,7 +3,7 @@ Notification can be shown by usign v-if-->
 <template>
   <div class="notification">
     <p class="msg">{{ text }}</p>
-    <i class="close"></i>
+    <i class="close" @click="update"></i>
   </div>
 </template>
 
@@ -13,6 +13,11 @@ export default defineComponent({
   name: "Notification",
   props: {
     text: String
+  },
+  methods: {
+    update() {
+      this.$emit("update");
+    }
   }
 });
 </script>
