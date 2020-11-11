@@ -30,7 +30,7 @@ export default defineComponent({
   position: absolute;
   width: 480px;
   height: 56px;
-  right: 0px;
+  right: 0;
   top: 1.5rem;
   color: RGB(255, 255, 255);
   background: RGB(71, 96, 243);
@@ -52,30 +52,29 @@ export default defineComponent({
   padding: 1rem;
 }
 
+/* FIXME: Adjust relative units */
 .close {
-  /*
   position: absolute;
-  right: 32px;
-  top: 32px;
-  */
-  width: 32px;
-  height: 32px;
-  opacity: 0.3;
+  right: 1.5rem;
+  width: 20px;
+  height: 20px;
+  opacity: 1;
   cursor: pointer;
   align-self: center;
 }
+
 .close:hover {
-  opacity: 1;
+  opacity: 0.3;
 }
 .close:before,
 .close:after {
   position: absolute;
-  left: 15px;
+  right: 1.5rem;
 
   content: " ";
-  height: 33px;
+  height: 21px;
   width: 2px;
-  background-color: #333;
+  background-color: RGB(255, 255, 255);
 }
 .close:before {
   transform: rotate(45deg);
