@@ -1,5 +1,5 @@
 <template>
-  <button class="button">{{ text }}</button>
+  <button class="button" @click="update">{{ text }}</button>
 </template>
 
 <script lang="ts">
@@ -8,6 +8,16 @@ export default defineComponent({
   name: "AppButton",
   props: {
     text: String
+  },
+
+  methods: {
+    // AppButton will emit a click event
+    // this.$emit('showNotification')
+    // emit will tell the parent (Event.vue) to update showNotification in Notification
+    // AppButton is the child component
+    update() {
+      this.$emit("update");
+    }
   }
 });
 </script>

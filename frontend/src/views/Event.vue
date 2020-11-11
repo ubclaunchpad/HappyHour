@@ -26,8 +26,8 @@
             toggleRightText="Group Availability"
           />
           <div class="buttons">
-            <AppButton text="Save Response" class="btn" />
-            <AppButton text="Copy Event Link" class="btn" />
+            <AppButton @update="handleSave()" text="Save Response" />
+            <AppButton @update="copyLink()" text="Copy Event Link" />
           </div>
         </section>
       </div>
@@ -35,6 +35,7 @@
       <div class="respondents">
         <EventRespondents />
       </div>
+      <Notification v-show="notificationVisible" :text="notificationText" />
     </section>
   </div>
 </template>
@@ -45,6 +46,7 @@ import AppButton from "@/components/AppButton.vue";
 import AppToggleExternalText from "@/components/AppToggleExternalText.vue";
 import Calendar from "@/components/Calendar.vue";
 import EventRespondents from "@/components/EventRespondents.vue";
+import Notification from "@/components/Notification.vue";
 
 const start = new Date("November 2, 2020 09:00:00");
 const end = new Date("November  8, 2020 21:30:00");
@@ -54,7 +56,8 @@ export default defineComponent({
     AppButton,
     AppToggleExternalText,
     Calendar,
-    EventRespondents
+    EventRespondents,
+    Notification
   },
 
   props: {
@@ -74,7 +77,9 @@ export default defineComponent({
     return {
       calendar: {
         blocks: []
-      }
+      },
+      notificationText: "Some Notification",
+      notificationVisible: false
     };
   },
 
@@ -84,6 +89,25 @@ export default defineComponent({
     },
     end() {
       return end.toISOString();
+    }
+  },
+
+  methods: {
+    handleSave() {
+      // save the calendar
+      //alert("handleSave is called");
+      // and show notification with "Availability saved!"
+      this.notificationVisible = true;
+      this.notificationText = "Availability saved!";
+      setTimeout(() => (this.notificationVisible = false), 1000);
+    },
+    copyLink() {
+      // copy the link to the event
+      //alert("copyLink is called");
+      // and show notification with "Event link copied to clipboard!"
+      this.notificationVisible = true;
+      this.notificationText = "Event link copied to clipboard!";
+      setTimeout(() => (this.notificationVisible = false), 1000);
     }
   }
 });
