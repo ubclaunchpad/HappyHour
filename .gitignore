@@ -1,3 +1,4 @@
 .idea
 backend/ServiceAccountKey.json
+backend/credentials.json
 .DS_Store
