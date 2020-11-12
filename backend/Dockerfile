@@ -32,8 +32,11 @@ FROM alpine
 # Copy built binary from previous stage
 COPY --from=builder /go/bin/app /go/bin/app
 
-# Copy API keys from previous stage
+# Copy Firebase API keys from previous stage
 COPY --from=builder /app/src/ServiceAccountKey.json /go/bin/ServiceAccountKey.json
+
+# Copy Google API keys from previous stage
+COPY --from=builder /app/src/credentials.json /go/bin/credentials.json
 
 # Expose port (more for documentation than
 # anything, still needs -p 8080:8080)
