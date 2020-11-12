@@ -23,4 +23,4 @@ _Figma: https://www.figma.com/file/P8cQy1qJhyDX4oTm1DxMtz/When3Meet?node-id=0%3A
 
 # Related Issues ⚠️ 
 
-> Any dependent/related issues would go here. Type in the issue like so: #<number>
+> Any dependent/related issues would go here. Type in the issue like so: `#<number>`
