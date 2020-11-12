@@ -17,8 +17,8 @@ type User struct {
 // Event describes a single event/meeting and includes.
 type Event struct {
 	FirebaseID string
-	Users      []User // who is in this event
-	Owners     []User // who owns this event
+	Users      []string // FirebaseID of users is in this event
+	Owners     []string // FirebaseID of event owners
 
 	// time window during which event can be scheduled
 	ScheduleWindow struct {
