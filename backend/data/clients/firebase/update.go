@@ -17,5 +17,4 @@ func (e *Event) Update() error {
 	id := e.FirebaseID
 	_, err := Client.Collection("users").Doc(id).Set(context.Background(),e)
 	return err
-	return nil
 }
