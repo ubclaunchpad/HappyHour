@@ -2,9 +2,9 @@
   <div class="login">
     <div class="heading">Log In</div>
     <div class="p1">
-      <p>Username/Email: {{ username }}</p>
+      <p>Username/Email:</p>
       <input class="input" v-model="username" />
-      <p>Password: {{ password }}</p>
+      <p>Password:</p>
       <input class="input" v-model="password" />
     </div>
     <div class="button">
