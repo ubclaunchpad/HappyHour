@@ -27,6 +27,8 @@ export interface Event {
   };
   link: string;
   calendar: Calendar;
+  title: string;
+  timezone: string;
 }
 
 export interface Time {
