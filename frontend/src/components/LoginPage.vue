@@ -13,10 +13,15 @@
     <div class="button">
       <AppButton @update="logInViaGoogle()" text="Log in with Google Account" />
     </div>
+    <div class="button">
+      <AppButton @update="signUp()" text="Sign up" />
+    </div>
   </div>
 </template>
 
 <script lang="ts">
+import { Auth } from "../auth";
+
 import { defineComponent } from "vue";
 import AppButton from "@/components/AppButton.vue";
 export default defineComponent({
@@ -30,11 +35,30 @@ export default defineComponent({
     };
   },
   methods: {
-    logIn() {
-      // log in
+    async logIn() {
+      try {
+        const user = Auth.signInWithEmailAndPassword(
+          this.username,
+          this.password
+        );
+        console.log("OK - Token: " + user); // TODO: post to server
+      } catch (err) {
+        console.error("ERR: " + err);
+      }
     },
     logInViaGoogle() {
       // log in via Google Account
+    },
+    async signUp() {
+      try {
+        const user = Auth.createUserWithEmailAndPassword(
+          this.username,
+          this.password
+        );
+        console.log("OK - Token: " + user); // TODO: post to server
+      } catch (err) {
+        console.error("ERR: " + err);
+      }
     }
   }
 });
