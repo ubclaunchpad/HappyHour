@@ -1,11 +1,35 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
-import Home from "../views/Home.vue";
+import Event from "../views/Event.vue";
 
 export const routes: Array<RouteRecordRaw> = [
   {
     path: "/",
-    name: "Home",
-    component: Home
+    component: Event
+  },
+  {
+    path: "/datepicker",
+    name: "DatePicker",
+    component: () => import("../components/DatePicker.vue")
+  },
+  {
+    path: "/event",
+    name: "Event View",
+    component: () => import("../views/Event.vue")
+  },
+  {
+    path: "/signup",
+    name: "Sign Up",
+    component: () => import("../views/Placeholder.vue")
+  },
+  {
+    path: "/login",
+    name: "Log In",
+    component: () => import("../views/Placeholder.vue")
+  },
+  {
+    path: "/faq",
+    name: "FAQ",
+    component: () => import("../views/Placeholder.vue")
   },
   {
     path: "/about",
@@ -15,16 +39,6 @@ export const routes: Array<RouteRecordRaw> = [
     // which is lazy-loaded when the route is visited.
     component: () =>
       import(/* webpackChunkName: "about" */ "../views/About.vue")
-  },
-  {
-    path: "/counter",
-    name: "Counter",
-    component: () => import("../components/Counter.vue")
-  },
-  {
-    path: "/event",
-    name: "Event",
-    component: () => import("../views/Event.vue")
   }
 ];
 
