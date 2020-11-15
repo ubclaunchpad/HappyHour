@@ -18,7 +18,7 @@
 
 <script lang="ts">
 import { Auth } from "../auth";
-
+import firebase from "firebase/app";
 import { defineComponent } from "vue";
 import AppButton from "@/components/AppButton.vue";
 export default defineComponent({
@@ -38,13 +38,28 @@ export default defineComponent({
           this.username,
           this.password
         );
-        console.log("OK - Token: " + user); // TODO: post to server
+        console.log("OK - Token: " + user);
       } catch (err) {
         console.error("ERR: " + err);
       }
     },
     logInViaGoogle() {
-      // log in via Google Account
+      const provider = new firebase.auth.GoogleAuthProvider();
+      provider.addScope("profile");
+      provider.addScope("email");
+      firebase
+        .auth()
+        .signInWithPopup(provider)
+        .then(function(result) {
+          if (result.credential) {
+            const credential = result.credential as firebase.auth.OAuthCredential;
+            const token = credential.accessToken;
+            console.log("OK - OAuth Token: " + token);
+          }
+        })
+        .catch(function(err) {
+          console.error("ERR: " + err);
+        });
     }
   }
 });

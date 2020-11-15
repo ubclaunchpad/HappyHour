@@ -35,7 +35,7 @@ export default defineComponent({
           this.username,
           this.password
         );
-        console.log("OK - Token: " + user); // TODO: post to server
+        console.log("OK - Token: " + user);
       } catch (err) {
         console.error("ERR: " + err);
       }
