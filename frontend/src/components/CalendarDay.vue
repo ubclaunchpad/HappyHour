@@ -108,11 +108,12 @@ export default defineComponent({
 }
 
 .block {
-  border: 0.5px solid lightgray;
+  /*border: 0.5px solid lightgray;*/
+  border: 0.5px solid #f4f4f4;
   height: 2em;
 }
 
 .selected {
-  background: green;
+  background: rgba(200, 235, 220, 0.7);
 }
 </style>
