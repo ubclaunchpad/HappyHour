@@ -2,7 +2,10 @@
   <div class="container-page">
     <TheNavbar />
     <router-view />
+<<<<<<< HEAD
     <SidebarCollapsed />
+=======
+>>>>>>> #21 implement participant event screen (#46)
   </div>
 </template>
 
