@@ -1,6 +1,6 @@
 <template>
-  <div class="login">
-    <div class="heading">Log In</div>
+  <div class="signup">
+    <div class="heading">Sign up</div>
     <div class="p1">
       <p>Username/Email:</p>
       <input class="input" v-model="username" />
@@ -8,10 +8,7 @@
       <input class="input" v-model="password" />
     </div>
     <div class="button">
-      <AppButton @update="logIn()" text="Log in" />
-    </div>
-    <div class="button">
-      <AppButton @update="logInViaGoogle()" text="Log in with Google Account" />
+      <AppButton @update="signUp()" text="Sign up" />
     </div>
   </div>
 </template>
@@ -32,9 +29,9 @@ export default defineComponent({
     };
   },
   methods: {
-    async logIn() {
+    async signUp() {
       try {
-        const user = Auth.signInWithEmailAndPassword(
+        const user = Auth.createUserWithEmailAndPassword(
           this.username,
           this.password
         );
@@ -42,9 +39,6 @@ export default defineComponent({
       } catch (err) {
         console.error("ERR: " + err);
       }
-    },
-    logInViaGoogle() {
-      // log in via Google Account
     }
   }
 });
@@ -72,7 +66,7 @@ export default defineComponent({
   padding-top: 10px;
   margin-bottom: 10px;
 }
-.login {
+.signup {
   position: absolute;
   width: 556px;
   height: 484px;
