@@ -8,6 +8,7 @@ import "time"
 // User describes a single when3meet user and includes their personal
 // availability calendar
 type User struct {
+	AccessToken string
 	FirebaseID string
 	Username   string
 	Email      string

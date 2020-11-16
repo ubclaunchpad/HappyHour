@@ -26,11 +26,14 @@ func main() {
 	r.HandleFunc("/events/{id}", UpdateEvent).Methods("PATCH")
 
 	// test route to fetch & save gcal info of a user
-	r.HandleFunc("/setUserCalendar", CreateUserCalendar).Methods("POST")
+	r.HandleFunc("/setUserCalendar", CreateUserCalendar).Methods("POST",
+		"OPTIONS")
 
 	// serve on port 8080
-	log.Info("server started on 8080")
-	http.ListenAndServe(":8080", r)
+	//log.Info("server started on 8080")
+	//http.ListenAndServe(":8080", r)
+	log.Info("server started on 8000")
+	http.ListenAndServe(":8000", r)
 }
 
 func HelloWorldHandler(w http.ResponseWriter, r *http.Request) {
