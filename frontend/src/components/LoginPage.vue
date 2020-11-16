@@ -21,6 +21,8 @@ import { Auth } from "../auth";
 import firebase from "firebase/app";
 import { defineComponent } from "vue";
 import AppButton from "@/components/AppButton.vue";
+import axios from "axios";
+
 export default defineComponent({
   components: {
     AppButton
@@ -47,14 +49,43 @@ export default defineComponent({
       const provider = new firebase.auth.GoogleAuthProvider();
       provider.addScope("profile");
       provider.addScope("email");
+      provider.addScope("https://www.googleapis.com/auth/calendar");
       firebase
         .auth()
         .signInWithPopup(provider)
         .then(function(result) {
-          if (result.credential) {
+          if (result.credential && result.user) {
             const credential = result.credential as firebase.auth.OAuthCredential;
             const token = credential.accessToken;
+            const firebaseID = result.user.uid;
+            const uname = result.user.displayName;
+            const email = result.user.email;
             console.log("OK - OAuth Token: " + token);
+            console.log(
+              `firebaseID: ${firebaseID}, uname: ${uname}, email: ${email}`
+            );
+            axios
+              .post(
+                "http://localhost:8000/setUserCalendar",
+                {
+                  AccessToken: token,
+                  FirebaseID: firebaseID,
+                  Username: uname,
+                  Email: email,
+                  Calendar: null
+                },
+                {
+                  headers: {
+                    "Content-Type": "application/json"
+                  }
+                }
+              )
+              .then(function(r) {
+                console.log(`made request, heres the response: ${r}`);
+              })
+              .catch(function(e) {
+                console.log(`could not make the request: ${e}`);
+              });
           }
         })
         .catch(function(err) {

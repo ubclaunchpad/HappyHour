@@ -9,6 +9,7 @@ import "time"
 // availability calendar
 type User struct {
 	//TODO: Remove the FirebaseID field since it is the same as a user's email - for now we keep it since all our endpoints are using this
+	AccessToken string
 	FirebaseID string
 	Username   string
 	Email      string
