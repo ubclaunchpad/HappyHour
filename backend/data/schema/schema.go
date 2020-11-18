@@ -33,6 +33,11 @@ type Event struct {
 
 	// user shared calendar, created on event init but modified when users are added/removed
 	Calendar Calendar
+
+	Summary string
+	Description string
+	StartTime string //confirmed start time
+	EndTime string //confirmed end time
 }
 
 // Calendar describes a group of availabilities in 30min time blocks

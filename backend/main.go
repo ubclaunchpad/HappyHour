@@ -3,6 +3,7 @@ package main
 import (
 	"net/http"
 
+	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	log "github.com/sirupsen/logrus"
 )
@@ -10,6 +11,10 @@ import (
 func main() {
 	// new mux router
 	r := mux.NewRouter()
+	headersOk := handlers.AllowedHeaders([]string{"Origin", "X-Requested-With", "Content-Type", "Authorization"})
+	originsOk := handlers.AllowedOrigins([]string{"*"})
+	methodsOk := handlers.AllowedMethods([]string{"GET", "PUT", "PATCH", "POST", "DELETE", "OPTIONS"})
+
 	r.HandleFunc("/", HelloWorldHandler)
 	http.Handle("/", r)
 
@@ -25,13 +30,13 @@ func main() {
 	r.HandleFunc("/events/{id}", DeleteEvent).Methods("DELETE")
 	r.HandleFunc("/events/{id}", UpdateEvent).Methods("PATCH")
 
-	// test route to fetch & save gcal info of a user
-	r.HandleFunc("/setUserCalendar", CreateUserCalendar).Methods("POST",
-		"OPTIONS")
+	// test gcal routes
+	r.HandleFunc("/createUserCalendar", CreateUserCalendar).Methods("POST")
+	//r.HandleFunc("/confirmEventTest", ConfirmEventTest).Methods("POST")
 
-	// serve on port 8080
+	// serve on port 8000
 	log.Info("server started on 8000")
-	http.ListenAndServe(":8000", r)
+	http.ListenAndServe(":8000", handlers.CORS(originsOk, headersOk, methodsOk)(r))
 }
 
 func HelloWorldHandler(w http.ResponseWriter, r *http.Request) {

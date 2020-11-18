@@ -65,21 +65,13 @@ export default defineComponent({
               `firebaseID: ${firebaseID}, uname: ${uname}, email: ${email}`
             );
             axios
-              .post(
-                "http://localhost:8000/setUserCalendar",
-                {
-                  AccessToken: token,
-                  FirebaseID: firebaseID,
-                  Username: uname,
-                  Email: email,
-                  Calendar: null
-                },
-                {
-                  headers: {
-                    "Content-Type": "application/json"
-                  }
-                }
-              )
+              .post("http://localhost:8000/createUserCalendar", {
+                AccessToken: token,
+                FirebaseID: firebaseID,
+                Username: uname,
+                Email: email,
+                Calendar: null
+              })
               .then(function(r) {
                 console.log(`made request, heres the response: ${r}`);
               })

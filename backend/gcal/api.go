@@ -1,8 +1,12 @@
 package gcal
 
 import (
+	"context"
+	"io/ioutil"
 	"log"
 	"time"
+	"golang.org/x/oauth2"
+	"golang.org/x/oauth2/google"
 	"google.golang.org/api/calendar/v3"
 	"errors"
 	"github.com/ubclaunchpad/when3meet/data/schema"
@@ -156,4 +160,47 @@ func PrintCalendar(cal *schema.Calendar) {
 		log.Printf("block %v, startTime: %v, users: %v", i, block.StartTime,
 			block.Users)
 	}
+}
+
+func GetGCal(filename string, token *oauth2.Token) *calendar.Service {
+	f, err := ioutil.ReadFile(filename)
+	if err != nil {
+		log.Fatalf("unable to read client secret file: %v", err)
+	}
+
+	//get read & write permission
+	config, err := google.ConfigFromJSON(f, calendar.CalendarScope)
+	if err != nil {
+		log.Fatalf("unable to parse client secret file to config: %v", err)
+	}
+
+	client := config.Client(context.Background(), token)
+
+	srv, err := calendar.New(client)
+	if err != nil {
+		log.Fatalf("unable to retrieve calendar client: %v", err)
+	}
+
+	return srv
+}
+
+//srv refers to a particular user's calendar!!!
+func CreateEvent(srv *calendar.Service, e schema.Event) (schema.Event,
+	error) {
+	//need to know the particular start & end time of the event (
+	//once its confirmed!)
+	event := &calendar.Event{
+		Summary: e.Summary,
+		Description: e.Description,
+		Start: &calendar.EventDateTime{
+			DateTime: e.StartTime,
+		},
+		End: &calendar.EventDateTime{
+			DateTime: e.EndTime,
+		},
+		Attendees: nil, //need to change
+	}
+
+	_, err := srv.Events.Insert("primary", event).Do()
+	return e, err
 }
