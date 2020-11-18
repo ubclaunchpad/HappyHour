@@ -50,10 +50,11 @@ export default defineComponent({
   color: rgb(71, 96, 243);
 }
 
-/* Removed button border on focus - may be an  accessibility issues */
-.logo:focus {
+/* Removes button border on focus - an  accessibility issues */
+/*.logo:focus {
   outline: 0 !important;
 }
+*/
 
 /* Router Links */
 .router {
