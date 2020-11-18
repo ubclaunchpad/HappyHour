@@ -71,7 +71,7 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 	err := user.Get()
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
-		log.Warnf("Failed to get event : %v", err)
+		log.Warnf("Failed to get user : %v", err)
 		http.Error(w,"Could not find user with the given id",http.StatusNotFound)
 		return
 	}
