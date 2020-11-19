@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -27,7 +28,7 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 	err = user.Write()
 	if err != nil {
 		log.Warnf("Failed to add user : %v", err)
-		http.Error(w, "Something went wrong creating the user", http.StatusInternalServerError)
+		http.Error(w, fmt.Sprintf("Something went wrong creating the user: %v",err), http.StatusInternalServerError)
 		return
 	}
 
