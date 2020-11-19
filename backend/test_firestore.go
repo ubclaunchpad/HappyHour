@@ -1,14 +1,63 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
-
 	"github.com/gorilla/mux"
 	log "github.com/sirupsen/logrus"
 	"github.com/ubclaunchpad/when3meet/data/clients/firebase"
+	"strings"
 )
+
+//TODO: AUTH - Enable this endpoint once Front-end Login is implemented
+func CreateUserWithToken(w http.ResponseWriter, r *http.Request) {
+	authClient, err := firebase.App.Auth(context.Background())
+	if err != nil {
+		log.Warnf("Error getting Auth client: %v", err)
+		http.Error(w,"There was a problem authenticating. Please try again", http.StatusInternalServerError)
+		return
+	}
+
+	token := r.Header.Get("Authorization")
+	if token == "" {
+		log.Warnf("Error getting Auth client: %v", err)
+		http.Error(w,"No Authorization Token Provided", http.StatusBadRequest)
+		return
+	}
+	extractedToken := strings.Split(token,"Bearer ")[1]
+	verifiedToken, err := authClient.VerifyIDToken(context.Background(), extractedToken)
+	if err != nil {
+		log.Fatalf("Error verifying ID token: %v", err)
+	}
+
+	// return json
+	w.Header().Set("Content-type", "application/json")
+
+	// unmarshal the JSON in the request to the data struct
+	// to access the key-value pairs
+	var user firebase.User
+	err = json.NewDecoder(r.Body).Decode(&user)
+	user.FirebaseID = verifiedToken.UID
+	if err != nil {
+		log.Warnf("Failed to decode the request: %v", err)
+		http.Error(w,"Failed to decode the provided user",http.StatusBadRequest)
+		return
+	}
+
+	log.Infof("Creating user with data: %+v", user)
+	err = user.Write()
+	if err != nil {
+		log.Warnf("Failed to add user : %v", err)
+		http.Error(w, fmt.Sprintf("Something went wrong creating the user: %v",err), http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusCreated)
+	// marshal the data struct to JSON to send as response
+	json.NewEncoder(w).Encode(user)
+}
 
 func CreateUser(w http.ResponseWriter, r *http.Request) {
 	// return json
