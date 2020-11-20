@@ -1,32 +1,20 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
-<<<<<<< HEAD
-import Event from "../views/Event.vue";
-=======
 import Create from "../views/Create.vue";
->>>>>>> #21 implement participant event screen (#46)
 
 export const routes: Array<RouteRecordRaw> = [
   {
     path: "/",
-<<<<<<< HEAD
-    component: Event
-=======
     component: Create
   },
   {
     path: "/event-create",
     name: "Create Event",
     component: () => import("../views/Create.vue")
->>>>>>> #21 implement participant event screen (#46)
   },
   {
     path: "/datepicker",
     name: "DatePicker",
-<<<<<<< HEAD
-    component: () => import("../components/DatePicker.vue")
-=======
     component: () => import("../components/EventDatePicker.vue")
->>>>>>> #21 implement participant event screen (#46)
   },
   {
     path: "/event",
