@@ -113,13 +113,13 @@
 
 <script>
 export default {
+  // TODO: Support drag & drop & multi-select -> ref CalendarDay.vue
+  // TODO: Support drag drop multi-select cross months
+  // TODO: Store data -> props?
   // TODO: Add typescripts
-  // TODO: Store form data
-  // TODO: Link to backend
-  // TODO: Support drag & drop & multi-select
   // TODO: Reconsider methods & computed
-  // TODO: Clean up code
-  // TODO: Disable past dates
+  // TODO: Style per design,  remove borders
+  // TODO: Comment & clean up code
   // FIXME: Inconsistent sizing in each month
   data() {
     return {
