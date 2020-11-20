@@ -8,7 +8,6 @@ import { defineComponent } from "vue";
 import PlaceholderComponent from "@/components/PlaceholderComponent.vue"; // @ is an alias to /src
 
 export default defineComponent({
-  name: "Home",
   components: {
     PlaceholderComponent
   }

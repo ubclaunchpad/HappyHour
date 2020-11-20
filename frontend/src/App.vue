@@ -2,7 +2,6 @@
   <div class="container-page">
     <TheNavbar />
     <router-view />
-    <SidebarCollapsed />
   </div>
 </template>
 
