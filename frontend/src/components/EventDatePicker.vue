@@ -123,7 +123,7 @@ export default {
   // FIXME: Inconsistent sizing in each month
   data() {
     return {
-      currDate: new Date().getUTCDate(),
+      currDate: new Date().getDate(),
       currMonthIndex: new Date().getMonth(),
       currYear: new Date().getFullYear(),
       dayShortNames: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
