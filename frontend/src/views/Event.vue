@@ -22,8 +22,10 @@
 
         <section class="toggle-buttons">
           <AppToggleExternalText
-            toggleLeftText="My Availability"
-            toggleRightText="Group Availability"
+            v-model:checked="displayGroupAvail"
+            @update="switchCalendar()"
+            leftText="My Availability"
+            rightText="Group Availability"
           />
           <div class="buttons">
             <AppButton
@@ -90,6 +92,7 @@ export default defineComponent({
       calendar: {
         blocks: []
       },
+      displayGroupAvail: true,
       notificationText: "Some Notification",
       notificationVisible: false
     };
@@ -107,7 +110,7 @@ export default defineComponent({
   methods: {
     handleSave() {
       // save the calendar
-      //alert("handleSave is called");
+      // alert("handleSave is called");
       // and show notification with "Availability saved!"
       this.notificationVisible = true;
       this.notificationText = "Availability saved!";
@@ -115,11 +118,15 @@ export default defineComponent({
     },
     copyLink() {
       // copy the link to the event
-      //alert("copyLink is called");
+      // alert("copyLink is called");
       // and show notification with "Event link copied to clipboard!"
       this.notificationVisible = true;
       this.notificationText = "Event link copied to clipboard!";
       setTimeout(() => (this.notificationVisible = false), 5000);
+    },
+    switchCalendar() {
+      // method to switch between user's calendar and group calendar
+      console.log("calendar switched");
     }
   }
 });
@@ -160,6 +167,11 @@ export default defineComponent({
   justify-content: space-around;
   align-items: center;
   margin: 0 1rem;
+}
+
+.buttons {
+  display: flex;
+  flex-shrink: 0;
 }
 
 .btn {

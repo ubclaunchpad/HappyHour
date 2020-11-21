@@ -1,179 +1,123 @@
 <template>
   <label
-    :for="id + '_button'"
-    :class="{ active: isActive }"
-    class="toggle__button"
+    class="container"
+    :style="'--switch-container-width: 20rem'"
+    @click="update"
   >
-    <span class="toggle__label">{{ toggleLeftText }}</span>
-
     <input
+      v-bind="$attrs"
+      class="input"
       type="checkbox"
-      :disabled="disabled"
-      :id="id + '_button'"
-      v-model="checkedValue"
+      :checked="checked"
+      @change="$emit('update:checked', $event.target.checked)"
     />
-
-    <span class="toggle__switch"></span>
-
-    <span class="toggle__label">{{ toggleRightText }}</span>
+    <span class="switch"></span>
+    <span v-bind:class="{ leftWhite: !checked, left: checked }">{{
+      leftText
+    }}</span>
+    <span v-bind:class="{ right: !checked, rightWhite: checked }">{{
+      rightText
+    }}</span>
   </label>
 </template>
 
 <script>
 export default {
+  name: "Switch",
   props: {
-    /* Boolean dictates the disabled state of toggle */
-    disabled: {
+    leftText: {
+      type: String,
+      required: true
+    },
+    rightText: {
+      type: String,
+      required: true
+    },
+    checked: {
       type: Boolean,
-      default: false
-    },
-
-    /* Text of the false or left state */
-    toggleLeftText: {
-      type: String,
-      default: "«Left«"
-    },
-
-    /* Text of the false or right state */
-    toggleRightText: {
-      type: String,
-      default: "»Right»"
-    },
-
-    id: {
-      type: String,
-      default: "primary"
-    },
-
-    /* Default state of the toggle (false is left) */
-    defaultState: {
-      type: Boolean,
-      default: false
+      required: true
     }
   },
-
-  data() {
-    return {
-      currentToggleState: this.defaultState
-    };
-  },
-
-  watch: {
-    defaultState: function defaultState() {
-      this.currentToggleState = Boolean(this.defaultState);
-    }
-  },
-
-  computed: {
-    isActive() {
-      return this.currentToggleState;
-    },
-
-    /* Returns disabled / left text */
-    disabledText() {
-      return this.toggledLeftText;
-    },
-
-    /* Returns enabled / right text */
-    enabledText() {
-      return this.toggledRightText;
-    },
-
-    checkedValue: {
-      get() {
-        return this.currentToggleState;
-      },
-      set(newValue) {
-        this.currentToggleState = newValue;
-        this.$emit("change", newValue);
-      }
+  methods: {
+    update() {
+      this.$emit("update");
     }
   }
 };
 </script>
 
 <style scoped>
-/* TODO: Clean up styling */
-/* TODO: Grey out disabled toggle */
-/* TODO: Create constants for the accent colours for ease of modification */
-
-.toggle__label {
-  padding: 0 1rem;
-  font-size: 0.875em;
-}
-
-/* Hide Checkbox */
-.toggle__button input[type="checkbox"] {
-  display: none;
-}
-
-.toggle__button {
-  vertical-align: middle;
-  user-select: none;
+.container {
+  width: var(--switch-container-width);
   cursor: pointer;
+  display: flex;
+  align-items: center;
 }
-
-.toggle__button button[disabled] {
-  opacity: 0.5;
-  pointer-events: none;
+.left {
+  flex-shrink: 0;
+  margin-left: calc(var(--switch-container-width) * -1 + 2rem);
+  color: rgb(48, 48, 48);
 }
-
-/* Toggle Button Shape */
-
-.toggle__button .toggle__switch::after,
-.toggle__button .toggle__switch::before {
-  content: "";
-  position: absolute;
-  display: block;
-  height: 18px;
-  width: 18px;
-  border-radius: 50%;
-  left: 0;
-  top: -3px;
-  transform: translateX(0);
-  transition: all 0.25s cubic-bezier(0.5, -0.6, 0.5, 1.6);
+.leftWhite {
+  flex-shrink: 0;
+  margin-left: calc(var(--switch-container-width) * -1 + 2rem);
+  color: white;
 }
-
-.toggle__button .toggle__switch {
-  display: inline-block;
-  height: 12px;
-  border-radius: 6px;
-  width: 40px;
-  background: #b6caf7;
-  box-shadow: inset 0 0 1px #b6caf7;
+.right {
+  flex-shrink: 0;
+  margin-left: 3rem;
+  color: rgb(48, 48, 48);
+}
+.rightWhite {
+  flex-shrink: 0;
+  margin-left: 3rem;
+  color: white;
+}
+/* Visually hide the checkbox input */
+.input {
+  /* position: relative; */
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+.switch {
+  --switch-container-size: 80px;
+  --switch-size: calc(var(--switch-container-size) / 2);
+  --blue: #4760f3;
+  --dark-blue: #3a4fca;
+  /* Vertically center the inner circle */
+  display: flex;
+  align-items: center;
   position: relative;
-  margin-left: 10px;
-  transition: all 0.25s;
+  height: var(--switch-size);
+  flex-basis: var(--switch-container-width);
+  z-index: -1;
+  /* Make the container element rounded */
+  border-radius: var(--switch-size);
+  background-color: white;
+  /* In case the label gets really long, the toggle shouldn't shrink. */
+  flex-shrink: 0;
+  border: 2px solid var(--dark-blue);
+  transition: background-color 0.25s ease-in-out;
 }
-
-/* Toggle Left */
-.toggle__button .toggle__switch::after {
-  background: #6791f0;
-  box-shadow: 0 0 1px #666;
+.switch::before {
+  content: "";
+  /* position: absolute; */
+  height: calc(var(--switch-size) - 4px);
+  width: calc(var(--switch-container-width) / 2);
+  /* Make the inner circle fully rounded */
+  border-radius: var(--switch-size);
+  background-color: var(--blue);
+  border: 2px solid var(--dark-blue);
+  transition: transform 0.375s ease-in-out;
 }
-
-/*
-.toggle__button .toggle__switch::before {
-  background: #6791f0;
-  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1);
-  opacity: 0;
-} 
-*/
-
-/* Toggle Right */
-.active .toggle__switch {
-  background: #adedcb;
-  box-shadow: inset 0 0 1px #adedcb;
-}
-
-.active .toggle__switch::after,
-.active .toggle__switch::before {
-  transform: translateX(40px - 18px);
-}
-
-.active .toggle__switch::after {
-  left: 23px;
-  background: #53b883;
-  box-shadow: 0 0 1px #53b883;
+.input:checked + .switch::before {
+  /* Move the inner circle to the right */
+  transform: translateX(calc(var(--switch-container-width) / 2));
 }
 </style>
