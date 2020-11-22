@@ -70,6 +70,7 @@ export default defineComponent({
                 FirebaseID: firebaseID,
                 Username: uname,
                 Email: email,
+                Events: [],
                 Calendar: null
               })
               .then(function(r) {

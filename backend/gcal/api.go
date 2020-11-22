@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"log"
 	"time"
+	"github.com/ubclaunchpad/when3meet/data/clients/firebase"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"
 	"google.golang.org/api/calendar/v3"
@@ -184,11 +185,55 @@ func GetGCal(filename string, token *oauth2.Token) *calendar.Service {
 	return srv
 }
 
-//srv refers to a particular user's calendar!!!
-func CreateEvent(srv *calendar.Service, e schema.Event) (schema.Event,
+func UpdateCalendar(user *firebase.User) (*firebase.User, error){
+	//1. read access token
+	token := oauth2.Token{AccessToken: user.AccessToken}
+
+	//2. get user's calendar
+	srv := GetGCal("credentials.json", &token)
+
+	//3. get user's busy slots
+	timeMin := time.Now()
+	timeMax := time.Date(timeMin.Year(), timeMin.Month(), timeMin.Day() + 1,
+		timeMin.Hour(), 0,0, 0, timeMin.Location())
+	min := timeMin.Format(time.RFC3339)
+	max := timeMax.Format(time.RFC3339)
+
+	busy, err := GetBusySlots(srv, min, max)
+	if err != nil {
+		log.Printf("unable to get busy slots of user: %v", err)
+		return nil, err
+	}
+
+	//4. get user's free slots from busy slots
+	free := GetFreeSlots(busy, min, max)
+
+	//5. convert free slots to Calendar
+	cal, err := CreateCalendar(free)
+	if err != nil {
+		log.Printf("unable to save calendar of user: %v", err)
+		return nil, err
+	}
+	PrintCalendar(cal) //only for testing
+
+	//6. update the user
+	err = user.Get()
+	if err != nil {
+		//TODO if user doesn't exist, we need to create the user here
+	}
+	user.Calendar = *cal
+	err = user.Update()
+	if err != nil {
+		log.Printf("Failed to update user : %v", err)
+		return nil, err
+	}
+
+	//7. send back updated user
+	return user, nil
+}
+
+func CreateEvent(srv *calendar.Service, e *firebase.Event) (*firebase.Event,
 	error) {
-	//need to know the particular start & end time of the event (
-	//once its confirmed!)
 	event := &calendar.Event{
 		Summary: e.Summary,
 		Description: e.Description,
@@ -198,9 +243,30 @@ func CreateEvent(srv *calendar.Service, e schema.Event) (schema.Event,
 		End: &calendar.EventDateTime{
 			DateTime: e.EndTime,
 		},
-		Attendees: nil, //need to change
+		Attendees: nil, //need to get user emails from user id's TODO
 	}
 
 	_, err := srv.Events.Insert("primary", event).Do()
 	return e, err
+}
+
+func GetEvents(srv *calendar.Service, timeMin string,
+	timeMax string) ([]firebase.Event, error) {
+	events, err := srv.Events.List("primary").ShowDeleted(false).
+		SingleEvents(true).TimeMin(timeMin).TimeMax(timeMax).OrderBy("startTime").Do()
+	if err != nil {
+		return nil, err
+	}
+	log.Printf("retrieved %v events!", len(events.Items))
+	var result []firebase.Event
+	for _, item := range events.Items {
+		e := firebase.Event{
+			Summary: item.Summary,
+			Description: item.Description,
+			StartTime: item.Start.DateTime,
+			EndTime: item.End.DateTime,
+		}
+		result = append(result, e)
+	}
+	return result, nil
 }

@@ -38,6 +38,7 @@ type Event struct {
 	Description string
 	StartTime string //confirmed start time
 	EndTime string //confirmed end time
+	Confirmed bool //confirmed or not
 }
 
 // Calendar describes a group of availabilities in 30min time blocks

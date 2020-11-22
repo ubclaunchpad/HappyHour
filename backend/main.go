@@ -30,9 +30,13 @@ func main() {
 	r.HandleFunc("/events/{id}", DeleteEvent).Methods("DELETE")
 	r.HandleFunc("/events/{id}", UpdateEvent).Methods("PATCH")
 
-	// test gcal routes
-	r.HandleFunc("/createUserCalendar", CreateUserCalendar).Methods("POST")
-	//r.HandleFunc("/confirmEventTest", ConfirmEventTest).Methods("POST")
+	// GCal endpoints
+	r.HandleFunc("/gcal/{id}", GetGCalEvents).Methods("GET")
+
+	//endpoints that are only for testing functions
+	r.HandleFunc("/gcal/test/{id}", TestUpdateCal).Methods(
+		"PATCH")
+	r.HandleFunc("/events/confirmed/{id}", TestConfirmEvent).Methods("PATCH")
 
 	// serve on port 8000
 	log.Info("server started on 8000")

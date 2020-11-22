@@ -3,135 +3,152 @@ package main
 import (
 	"encoding/json"
 	"net/http"
-
+	"time"
+	"github.com/gorilla/mux"
 	log "github.com/sirupsen/logrus"
-	"github.com/ubclaunchpad/when3meet/data/schema"
+	"github.com/ubclaunchpad/when3meet/data/clients/firebase"
 	"github.com/ubclaunchpad/when3meet/gcal"
 	"golang.org/x/oauth2"
 )
 
-func CreateUserCalendar(w http.ResponseWriter,
+func GetGCalEvents(w http.ResponseWriter,
 	r *http.Request) {
-	// 0. return json
 	w.Header().Set("Content-type", "application/json")
 
-	// 1. decode the user & read the access token
-	var user schema.User
-	err := json.NewDecoder(r.Body).Decode(&user)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		log.Fatalf("failed to decode the request: %v", err)
+	//1. get user from user id
+	vars := mux.Vars(r)
+	if vars["id"] == "" {
+		log.Warn("No document id provided")
+		http.Error(w,"No ID provided",http.StatusBadRequest)
+		return
 	}
+	user := &firebase.User{FirebaseID: vars["id"]}
+	err := user.Get()
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		log.Warnf("Failed to get user : %v", err)
+		http.Error(w,"Could not find user with the given id",http.StatusNotFound)
+		return
+	}
+
+	//2. get access token
 	token := oauth2.Token{AccessToken: user.AccessToken}
 
-	//2. get user's calendar
+	//3. get user's calendar
 	srv := gcal.GetGCal("credentials.json", &token)
 
-	//3. get user's busy slots
-	timeMin := "2020-11-15T00:00:00-08:00"
-	timeMax := "2020-11-16T12:59:00-08:00"
-	busy, err := gcal.GetBusySlots(srv, timeMin, timeMax)
+	//4. get all events
+	timeMin := time.Now()
+	timeMax := time.Date(timeMin.Year() + 1, timeMin.Month(), timeMin.Day(),
+		timeMin.Hour(), 0,0, 0, timeMin.Location())
+	min := timeMin.Format(time.RFC3339)
+	max := timeMax.Format(time.RFC3339)
+
+	events, err := gcal.GetEvents(srv, min, max)
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		log.Fatalf("unable to get busy slots of user: %v", err)
+		log.Fatalf("failed to get events: %v", err)
+	}
+	for i, event := range events {
+		log.Printf("event %v: summary: %v, descr: %v, start: %v, end: %v", i,
+			event.Summary, event.Description, event.StartTime, event.EndTime)
 	}
 
-	//4. get user's free slots from busy slots
-	free := gcal.GetFreeSlots(busy, timeMin, timeMax)
-
-	//5. convert free slots to Calendar
-	cal, err := gcal.CreateCalendar(free)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		log.Fatalf("unable to save calendar of user: %v", err)
-	}
-	gcal.PrintCalendar(cal)
-
-	//6. update the user
-	//todo: get req & update req or create req
-
-	//7. send back updated user
-	//todo
+	//5. send back all events
 	w.WriteHeader(http.StatusOK)
-	w.Write([]byte("success!"))
+	json.NewEncoder(w).Encode(events)
 }
 
-//func ConfirmEventTest(w http.ResponseWriter,
-//	r *http.Request) {
-//	// 0. return json
-//	w.Header().Set("Content-type", "application/json")
-//
-//	// 1. decode the user & read the access token
-//	var user schema.User
-//	err := json.NewDecoder(r.Body).Decode(&user)
-//	if err != nil {
-//		w.WriteHeader(http.StatusInternalServerError)
-//		log.Fatalf("failed to decode the request: %v", err)
-//	}
-//	token := oauth2.Token{AccessToken: user.AccessToken}
-//
-//	//2. get user's calendar
-//	srv := gcal.GetGCal("credentials.json", &token)
-//
-//	//3. create event
-//	e, err := gcal.CreateEvent(srv, schema.Event{
-//		Summary: "test event",
-//		Description: "i hope it works!",
-//		StartTime: "2020-11-17T12:00:00-08:00",
-//		EndTime: "2020-11-17T13:00:00-08:00",
-//	})
-//	if err != nil {
-//		w.WriteHeader(http.StatusInternalServerError)
-//		log.Fatalf("unable to create an event: %v", err)
-//	}
-//
-//	w.WriteHeader(http.StatusOK)
-//	json.NewEncoder(w).Encode(e)
-//}
+func TestUpdateCal(w http.ResponseWriter,
+	r *http.Request) {
+	w.Header().Set("Content-type", "application/json")
 
-//func ConfirmEvent(w http.ResponseWriter,
-//	r *http.Request) {
-//	w.Header().Set("Content-type", "application/json")
-//
-//	//0. get event id
-//	vars := mux.Vars(r)
-//	if vars["id"] == "" {
-//		log.Warn("No document id provided")
-//		http.Error(w,"No ID provided",http.StatusBadRequest)
-//		return
-//	}
-//
-//	//1. find event
-//	event := &firebase.Event{FirebaseID: vars["id"]} //ask how to get this correctly!! (type mismatch)
-//	err := event.Get()
-//	if err != nil {
-//		w.WriteHeader(http.StatusNotFound)
-//		log.Warnf("Failed to get event : %v", err)
-//		http.Error(w,"Could not find event with the given id",
-//			http.StatusNotFound)
-//		return
-//	}
-//
-//	//2. find users associated with the event
-//	userIDs := append(event.Owners, event.Users...)
-//
-//	//3. for each user:
-//	for _, uid := range userIDs {
-//		//3a. get the User
-//		//todo: request to GetUser
-//		var user schema.User //needs to be changed
-//
-//		//3b. construct calendar srv
-//		token := oauth2.Token{AccessToken: user.AccessToken}
-//		srv := gcal.GetGCal("credentials.json", &token)
-//
-//		//3c. create gcal event: need to fix firebase.Event vs schema.
-//		//Event logic!
-//		e, err := gcal.CreateEvent(srv, event)
-//
-//		//3d. update user's calendar
-//		//todo: request to /createUserCalendar
-//
-//	}
-//
-//}
+	// get the user
+	vars := mux.Vars(r)
+	if vars["id"] == "" {
+		log.Warn("No document id provided")
+		http.Error(w,"No ID provided",http.StatusBadRequest)
+		return
+	}
+	user := &firebase.User{FirebaseID: vars["id"]}
+	err := user.Get()
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		log.Warnf("Failed to get user : %v", err)
+		http.Error(w,"Could not find user with the given id",http.StatusNotFound)
+		return
+	}
+
+	// update user's calendar
+	u, err := gcal.UpdateCalendar(user)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		log.Fatalf("failed to update user's calendar: %v", err)
+	}
+
+	// send back the updated user
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(u)
+}
+
+//given event id, find the event, find the attendees,
+//create gcal event with event details in each attendee's gcal
+func TestConfirmEvent(w http.ResponseWriter,
+	r *http.Request) {
+	w.Header().Set("Content-type", "application/json")
+
+	//0. get event id
+	vars := mux.Vars(r)
+	if vars["id"] == "" {
+		log.Warn("No document id provided")
+		http.Error(w,"No ID provided",http.StatusBadRequest)
+		return
+	}
+
+	//1. find event
+	event := &firebase.Event{FirebaseID: vars["id"]} //ask how to get this correctly!! (type mismatch)
+	err := event.Get()
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		log.Warnf("Failed to get event : %v", err)
+		http.Error(w,"Could not find event with the given id",
+			http.StatusNotFound)
+		return
+	}
+
+	//2. find users associated with the event
+	userIDs := append(event.Owners, event.Users...)
+	log.Printf("found users: %v", userIDs)
+
+	//3. for each user:
+	for _, uid := range userIDs {
+		//3a. get the user
+		user := &firebase.User{FirebaseID: uid}
+		err := user.Get()
+		if err != nil {
+			w.WriteHeader(http.StatusNotFound)
+			log.Warnf("Failed to get user : %v", err)
+			http.Error(w,"Could not find user with the given id",http.StatusNotFound)
+			return
+		}
+
+		//3b. construct calendar srv
+		token := oauth2.Token{AccessToken: user.AccessToken}
+		srv := gcal.GetGCal("credentials.json", &token)
+
+		//3c. create gcal event
+		_, err = gcal.CreateEvent(srv, event)
+		if err != nil {
+			log.Fatalf("failed to create gcal event: %v", err)
+		}
+
+		//3d. update user's calendar TODO
+
+		//3e. update user's availabilities for each event they are part of TODO
+
+	//4. send back the confirmed event
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(event)
+
+	}
+
+}
