@@ -82,8 +82,6 @@
           <section class="event-input">
             <h3 class="heading">Event name</h3>
             <input type="text" required />
-            <!-- TODO: Focus description box on click -->
-            <!-- FIXME: Width size of button -->
             <button
               @click="isHidden = false"
               v-if="isHidden"
@@ -138,6 +136,19 @@ import EventDatePicker from "@/components/EventDatePicker.vue";
 import EventDayPicker from "@/components/EventDayPicker.vue";
 
 export default defineComponent({
+  //TODO: Store data -> props?
+  //TODO: POST to backend
+  //TODO: Validate legal time
+  //TODO: Validate empty space Event Name
+  //TODO: Focus on textarea on btn-add-desc click
+  //TODO: Support 24HR via auto changing AM/PM
+  //TODO: Toggle EventDayPicker
+  //TODO: Add EventDayPicker component
+  //TODO: Add typescripts i.e., eventName & eventDetails to index.ts
+  //TODO: Add responsive support
+  //TODO: Styling per designs
+  //TODO: Comment & clean up code
+  //FIXME: Width size of btn-add-desc
   components: {
     AppButton,
     AppToggleExternalText,
