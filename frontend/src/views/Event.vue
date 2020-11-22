@@ -21,7 +21,7 @@
         <div class="timezone">(Time displayed in {{ timezone }})</div>
 
         <section class="toggle-buttons">
-          <AppToggleExternalText
+          <AppToggleInternalText
             v-model:checked="displayGroupAvail"
             @update="switchCalendar()"
             leftText="My Availability"
@@ -57,7 +57,7 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import AppButton from "@/components/AppButton.vue";
-import AppToggleExternalText from "@/components/AppToggleExternalText.vue";
+import AppToggleInternalText from "@/components/AppToggleInternalText.vue";
 import Calendar from "@/components/Calendar.vue";
 import EventRespondents from "@/components/EventRespondents.vue";
 import AppNotification from "@/components/AppNotification.vue";
@@ -69,7 +69,7 @@ export default defineComponent({
   components: {
     AppButton,
     AppNotification,
-    AppToggleExternalText,
+    AppToggleInternalText,
     Calendar,
     EventRespondents
   },
