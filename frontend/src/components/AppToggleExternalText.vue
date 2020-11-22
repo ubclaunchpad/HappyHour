@@ -27,58 +27,48 @@ export default {
       type: Boolean,
       default: false
     },
-
     /* Text of the false or left state */
     toggleLeftText: {
       type: String,
       default: "«Left«"
     },
-
     /* Text of the false or right state */
     toggleRightText: {
       type: String,
       default: "»Right»"
     },
-
     id: {
       type: String,
       default: "primary"
     },
-
     /* Default state of the toggle (false is left) */
     defaultState: {
       type: Boolean,
       default: false
     }
   },
-
   data() {
     return {
       currentToggleState: this.defaultState
     };
   },
-
   watch: {
     defaultState: function defaultState() {
       this.currentToggleState = Boolean(this.defaultState);
     }
   },
-
   computed: {
     isActive() {
       return this.currentToggleState;
     },
-
     /* Returns disabled / left text */
     disabledText() {
       return this.toggledLeftText;
     },
-
     /* Returns enabled / right text */
     enabledText() {
       return this.toggledRightText;
     },
-
     checkedValue: {
       get() {
         return this.currentToggleState;
@@ -96,30 +86,24 @@ export default {
 /* TODO: Clean up styling */
 /* TODO: Grey out disabled toggle */
 /* TODO: Create constants for the accent colours for ease of modification */
-
 .toggle__label {
   padding: 0 1rem;
   font-size: 0.875em;
 }
-
 /* Hide Checkbox */
 .toggle__button input[type="checkbox"] {
   display: none;
 }
-
 .toggle__button {
   vertical-align: middle;
   user-select: none;
   cursor: pointer;
 }
-
 .toggle__button button[disabled] {
   opacity: 0.5;
   pointer-events: none;
 }
-
 /* Toggle Button Shape */
-
 .toggle__button .toggle__switch::after,
 .toggle__button .toggle__switch::before {
   content: "";
@@ -133,7 +117,6 @@ export default {
   transform: translateX(0);
   transition: all 0.25s cubic-bezier(0.5, -0.6, 0.5, 1.6);
 }
-
 .toggle__button .toggle__switch {
   display: inline-block;
   height: 12px;
@@ -145,13 +128,11 @@ export default {
   margin-left: 10px;
   transition: all 0.25s;
 }
-
 /* Toggle Left */
 .toggle__button .toggle__switch::after {
   background: #6791f0;
   box-shadow: 0 0 1px #666;
 }
-
 /*
 .toggle__button .toggle__switch::before {
   background: #6791f0;
@@ -159,18 +140,15 @@ export default {
   opacity: 0;
 } 
 */
-
 /* Toggle Right */
 .active .toggle__switch {
   background: #adedcb;
   box-shadow: inset 0 0 1px #adedcb;
 }
-
 .active .toggle__switch::after,
 .active .toggle__switch::before {
   transform: translateX(40px - 18px);
 }
-
 .active .toggle__switch::after {
   left: 23px;
   background: #53b883;
