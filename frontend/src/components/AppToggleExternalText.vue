@@ -3,6 +3,7 @@
     :for="id + '_button'"
     :class="{ active: isActive }"
     class="toggle__button"
+    @click="$emit('toggled', this.currentToggleState)"
   >
     <span class="toggle__label">{{ toggleLeftText }}</span>
 

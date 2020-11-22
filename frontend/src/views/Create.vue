@@ -5,12 +5,14 @@
       <div class="main-left">
         <div class="date card">
           <h3 class="heading">Pick the date</h3>
-          <EventDatePicker class="date-picker" />
+          <EventDatePicker v-if="isSingleEvent" class="date-picker" />
+          <EventDayPicker v-if="!isSingleEvent" />
           <AppToggleExternalText
             class="toggle"
             toggleLeftText="Single"
             toggleRightText="Recurring"
             :defaultState="false"
+            @toggled="switchEventType"
           />
         </div>
       </div>
@@ -133,9 +135,15 @@ import { defineComponent } from "vue";
 import AppButton from "@/components/AppButton.vue";
 import AppToggleExternalText from "@/components/AppToggleExternalText.vue";
 import EventDatePicker from "@/components/EventDatePicker.vue";
+import EventDayPicker from "@/components/EventDayPicker.vue";
 
 export default defineComponent({
-  components: { AppButton, AppToggleExternalText, EventDatePicker },
+  components: {
+    AppButton,
+    AppToggleExternalText,
+    EventDatePicker,
+    EventDayPicker
+  },
 
   props: {
     timezone: {
@@ -146,12 +154,19 @@ export default defineComponent({
   },
 
   data() {
-    return { isHidden: true };
+    return {
+      isHidden: true,
+      isSingleEvent: true
+    };
   },
 
   computed: {},
 
-  methods: {}
+  methods: {
+    switchEventType(toggleState: boolean) {
+      this.isSingleEvent = toggleState;
+    }
+  }
 });
 </script>
 
