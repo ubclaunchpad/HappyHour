@@ -36,6 +36,7 @@ export default defineComponent({
   justify-content: space-between;
   background-color: rgb(255, 255, 255);
   padding: 1rem 1.875rem;
+  margin-bottom: 7.875rem;
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
 }
 
@@ -49,12 +50,6 @@ export default defineComponent({
 .logo:hover {
   color: rgb(71, 96, 243);
 }
-
-/* Removes button border on focus - an  accessibility issues */
-/*.logo:focus {
-  outline: 0 !important;
-}
-*/
 
 /* Router Links */
 .router {
