@@ -112,13 +112,15 @@ export default defineComponent({
   display: flex;
   padding-left: 4rem;
   padding-right: 4rem;
+  margin-bottom: 2rem;
   font-size: 12px;
 }
 
 .times {
   flex: 1;
-  text-align: right;
-  margin-right: 1rem;
+  text-align: center;
+  margin-top: 2rem;
+  margin-left: 2rem;
 }
 
 .time {
@@ -130,5 +132,8 @@ export default defineComponent({
   display: flex;
   flex: 12;
   justify-content: space-between;
+  margin-top: 2rem;
+  margin-right: 2rem;
+  margin-bottom: 2rem;
 }
 </style>

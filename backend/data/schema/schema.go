@@ -8,9 +8,11 @@ import "time"
 // User describes a single when3meet user and includes their personal
 // availability calendar
 type User struct {
+	//TODO: Remove the FirebaseID field since it is the same as a user's email - for now we keep it since all our endpoints are using this
 	FirebaseID string
 	Username   string
 	Email      string
+	Events		[]string // FirebaseID of events that this user is attending or the owner of
 	Calendar   Calendar // default user calendar
 }
 
