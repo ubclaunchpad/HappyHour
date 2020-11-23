@@ -2,16 +2,26 @@
   <form class="main">
     <!-- Left Components -->
     <div class="main-left">
+      <!-- Date Card -->
       <section class="date card">
         <h5>Pick the date</h5>
-        <EventDatePicker v-if="isSingleEvent" class="date-picker" />
-        <EventDayPicker v-if="!isSingleEvent" />
+
+        <!-- EventDateSelectors component -->
+        <DatePicker v-if="isDatePickerEvent" class="date-picker" />
+        <DayPicker v-if="!isDatePickerEvent" class="day-picker" />
         <AppToggleExternalText
-          class="toggle"
-          toggleLeftText="Single"
-          toggleRightText="Recurring"
-          :defaultState="false"
-          @toggled="switchEventType"
+          class="date-toggle"
+          toggle-left-text="Single"
+          toggle-right-text="Recurring"
+          :default-state="false"
+          @toggled="toggleEventType"
+        />
+        <AppToggleInternalText
+          style="display: none"
+          left-text="My Availability"
+          right-text="Group Availability"
+          checked="false"
+          @update="toggleEventType()"
         />
       </section>
     </div>
@@ -25,11 +35,13 @@
         <!-- EventTimePicker component -->
         <div class="time-picker">
           Between
+
+          <!-- TimeInputs component -->
           <input type="number" required />
           <div class="time-period">
             <select name="dropdown">
-              <option value="AM" selected>AM </option>
-              <option value="PM">PM </option>
+              <option value="AM" selected>AM</option>
+              <option value="PM">PM</option>
             </select>
             <svg
               class="icon-select-arrow"
@@ -45,7 +57,10 @@
               />
             </svg>
           </div>
+
           and
+
+          <!-- TimeInputs component -->
           <input type="number" required />
           <div class="time-period">
             <select name="dropdown">
@@ -83,14 +98,15 @@
               fill="rgba(120,120,133,1.0)"
             />
           </svg>
-          <select class="timezone-select" name="dropdown">
-            <option class="timezone-option" value="Default" selected>
+          <select name="dropdown">
+            <option value="America/Vancouver - PST" selected>
               America/Vancouver - PST</option
             >
-            <option class="timezone-option" value="Default"> Option #2</option>
-            <option class="timezone-option" value="Default"> Option #3</option>
-            <option class="timezone-option" value="Default"> Option #4</option>
-            <option class="timezone-option" value="Default"> Option #5</option>
+            <option value="Option #2"> Option #2</option>
+            <option value="Option #3"> Option #3</option>
+            <option value="Option #4"> Option #4</option>
+            <option value="Option #5"> Option #5</option>
+            <option value="Option #6"> Option #6</option>
           </select>
           <svg
             class="icon-select-arrow"
@@ -110,15 +126,15 @@
 
       <!-- Event Card -->
       <section class="event card">
-        <h5>Event name</h5>
+        <h5>Event Name</h5>
 
         <input type="text" required />
 
         <button
-          @click="isHidden = false"
           v-if="isHidden"
-          class="btn-add-desc"
+          class="btn-add-desc button"
           type="button"
+          @click="isHidden = false"
         >
           Add a description
         </button>
@@ -128,7 +144,11 @@
           <h5>Description</h5>
 
           <div class="description-textarea-container">
-            <button @click="isHidden = true" class="btn-close" type="button">
+            <button
+              class="btn-close button"
+              type="button"
+              @click="isHidden = true"
+            >
               <svg
                 width="25"
                 height="25"
@@ -152,7 +172,7 @@
                 />
               </svg>
             </button>
-            <textarea />
+            <textarea autofocus />
           </div>
         </section>
 
@@ -163,54 +183,51 @@
 </template>
 
 <script lang="ts">
+//TODO: Store props/data: selectedDates, selectedDays, start/endTime, start/endTimePeriod, timezone, eventName, eventDescription
+//TODO: Add typescripts i.e., eventName & eventDetails to index.ts
+//TODO: Validate legal time 0-24hr
+//TODO: Validate empty space Event Name " "
+//TODO: Support 24HR via auto-changing AM/PM
+//TODO: Move svg to a separate files
+//TODO: Move Event components to separate files
+//TODO: Add responsive support
+//TODO: POST to backend
+//TODO: Comment & clean up code
+//FIXME: Replace toggle and link it up
+//FIXME: Align toggle margin with .btn-create
+//FIXME: Focus on textarea multiple times
+//FIXME: Width size of btn-add-desc
+
 import { defineComponent } from "vue";
 import AppButton from "@/components/AppButton.vue";
 import AppToggleExternalText from "@/components/AppToggleExternalText.vue";
-import EventDatePicker from "@/components/EventDatePicker.vue";
-import EventDayPicker from "@/components/EventDayPicker.vue";
+import AppToggleInternalText from "@/components/AppToggleInternalText.vue";
+import DatePicker from "@/components/DatePicker.vue";
+import DayPicker from "@/components/DayPicker.vue";
 
 export default defineComponent({
-  //TODO: Store data -> props?
-  //TODO: POST to backend
-  //TODO: Validate legal time
-  //TODO: Validate empty space Event Name
-  //TODO: Focus on textarea on btn-add-desc click
-  //TODO: Support 24HR via auto changing AM/PM
-  //TODO: Toggle EventDayPicker
-  //TODO: Add EventDayPicker component
-  //TODO: Add typescripts i.e., eventName & eventDetails to index.ts
-  //TODO: Move svg to a separate file
-  //TODO: Add responsive support
-  //TODO: Styling per designs
-  //TODO: Comment & clean up code
-  //FIXME: Width size of btn-add-desc
+  name: "Create",
   components: {
     AppButton,
     AppToggleExternalText,
-    EventDatePicker,
-    EventDayPicker
+    AppToggleInternalText,
+    DatePicker,
+    DayPicker
   },
-
-  props: {
-    timezone: {
-      type: String,
-      required: true,
-      default: () => "PST - Vancouver time"
-    }
-  },
+  props: {},
 
   data() {
     return {
       isHidden: true,
-      isSingleEvent: true
+      isDatePickerEvent: true
     };
   },
 
   computed: {},
 
   methods: {
-    switchEventType(toggleState: boolean) {
-      this.isSingleEvent = toggleState;
+    toggleEventType(toggleState: boolean) {
+      this.isDatePickerEvent = toggleState;
     }
   }
 });
@@ -227,35 +244,31 @@ h5 {
   align-self: flex-start;
 }
 
+/* Hides drop-down arrow */
 select {
   -webkit-appearance: none;
 }
 
 /* Card styling */
 .card {
-  background: rgb(255, 255, 255);
-  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-  border-radius: 5px;
   width: 100%;
   padding: 1.75rem;
-}
-
-.icon-select-arrow {
-  position: absolute;
-  right: 1rem;
+  border-radius: 5px;
+  background: rgb(255, 255, 255);
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
 }
 
 /* Input boxes */
-.time input,
-.time select,
+.time-picker input,
+.time-picker select,
+.timezone-picker select,
 .event input,
 .event-description textarea {
   height: 2.5rem;
-  background: #fff;
-  border: 1px solid #f0f3f5;
-  /* box-sizing: border-box; */
+  padding: 0.5rem;
+  border: 1px solid rgb(240, 243, 245);
   border-radius: 5px;
-  padding: 0.4rem;
+  background: rgb(255, 255, 255);
 }
 
 /*------------------------------------*\
@@ -275,17 +288,17 @@ select {
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
-  margin: 0 0.4375rem 0.875rem 0.4375rem;
-
-  width: 560px;
-  height: 576px;
+  width: 560px; /*FIXME: */
+  height: 576px; /*FIXME: */
   /* width: calc(100% / (1440 / 560)); /*560px for 1440px width*/
+  margin: 0 0.4375rem 0.875rem 0.4375rem;
 }
 
 /*------------------------------------*\
-  # LEFT COMPONENT
+  # LEFT COMPONENTS
 \*------------------------------------*/
 
+/* ========= Date ========= */
 .date {
   display: flex;
   flex-direction: column;
@@ -294,6 +307,11 @@ select {
   height: 100%;
 }
 
+.day-picker {
+}
+
+.date-toggle {
+}
 /*------------------------------------*\
   # RIGHT COMPONENTS
 \*------------------------------------*/
@@ -314,28 +332,17 @@ select {
 }
 
 .time-picker input {
-  text-align: center;
   width: 4rem;
+  /*text-align: center;*/
 
+  /* Hide input spin buttons*/
   -webkit-appearance: none;
   -moz-appearance: textfield;
 }
 
+/* Display input spin buttons on Firefox hover*/
 .time-picker input:hover {
   -moz-appearance: button;
-}
-
-.time-period,
-.timezone-picker {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  position: relative;
-}
-
-.time-period input {
-  text-align: center;
-  width: 25%;
 }
 
 .time-period select {
@@ -346,14 +353,29 @@ select {
   margin-bottom: 0.25rem;
 }
 
-.timezone-picker .icon-location {
-  position: absolute;
-  left: 0.75rem;
-}
-
 .timezone-picker select {
   width: 100%;
   padding-left: 1.75rem;
+}
+
+/* Icon containers & icons*/
+.time-period,
+.timezone-picker {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.time-period .icon-select-arrow,
+.timezone-picker .icon-select-arrow {
+  position: absolute;
+  right: 1rem;
+}
+
+.timezone-picker .icon-location {
+  position: absolute;
+  left: 0.75rem;
 }
 
 /* ========= Event ========= */
@@ -361,14 +383,7 @@ select {
 .event {
   display: flex;
   flex-direction: column;
-
   height: 60%;
-}
-
-.event-input {
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 2rem;
 }
 
 .event input {
@@ -376,25 +391,15 @@ select {
 }
 
 .btn-add-desc {
-  background: none;
-  font-family: Open Sans;
-  font-style: normal;
-  font-weight: 600;
-  font-size: 14px;
-  /*line-height: 0%;*/
-  letter-spacing: 1.25px;
-  text-decoration-line: underline;
-  color: rgba(157, 157, 157, 1);
-
-  /* text-transform: uppercase; */
-  text-align: left;
-
   margin-bottom: 4.875rem;
+  color: rgb(157, 157, 157);
+  text-align: left;
+  text-decoration-line: underline;
 }
 
 .btn-add-desc:hover {
   cursor: pointer;
-  opacity: 0.3;
+  opacity: 0.8;
 }
 
 .event-description textarea {
@@ -403,25 +408,24 @@ select {
   resize: none;
 }
 
+.btn-create {
+  width: 100%;
+}
+
+/* Icon containers & icons*/
 .description-textarea-container {
   position: relative;
   margin: 1.5rem 0;
 }
 
 .btn-close {
-  background: none;
   position: absolute;
-  cursor: pointer;
   top: 0.75rem;
   right: 1rem;
+  cursor: pointer;
 }
 
 .btn-close:hover {
   opacity: 0.3;
-}
-
-.btn-create {
-  width: 100%;
-  padding: 0.25rem; /* Reduced padding */
 }
 </style>
