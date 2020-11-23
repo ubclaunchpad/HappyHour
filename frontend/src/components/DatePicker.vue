@@ -29,7 +29,7 @@
     <!-- Main DatePicker Display -->
     <div class="main">
       <!-- Month & Year -->
-      <section class="header">
+      <section class="month-year">
         {{ currMonthName }}
         {{ currYear }}
       </section>
@@ -37,9 +37,10 @@
       <!-- Days -->
       <section class="day-names">
         <p
-          style="width:calc(100%/7)"
           v-for="dayName in dayShortNames"
           :key="dayName"
+          class="overline"
+          style="width:calc(100%/7)"
         >
           {{ dayName }}
         </p>
@@ -48,10 +49,10 @@
       <!-- Previous overflow -->
       <section class="dates-section">
         <button
-          class="overflow dates"
-          style="width:calc(100%/7)"
           v-for="date in daysInPrevMonthOverflow"
           :key="date"
+          class="overflow dates"
+          style="width:calc(100%/7)"
           type="button"
         >
           {{ date }}
@@ -59,10 +60,10 @@
 
         <!-- Viewing dates -->
         <button
-          class="dates"
-          style="width:calc(100%/7)"
           v-for="date in daysInMonth()"
           :key="date"
+          class="dates subtitle2"
+          style="width:calc(100%/7)"
           :class="isCurrDate(date) ? 'curr-date' : ''"
           type="button"
         >
@@ -71,10 +72,10 @@
 
         <!-- Next overlow -->
         <button
-          class="overflow dates"
-          style="width:calc(100%/7)"
           v-for="date in daysInNextMonthOverflow"
           :key="date"
+          class="overflow dates"
+          style="width:calc(100%/7)"
           type="button"
         >
           {{ date }}
@@ -113,14 +114,15 @@
 
 <script>
 export default {
+  // TODO: Style per design,  remove borders
   // TODO: Support drag & drop & multi-select -> ref CalendarDay.vue
   // TODO: Support drag drop multi-select cross months
   // TODO: Store data -> props?
   // TODO: Add typescripts
   // TODO: Reconsider methods & computed
-  // TODO: Style per design,  remove borders
   // TODO: Comment & clean up code
   // FIXME: Inconsistent sizing in each month
+  name: "DatePicker",
   data() {
     return {
       currDate: new Date().getDate(),
@@ -128,6 +130,37 @@ export default {
       currYear: new Date().getFullYear(),
       dayShortNames: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
     };
+  },
+  computed: {
+    // Returns the full name of the viewing month
+    currMonthName() {
+      return new Date(this.currYear, this.currMonthIndex).toLocaleString(
+        "default",
+        {
+          month: "long"
+        }
+      );
+    },
+
+    // Returns array of overflowing dates in first week from the previous month
+    daysInPrevMonthOverflow() {
+      const lastDateOfPrevMonth = this.daysInMonth(); // 31
+
+      return [...Array(lastDateOfPrevMonth + 1).keys()].slice(
+        lastDateOfPrevMonth + 1 - this.monthStartDayIndex()
+      );
+    },
+
+    // Returns number of days overflowing into next month in the last week
+    daysInNextMonthOverflow() {
+      const lastDayNameIndex = new Date(
+        this.currYear,
+        this.currMonthIndex + 1,
+        0
+      ).getDay(); // 0 = Sun, 7 = Sat
+
+      return 6 - lastDayNameIndex;
+    }
   },
 
   methods: {
@@ -173,37 +206,6 @@ export default {
 
       return paramDate === currDate;
     }
-  },
-  computed: {
-    // Returns the full name of the viewing month
-    currMonthName() {
-      return new Date(this.currYear, this.currMonthIndex).toLocaleString(
-        "default",
-        {
-          month: "long"
-        }
-      );
-    },
-
-    // Returns array of overflowing dates in first week from the previous month
-    daysInPrevMonthOverflow() {
-      const lastDateOfPrevMonth = this.daysInMonth(); // 31
-
-      return [...Array(lastDateOfPrevMonth + 1).keys()].slice(
-        lastDateOfPrevMonth + 1 - this.monthStartDayIndex()
-      );
-    },
-
-    // Returns number of days overflowing into next month in the last week
-    daysInNextMonthOverflow() {
-      const lastDayNameIndex = new Date(
-        this.currYear,
-        this.currMonthIndex + 1,
-        0
-      ).getDay(); // 0 = Sun, 7 = Sat
-
-      return 6 - lastDayNameIndex;
-    }
   }
 };
 </script>
@@ -216,6 +218,16 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
+  text-align: center;
+}
+
+.overline {
+  font-weight: bold;
+}
+
+/*FIXME: To look into*/
+.subtitle2 {
+  font-weight: 500;
 }
 
 /*------------------------------------*\
@@ -224,20 +236,11 @@ export default {
 
 .main {
   margin: 0 5rem;
-
-  border: 1px solid;
 }
 
 /* Month & Year */
-.header {
-  font-style: normal;
-  font-weight: bold;
-  font-size: 16px;
-  letter-spacing: 0.12px;
-  line-height: 24px;
-  text-align: center;
-
-  border: 1px solid;
+.month-year {
+  margin-bottom: 0.875rem;
 }
 
 /* Day Names */
@@ -246,40 +249,37 @@ export default {
   justify-content: center;
 
   text-transform: uppercase;
-  font-style: normal;
-  font-weight: bold;
-  font-size: 10px;
-  line-height: 16px;
 }
 
 /* Dates */
 .dates-section {
   display: flex;
   flex-wrap: wrap;
-
-  border: 1px solid;
 }
 
 .dates {
   background: none;
-  padding: 0.6rem;
+  padding: 0.7rem; /*FIXME: Only way to get perfect circle*/
+  margin: 0.3125rem 0;
   border-radius: 50%;
-
-  border: 1px solid rgba(0, 0, 0, 0.2);
 }
 
 .dates:hover {
   cursor: pointer;
+  background: rgba(55, 87, 134, 0.25);
+}
+
+.dates:focus {
+  background: rgba(55, 87, 134, 0.5);
 }
 
 .overflow {
-  opacity: 0.5;
-
-  border: none;
+  color: rgba(213, 213, 213, 1);
 }
 
 .curr-date {
   font-weight: bold;
+  background: rgba(55, 87, 134, 0.5);
 }
 
 /*------------------------------------*\

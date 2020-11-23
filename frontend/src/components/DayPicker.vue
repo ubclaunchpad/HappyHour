@@ -1,13 +1,13 @@
 <template>
   <table>
     <tr>
-      <th v-for="(day, i) in days" :key="i">{{ day[0] }}</th>
+      <th v-for="(day, i) in days" :key="i" class="body2">{{ day[0] }}</th>
     </tr>
     <tr>
       <td
         v-for="(day, i) in days"
         :key="i"
-        v-bind:class="{ selected: day[1] }"
+        :class="{ selected: day[1] }"
         @click="day[1] = !day[1]"
       ></td>
     </tr>
@@ -15,13 +15,17 @@
 </template>
 
 <script>
+//TODO: Make buttons for day selection
+//FIXME: Flexbox instead of tables
+//FIXME: Styling
+//FIXME: Relative units
 import { defineComponent } from "vue";
 export default defineComponent({
-  name: "EventDayPicker",
+  name: "DayPicker",
 
   data() {
     return {
-      // each day of the week has name and selected state
+      // Each day of the week has name and selected state
       days: [
         ["Mon", false],
         ["Tue", false],
@@ -39,11 +43,15 @@ export default defineComponent({
 </script>
 
 <style scoped>
+.body2 {
+  font-weight: 600;
+}
+
 table {
   width: 100%;
   padding: 20px;
-  border-spacing: 7px 49px;
   border-collapse: separate;
+  border-spacing: 7px 49px;
 }
 
 tr {
@@ -53,16 +61,16 @@ tr {
 td {
   width: 57px;
   height: 238px;
-  background: rgb(255, 255, 252);
   border: 3px solid rgb(196, 196, 196);
   border-radius: 8px;
+  background: rgb(255, 255, 252);
 }
 
 td.selected {
   width: 57px;
   height: 238px;
-  background: rgba(55, 87, 134, 0.5);
   border: 0px solid rgb(196, 196, 196);
   border-radius: 8px;
+  background: rgba(55, 87, 134, 0.5);
 }
 </style>
