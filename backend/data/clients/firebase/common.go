@@ -5,7 +5,7 @@ import (
 
 	"cloud.google.com/go/firestore"
 	log "github.com/sirupsen/logrus"
-	"github.com/ubclaunchpad/when3meet/data/schema"
+	"github.com/ubclaunchpad/when3meet/backend/data/schema"
 
 	firebase "firebase.google.com/go"
 

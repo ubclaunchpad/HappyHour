@@ -1,4 +1,4 @@
-module github.com/ubclaunchpad/when3meet
+module github.com/ubclaunchpad/when3meet/backend
 
 go 1.13
 
