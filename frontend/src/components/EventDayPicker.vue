@@ -1,11 +1,11 @@
 <template>
   <table>
     <tr>
-      <th v-for="(day, i) in week" :key="i">{{ day[0] }}</th>
+      <th v-for="(day, i) in days" :key="i">{{ day[0] }}</th>
     </tr>
     <tr>
       <td
-        v-for="(day, i) in week"
+        v-for="(day, i) in days"
         :key="i"
         v-bind:class="{ selected: day[1] }"
         @click="day[1] = !day[1]"
@@ -22,7 +22,7 @@ export default defineComponent({
   data() {
     return {
       // each day of the week has name and selected state
-      week: [
+      days: [
         ["Mon", false],
         ["Tue", false],
         ["Wed", false],
