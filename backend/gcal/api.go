@@ -5,12 +5,12 @@ import (
 	"io/ioutil"
 	"log"
 	"time"
-	"github.com/ubclaunchpad/when3meet/data/clients/firebase"
+	"github.com/ubclaunchpad/when3meet/backend/data/clients/firebase"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"
 	"google.golang.org/api/calendar/v3"
 	"errors"
-	"github.com/ubclaunchpad/when3meet/data/schema"
+	"github.com/ubclaunchpad/when3meet/backend/data/schema"
 )
 
 func GetBusySlots(srv *calendar.Service, timeMin string, timeMax string) (*calendar.FreeBusyResponse, error) {
@@ -49,7 +49,7 @@ func GetFreeSlots (res *calendar.FreeBusyResponse, timeMin string, timeMax strin
 		for i, slot := range busy {
 			if i == 0 && timeMin < slot.Start {
 				free = append(free, Slot{startTime: timeMin, endTime: slot.Start})
-			} else if busy[i - 1].End < slot.Start {
+			} else if i > 0 && busy[i - 1].End < slot.Start {
 				free = append(free, Slot{startTime: busy[i - 1].End,
 					endTime: slot.Start})
 			}
@@ -193,7 +193,7 @@ func UpdateCalendar(user *firebase.User) (*firebase.User, error){
 	srv := GetGCal("credentials.json", &token)
 
 	//3. get user's busy slots
-	timeMin := time.Now()
+	timeMin := GetBlockStart(time.Now())
 	timeMax := time.Date(timeMin.Year(), timeMin.Month(), timeMin.Day() + 1,
 		timeMin.Hour(), 0,0, 0, timeMin.Location())
 	min := timeMin.Format(time.RFC3339)
@@ -219,7 +219,9 @@ func UpdateCalendar(user *firebase.User) (*firebase.User, error){
 	//6. update the user
 	err = user.Get()
 	if err != nil {
-		//TODO if user doesn't exist, we need to create the user here
+		//should not happen
+		log.Printf("user could not be found: %v", err)
+		return nil, err
 	}
 	user.Calendar = *cal
 	err = user.Update()
@@ -232,8 +234,15 @@ func UpdateCalendar(user *firebase.User) (*firebase.User, error){
 	return user, nil
 }
 
-func CreateEvent(srv *calendar.Service, e *firebase.Event) (*firebase.Event,
+func CreateEvent(srv *calendar.Service, e *firebase.Event,
+	userIDs []string) (*firebase.Event,
 	error) {
+	//get attendees
+	var attendees []*calendar.EventAttendee
+	for _, attendee := range userIDs {
+		attendees = append(attendees, &calendar.EventAttendee{Email: attendee})
+	}
+	//create event
 	event := &calendar.Event{
 		Summary: e.Summary,
 		Description: e.Description,
@@ -243,7 +252,7 @@ func CreateEvent(srv *calendar.Service, e *firebase.Event) (*firebase.Event,
 		End: &calendar.EventDateTime{
 			DateTime: e.EndTime,
 		},
-		Attendees: nil, //need to get user emails from user id's TODO
+		Attendees: attendees, //need to get user emails from user id's TODO
 	}
 
 	_, err := srv.Events.Insert("primary", event).Do()
@@ -260,12 +269,20 @@ func GetEvents(srv *calendar.Service, timeMin string,
 	log.Printf("retrieved %v events!", len(events.Items))
 	var result []firebase.Event
 	for _, item := range events.Items {
+		//get event attendees
+		var attendees []string
+		for _, attendee := range item.Attendees {
+			attendees = append(attendees, attendee.Email)
+		}
 		e := firebase.Event{
 			Summary: item.Summary,
 			Description: item.Description,
 			StartTime: item.Start.DateTime,
 			EndTime: item.End.DateTime,
+			Owners: []string{item.Creator.Email},
+			Users: attendees,
 		}
+		log.Printf("event %v, attendees %v", item.Summary, attendees)
 		result = append(result, e)
 	}
 	return result, nil

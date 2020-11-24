@@ -6,8 +6,8 @@ import (
 	"time"
 	"github.com/gorilla/mux"
 	log "github.com/sirupsen/logrus"
-	"github.com/ubclaunchpad/when3meet/data/clients/firebase"
-	"github.com/ubclaunchpad/when3meet/gcal"
+	"github.com/ubclaunchpad/when3meet/backend/data/clients/firebase"
+	"github.com/ubclaunchpad/when3meet/backend/gcal"
 	"golang.org/x/oauth2"
 )
 
@@ -79,6 +79,7 @@ func TestUpdateCal(w http.ResponseWriter,
 	}
 
 	// update user's calendar
+	log.Println("updating calendar!")
 	u, err := gcal.UpdateCalendar(user)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -105,7 +106,7 @@ func TestConfirmEvent(w http.ResponseWriter,
 	}
 
 	//1. find event
-	event := &firebase.Event{FirebaseID: vars["id"]} //ask how to get this correctly!! (type mismatch)
+	event := &firebase.Event{FirebaseID: vars["id"]}
 	err := event.Get()
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
@@ -136,7 +137,7 @@ func TestConfirmEvent(w http.ResponseWriter,
 		srv := gcal.GetGCal("credentials.json", &token)
 
 		//3c. create gcal event
-		_, err = gcal.CreateEvent(srv, event)
+		_, err = gcal.CreateEvent(srv, event, userIDs)
 		if err != nil {
 			log.Fatalf("failed to create gcal event: %v", err)
 		}
@@ -144,11 +145,10 @@ func TestConfirmEvent(w http.ResponseWriter,
 		//3d. update user's calendar TODO
 
 		//3e. update user's availabilities for each event they are part of TODO
+	}
 
 	//4. send back the confirmed event
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(event)
-
-	}
 
 }
