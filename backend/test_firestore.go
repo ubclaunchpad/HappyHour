@@ -6,7 +6,7 @@ import (
 
 	"github.com/gorilla/mux"
 	log "github.com/sirupsen/logrus"
-	"github.com/ubclaunchpad/when3meet/data/clients/firebase"
+	"github.com/ubclaunchpad/when3meet/backend/data/clients/firebase"
 )
 
 func CreateUser(w http.ResponseWriter, r *http.Request) {
@@ -19,7 +19,7 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 	err := json.NewDecoder(r.Body).Decode(&user)
 	if err != nil {
 		log.Warnf("Failed to decode the request: %v", err)
-		http.Error(w,"Failed to decode the provided user",http.StatusBadRequest)
+		http.Error(w, "Failed to decode the provided user", http.StatusBadRequest)
 		return
 	}
 
@@ -41,14 +41,14 @@ func CreateEvent(w http.ResponseWriter, r *http.Request) {
 	err := json.NewDecoder(r.Body).Decode(&event)
 	if err != nil {
 		log.Warnf("Failed to decode the request: %v", err)
-		http.Error(w,"Failed to decode the provided event", http.StatusBadRequest)
+		http.Error(w, "Failed to decode the provided event", http.StatusBadRequest)
 		return
 	}
 	log.Infof("Creating event with data: %+v", event)
 	err = event.Write()
 	if err != nil {
 		log.Warnf("Failed to create event with data: %v", err)
-		http.Error(w,"Something went wrong creating the event", http.StatusInternalServerError)
+		http.Error(w, "Something went wrong creating the event", http.StatusInternalServerError)
 		return
 	}
 	w.WriteHeader(http.StatusCreated)
@@ -62,7 +62,7 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	if vars["id"] == "" {
 		log.Warn("No document id provided")
-		http.Error(w,"No ID provided",http.StatusBadRequest)
+		http.Error(w, "No ID provided", http.StatusBadRequest)
 		return
 	}
 
@@ -72,7 +72,7 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
 		log.Warnf("Failed to get event : %v", err)
-		http.Error(w,"Could not find user with the given id",http.StatusNotFound)
+		http.Error(w, "Could not find user with the given id", http.StatusNotFound)
 		return
 	}
 
@@ -88,7 +88,7 @@ func GetEvent(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	if vars["id"] == "" {
 		log.Warn("No document id provided")
-		http.Error(w,"No ID provided",http.StatusBadRequest)
+		http.Error(w, "No ID provided", http.StatusBadRequest)
 		return
 	}
 
@@ -110,14 +110,14 @@ func DeleteUser(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	if vars["id"] == "" {
 		log.Warnf("No document id provided")
-		http.Error(w,"No ID provided",http.StatusBadRequest)
+		http.Error(w, "No ID provided", http.StatusBadRequest)
 		return
 	}
 	user := &firebase.User{FirebaseID: vars["id"]}
 	err := user.Delete()
 	if err != nil {
 		log.Warnf("Failed to delete user : %v", err)
-		http.Error(w,"Something went wrong deleting this user",http.StatusInternalServerError)
+		http.Error(w, "Something went wrong deleting this user", http.StatusInternalServerError)
 		return
 	}
 	w.WriteHeader(http.StatusNoContent)
@@ -127,25 +127,24 @@ func DeleteEvent(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	if vars["id"] == "" {
 		log.Warnf("No document id provided")
-		http.Error(w,"No ID provided",http.StatusBadRequest)
+		http.Error(w, "No ID provided", http.StatusBadRequest)
 		return
 	}
 	event := &firebase.Event{FirebaseID: vars["id"]}
 	err := event.Delete()
 	if err != nil {
 		log.Warnf("Failed to delete event : %v", err)
-		http.Error(w,"Something went wrong deleting this event",http.StatusInternalServerError)
+		http.Error(w, "Something went wrong deleting this event", http.StatusInternalServerError)
 		return
 	}
 	w.WriteHeader(http.StatusNoContent)
 }
 
-
 func UpdateUser(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	if vars["id"] == "" {
 		log.Warnf("No document id provided")
-		http.Error(w,"No ID provided",http.StatusBadRequest)
+		http.Error(w, "No ID provided", http.StatusBadRequest)
 		return
 	}
 	user := firebase.User{FirebaseID: vars["id"]}
@@ -154,7 +153,7 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 	err = user.Update()
 	if err != nil {
 		log.Warnf("Failed to update user : %v", err)
-		http.Error(w,"Something went wrong updating this event",http.StatusInternalServerError)
+		http.Error(w, "Something went wrong updating this event", http.StatusInternalServerError)
 		return
 	}
 	w.WriteHeader(http.StatusOK)
@@ -165,7 +164,7 @@ func UpdateEvent(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	if vars["id"] == "" {
 		log.Warnf("No document id provided")
-		http.Error(w,"No ID provided",http.StatusBadRequest)
+		http.Error(w, "No ID provided", http.StatusBadRequest)
 		return
 	}
 	event := firebase.Event{FirebaseID: vars["id"]}
@@ -174,7 +173,7 @@ func UpdateEvent(w http.ResponseWriter, r *http.Request) {
 	err = event.Update()
 	if err != nil {
 		log.Warnf("Failed to update event : %v", err)
-		http.Error(w,"Something went wrong updating this event",http.StatusInternalServerError)
+		http.Error(w, "Something went wrong updating this event", http.StatusInternalServerError)
 		return
 	}
 	w.WriteHeader(http.StatusOK)

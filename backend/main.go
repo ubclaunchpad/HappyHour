@@ -27,7 +27,10 @@ func main() {
 
 	// serve on port 8080
 	log.Info("server started on 8080")
-	http.ListenAndServe(":8080", r)
+	err := http.ListenAndServe(":8080", r)
+	if err != nil {
+		log.Fatalf("failed to start server: %s", err.Error())
+	}
 }
 
 func HelloWorldHandler(w http.ResponseWriter, r *http.Request) {
