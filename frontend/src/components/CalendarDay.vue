@@ -3,8 +3,8 @@
     <header>{{ dateText }}</header>
     <div
       v-for="time in times"
-      :class="['block', { selected: isActive(time) }]"
       :key="`${dateText}-${time}`"
+      :class="['block', { selected: isActive(time) }]"
       @touchstart="handleMouseDown(time, $event)"
       @mousedown="handleMouseDown(time, $event)"
       @touchmove="handleMouseOver(time, $event)"
@@ -114,6 +114,6 @@ export default defineComponent({
 }
 
 .selected {
-  background: rgba(200, 235, 220, 0.7);
+  background: rgba(143, 192, 198, 1);
 }
 </style>
