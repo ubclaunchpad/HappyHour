@@ -7,14 +7,9 @@ export const routes: Array<RouteRecordRaw> = [
     component: Create
   },
   {
-    path: "/event-create",
-    name: "Create Event",
-    component: () => import("../views/Create.vue")
-  },
-  {
     path: "/datepicker",
     name: "DatePicker",
-    component: () => import("../components/EventDatePicker.vue")
+    component: () => import("../components/DatePicker.vue")
   },
   {
     path: "/event",
@@ -22,19 +17,14 @@ export const routes: Array<RouteRecordRaw> = [
     component: () => import("../views/Event.vue")
   },
   {
-    path: "/signup",
-    name: "Sign Up",
-    component: () => import("../views/Signup.vue")
-  },
-  {
     path: "/login",
     name: "Log In",
     component: () => import("../views/Login.vue")
   },
   {
-    path: "/faq",
-    name: "FAQ",
-    component: () => import("../views/Placeholder.vue")
+    path: "/signup",
+    name: "Sign Up",
+    component: () => import("../views/Signup.vue")
   },
   {
     path: "/about",
