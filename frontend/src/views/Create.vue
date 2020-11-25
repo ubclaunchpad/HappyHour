@@ -280,6 +280,7 @@ select {
   flex-wrap: wrap;
   justify-content: center;
   align-items: center;
+  margin-top: 7.875rem;
 }
 
 .main-left,
@@ -392,7 +393,8 @@ select {
 
 .btn-add-desc {
   margin-bottom: 4.875rem;
-  color: rgb(157, 157, 157);
+  color: rgb(114, 122, 137);
+  font-weight: 400;
   text-align: left;
   text-decoration-line: underline;
 }
@@ -410,6 +412,13 @@ select {
 
 .btn-create {
   width: 100%;
+  background: rgb(55, 87, 134);
+  color: rgb(255, 255, 255);
+}
+
+.btn-create:hover {
+  color: rgb(55, 87, 134);
+  background: rgba(255, 255, 255, 0);
 }
 
 /* Icon containers & icons*/
