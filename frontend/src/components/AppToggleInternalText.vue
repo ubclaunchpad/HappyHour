@@ -12,10 +12,10 @@
       @change="$emit('update:checked', $event.target.checked)"
     />
     <span class="switch"></span>
-    <span v-bind:class="{ leftEnabled: !checked, leftDisabled: checked }">{{
+    <span :class="{ leftEnabled: !checked, leftDisabled: checked }">{{
       leftText
     }}</span>
-    <span v-bind:class="{ rightDisabled: !checked, rightEnabled: checked }">{{
+    <span :class="{ rightDisabled: !checked, rightEnabled: checked }">{{
       rightText
     }}</span>
   </label>
@@ -38,6 +38,7 @@ export default {
       required: true
     }
   },
+  emits: ["update:checked", "update"],
   methods: {
     update() {
       this.$emit("update");
@@ -56,22 +57,22 @@ export default {
 .leftDisabled {
   flex-shrink: 0;
   margin-left: calc(var(--switch-container-width) * -1 + 2rem);
-  color: rgb(48, 48, 48);
+  color: #c4c4c4;
 }
 .leftEnabled {
   flex-shrink: 0;
   margin-left: calc(var(--switch-container-width) * -1 + 2rem);
-  color: white;
+  color: #020f22;
 }
 .rightDisabled {
   flex-shrink: 0;
   margin-left: 3rem;
-  color: rgb(48, 48, 48);
+  color: #c4c4c4;
 }
 .rightEnabled {
   flex-shrink: 0;
   margin-left: 3rem;
-  color: white;
+  color: #020f22;
 }
 /* Visually hide the checkbox input */
 .input {
@@ -90,6 +91,8 @@ export default {
   --switch-size: calc(var(--switch-container-size) / 2);
   --blue: #4760f3;
   --dark-blue: #3a4fca;
+  --white: #fff;
+  --accent: #375786;
   /* Vertically center the inner circle */
   display: flex;
   align-items: center;
@@ -102,7 +105,7 @@ export default {
   background-color: white;
   /* In case the label gets really long, the toggle shouldn't shrink. */
   flex-shrink: 0;
-  border: 2px solid var(--dark-blue);
+  border: 2px solid var(--accent);
   transition: background-color 0.25s ease-in-out;
 }
 .switch::before {
@@ -112,8 +115,8 @@ export default {
   width: calc(var(--switch-container-width) / 2);
   /* Make the inner circle fully rounded */
   border-radius: var(--switch-size);
-  background-color: var(--blue);
-  border: 2px solid var(--dark-blue);
+  background-color: var(--white);
+  border: 2px solid var(--accent);
   transition: transform 0.375s ease-in-out;
 }
 .input:checked + .switch::before {

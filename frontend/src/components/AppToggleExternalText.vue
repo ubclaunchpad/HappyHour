@@ -3,15 +3,15 @@
     :for="id + '_button'"
     :class="{ active: isActive }"
     class="toggle__button"
-    @click="$emit('toggled', this.currentToggleState)"
+    @click="$emit('toggled', currentToggleState)"
   >
     <span class="toggle__label">{{ toggleLeftText }}</span>
 
     <input
-      type="checkbox"
-      :disabled="disabled"
       :id="id + '_button'"
       v-model="checkedValue"
+      type="checkbox"
+      :disabled="disabled"
     />
 
     <span class="toggle__switch"></span>
@@ -48,15 +48,11 @@ export default {
       default: false
     }
   },
+  emits: ["toggled"],
   data() {
     return {
       currentToggleState: this.defaultState
     };
-  },
-  watch: {
-    defaultState: function defaultState() {
-      this.currentToggleState = Boolean(this.defaultState);
-    }
   },
   computed: {
     isActive() {
@@ -78,6 +74,11 @@ export default {
         this.currentToggleState = newValue;
         this.$emit("change", newValue);
       }
+    }
+  },
+  watch: {
+    defaultState: function defaultState() {
+      this.currentToggleState = Boolean(this.defaultState);
     }
   }
 };
