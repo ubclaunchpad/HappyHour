@@ -39,8 +39,7 @@ ul {
   font-family: "Open Sans", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: rgb(48, 48, 48);
+  color: rgba(2, 15, 34, 1);
 }
 
 .root-container {
@@ -55,26 +54,6 @@ ul {
   position: absolute;
   background: RGB(229, 229, 229);
   z-index: -2;
-}
-/*
-.heading {
-  font-style: normal;
-  font-weight: bold;
-  font-size: 24px;
-  line-height: 44px;
-  letter-spacing: -0.56px;
-  color: RGB(48, 48, 48);
-}
-*/
-
-.sub-heading {
-  font-style: normal;
-  font-weight: 500;
-  font-size: 24px;
-  line-height: 44px;
-  letter-spacing: -0.56px;
-  color: RGB(48, 48, 48);
-  text-align: left;
 }
 
 /* Headline 1 */
@@ -103,12 +82,46 @@ h5 {
 }
 
 /* Headline 6 */
-h6 {
+h6,
+.h6 {
   font-size: 1.25rem; /*20px*/
 }
 
-/* Body1 */
+/* Body 1 */
 body {
   font-size: 1rem; /*16px*/
+}
+
+/* Body 2 */
+.body2 {
+  font-size: 0.875rem; /*14px*/
+}
+
+/* Subtitle 1 */
+.subtitle1 {
+  font-size: 1rem; /*16px*/
+}
+
+/* Subtitle 2 */
+.subtitle2 {
+  font-size: 0.875rem; /*14px*/
+}
+
+/* Button */
+.button {
+  background: none;
+  font-size: 0.875rem; /*14px*/
+  /*font-weight: 600;*/
+  /*letter-spacing: 0.078125rem; /*1.25px*/
+}
+
+/* Overline */
+.overline {
+  font-size: 0.625rem; /*10px*/
+}
+
+/* Caption */
+.caption {
+  font-size: 0.75rem; /*12px*/
 }
 </style>
