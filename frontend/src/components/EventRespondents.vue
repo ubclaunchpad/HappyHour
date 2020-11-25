@@ -1,11 +1,9 @@
 <template>
   <div>
-    <div class="sub-heading">
-      <h3>Respondents ({{ respondents.length }})</h3>
-    </div>
+    <h5>Respondents ({{ respondents.length }})</h5>
 
     <ul class="respondents">
-      <li class="resp-item" v-for="(resp, index) in respondents" :key="index">
+      <li v-for="(resp, index) in respondents" :key="index" class="resp-item">
         {{ resp }}
       </li>
     </ul>
@@ -15,8 +13,8 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 
-// FIXME: Pass in prop via EventRespondents respondents="[...]"
 export default defineComponent({
+  name: "EventRespondents",
   props: {
     respondents: {
       type: Array,
@@ -31,7 +29,19 @@ export default defineComponent({
         "Gokce",
         "Kai",
         "Henry",
-        "Tiffany"
+        "Tiffany",
+        "Michelle",
+        "Tommy",
+        "James",
+        "Francis",
+        "Jill",
+        "Nanda",
+        "Jacky",
+        "Gokce",
+        "Kai",
+        "Henry",
+        "Tiffany",
+        "Michelle"
       ]
     }
   }
@@ -39,23 +49,24 @@ export default defineComponent({
 </script>
 
 <style scoped>
-/* TODO: Reconsider relative units */
+h5 {
+  font-weight: 500;
+}
+
 .respondents {
-  border-radius: 5px;
-  background: RGB(255, 255, 255);
-  width: 25ch;
-  height: 30ch;
-  filter: drop-shadow(0px 4px 4px RGBA(0, 0, 0, 0.25));
+  width: 14.375rem;
+  height: 25.3125rem;
   padding: 1rem 1.125rem;
-  overflow: hidden;
-  overflow-y: auto;
+  border-radius: 5px;
+  filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25));
+  background: rgb(255, 255, 255);
   text-align: left;
   font-weight: 500;
-  line-height: 24px;
-  letter-spacing: 0.12px;
+  overflow: hidden;
+  overflow-y: auto;
 }
 
 .resp-item {
-  margin-bottom: 12px;
+  margin-bottom: 0.75rem;
 }
 </style>
