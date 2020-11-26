@@ -36,7 +36,7 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 	// marshal the data struct to JSON to send as response
 	err = json.NewEncoder(w).Encode(user)
 	if err != nil {
-		log.Warnf("There was an error sending the response")
+		log.Warnf("There was an error sending the response: Couldn't marshal User struct to json")
 	}
 }
 
@@ -58,7 +58,7 @@ func CreateEvent(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusCreated)
 	err = json.NewEncoder(w).Encode(event)
 	if err != nil {
-		log.Warnf("There was an error sending the response")
+		log.Warnf("There was an error sending the response: Couldn't marshal Event struct to json")
 	}
 }
 
@@ -86,7 +86,7 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 	// marshal the data struct to JSON to send as response
 	err = json.NewEncoder(w).Encode(user)
 	if err != nil {
-		log.Warnf("There was an error sending the response")
+		log.Warnf("There was an error sending the response: Couldn't marshal User struct to json")
 	}
 }
 
@@ -113,7 +113,7 @@ func GetEvent(w http.ResponseWriter, r *http.Request) {
 	// marshal the data struct to JSON to send as response
 	err = json.NewEncoder(w).Encode(event)
 	if err != nil {
-		log.Warnf("There was an error sending the response")
+		log.Warnf("There was an error sending the response: Couldn't marshal Event struct to json")
 	}
 }
 
@@ -176,7 +176,7 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	err = json.NewEncoder(w).Encode(user)
 	if err != nil {
-		log.Warnf("There was an error sending the response")
+		log.Warnf("There was an error sending the response: Couldn't marshal User struct to json")
 	}
 }
 
@@ -204,6 +204,6 @@ func UpdateEvent(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	err = json.NewEncoder(w).Encode(event)
 	if err != nil {
-		log.Warnf("There was an error sending the response")
+		log.Warnf("There was an error sending the response: Couldn't marshal Event struct to json")
 	}
 }
