@@ -2,6 +2,7 @@ package firebase
 
 import (
 	"context"
+	"errors"
 
 	log "github.com/sirupsen/logrus"
 )
@@ -9,10 +10,16 @@ import (
 func (u *User) Write() error {
 	// todo: consider logging ref or actual document info here
 	log.Infof("writing user to firestore: %+v", u)
+	// check if user with provided email already exists
+	ref, err := Client.Collection("users").Doc(u.Email).Get(context.Background())
+	if ref.Exists() {
+		log.Warnf("A user with this email already exists")
+		return errors.New("A user with this email already exists")
+	}
 
-	ref, _, err := Client.Collection("users").Add(context.Background(), u)
-	u.FirebaseID = ref.ID
-
+	// create a user with document ID set to email - this overwrites the document!
+	_, err = Client.Collection("users").Doc(u.Email).Set(context.Background(),u)
+	u.FirebaseID = u.Email
 	return err
 }
 
