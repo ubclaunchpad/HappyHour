@@ -34,7 +34,10 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusCreated)
 	// marshal the data struct to JSON to send as response
-	json.NewEncoder(w).Encode(user)
+	err = json.NewEncoder(w).Encode(user)
+	if err != nil {
+		log.Warnf("There was an error sending the response: Couldn't marshal User struct to json")
+	}
 }
 
 func CreateEvent(w http.ResponseWriter, r *http.Request) {
@@ -53,7 +56,10 @@ func CreateEvent(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(event)
+	err = json.NewEncoder(w).Encode(event)
+	if err != nil {
+		log.Warnf("There was an error sending the response: Couldn't marshal Event struct to json")
+	}
 }
 
 func GetUser(w http.ResponseWriter, r *http.Request) {
@@ -71,7 +77,6 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 	user := &firebase.User{FirebaseID: vars["id"]}
 	err := user.Get()
 	if err != nil {
-		w.WriteHeader(http.StatusNotFound)
 		log.Warnf("Failed to get event : %v", err)
 		http.Error(w, "Could not find user with the given id", http.StatusNotFound)
 		return
@@ -79,7 +84,10 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusOK)
 	// marshal the data struct to JSON to send as response
-	json.NewEncoder(w).Encode(user)
+	err = json.NewEncoder(w).Encode(user)
+	if err != nil {
+		log.Warnf("There was an error sending the response: Couldn't marshal User struct to json")
+	}
 }
 
 func GetEvent(w http.ResponseWriter, r *http.Request) {
@@ -96,7 +104,6 @@ func GetEvent(w http.ResponseWriter, r *http.Request) {
 	event := &firebase.Event{FirebaseID: vars["id"]}
 	err := event.Get()
 	if err != nil {
-		w.WriteHeader(http.StatusNotFound)
 		log.Warnf("Failed to get event : %v", err)
 		http.Error(w, "Could not find an event with the given ID", http.StatusNotFound)
 		return
@@ -104,7 +111,10 @@ func GetEvent(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusOK)
 	// marshal the data struct to JSON to send as response
-	json.NewEncoder(w).Encode(event)
+	err = json.NewEncoder(w).Encode(event)
+	if err != nil {
+		log.Warnf("There was an error sending the response: Couldn't marshal Event struct to json")
+	}
 }
 
 func DeleteUser(w http.ResponseWriter, r *http.Request) {
@@ -151,14 +161,23 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 	user := firebase.User{FirebaseID: vars["id"]}
 	err := json.NewDecoder(r.Body).Decode(&user)
 	log.Infof("Updating user with data: %+v", user)
+	if err != nil {
+		log.Warnf("There was an error decoding the user object : %v", err)
+		http.Error(w,"Invalid User object provided",http.StatusBadRequest)
+		return
+	}
+	log.Infof("Updating user with data: %+v", user)
 	err = user.Update()
 	if err != nil {
 		log.Warnf("Failed to update user : %v", err)
-		http.Error(w, "Something went wrong updating this event", http.StatusInternalServerError)
+		http.Error(w,"Something went wrong updating this user", http.StatusInternalServerError)
 		return
 	}
 	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(user)
+	err = json.NewEncoder(w).Encode(user)
+	if err != nil {
+		log.Warnf("There was an error sending the response: Couldn't marshal User struct to json")
+	}
 }
 
 func UpdateEvent(w http.ResponseWriter, r *http.Request) {
@@ -170,6 +189,11 @@ func UpdateEvent(w http.ResponseWriter, r *http.Request) {
 	}
 	event := firebase.Event{FirebaseID: vars["id"]}
 	err := json.NewDecoder(r.Body).Decode(&event)
+	if err != nil {
+		log.Warnf("There was an error decoding the event object : %v", err)
+		http.Error(w,"Invalid event object provided",http.StatusBadRequest)
+		return
+	}
 	log.Infof("Updating event with data: %+v", event)
 	err = event.Update()
 	if err != nil {
@@ -178,5 +202,8 @@ func UpdateEvent(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(event)
+	err = json.NewEncoder(w).Encode(event)
+	if err != nil {
+		log.Warnf("There was an error sending the response: Couldn't marshal Event struct to json")
+	}
 }
