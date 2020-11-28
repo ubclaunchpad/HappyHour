@@ -5,10 +5,19 @@
       <!-- Date Card -->
       <section class="date card">
         <h5>Pick the date</h5>
-
         <!-- EventDateSelectors component -->
-        <DatePicker v-if="isDatePickerEvent" class="date-picker" />
-        <DayPicker v-if="!isDatePickerEvent" class="day-picker" />
+        <DatePicker
+          v-if="isDatePickerEvent"
+          v-model:startTime="startTime"
+          v-model:endTime="endTime"
+          class="date-picker"
+        />
+        <DayPicker
+          v-if="!isDatePickerEvent"
+          v-model:startTime="startTime"
+          v-model:endTime="endTime"
+          class="day-picker"
+        />
         <AppToggleExternalText
           class="date-toggle"
           toggle-left-text="Single"
@@ -20,7 +29,7 @@
           style="display: none"
           left-text="My Availability"
           right-text="Group Availability"
-          checked="false"
+          :checked="false"
           @update="toggleEventType()"
         />
       </section>
@@ -35,36 +44,9 @@
         <!-- EventTimePicker component -->
         <div class="time-picker">
           Between
-
-          <!-- TimeInputs component -->
-          <input type="number" required />
-          <div class="time-period">
-            <select name="dropdown">
-              <option value="AM" selected>AM</option>
-              <option value="PM">PM</option>
-            </select>
-            <AppIcon
-              class="icon-select-arrow"
-              width="12"
-              icon="chevron-down"
-            ></AppIcon>
-          </div>
-
+          <TimePicker v-model="startTime" />
           and
-
-          <!-- TimeInputs component -->
-          <input type="number" required />
-          <div class="time-period">
-            <select name="dropdown">
-              <option value="AM" selected>AM </option>
-              <option value="PM">PM </option>
-            </select>
-            <AppIcon
-              class="icon-select-arrow"
-              width="12"
-              icon="chevron-down"
-            ></AppIcon>
-          </div>
+          <TimePicker v-model="endTime" />
         </div>
 
         <!-- EventTimezonePicker component-->
@@ -74,15 +56,8 @@
             width="12"
             icon="location-pin"
           ></AppIcon>
-          <select name="dropdown">
-            <option value="America/Vancouver - PST" selected>
-              America/Vancouver - PST</option
-            >
-            <option value="Option #2"> Option #2</option>
-            <option value="Option #3"> Option #3</option>
-            <option value="Option #4"> Option #4</option>
-            <option value="Option #5"> Option #5</option>
-            <option value="Option #6"> Option #6</option>
+          <select v-model="timezone" name="dropdown">
+            <option value="America/Vancouver"> America/Vancouver - PST</option>
           </select>
           <AppIcon
             class="icon-select-arrow"
@@ -96,7 +71,7 @@
       <section class="event card">
         <h5>Event Name</h5>
 
-        <input type="text" required />
+        <input v-model="eventTitle" type="text" required />
 
         <button
           v-if="isHidden"
@@ -123,7 +98,7 @@
                 icon="times"
               ></AppIcon>
             </button>
-            <textarea autofocus />
+            <textarea v-model="eventDescription" autofocus />
           </div>
         </section>
 
@@ -150,12 +125,15 @@
 //FIXME: Width size of btn-add-desc
 
 import { defineComponent } from "vue";
+import { set } from "date-fns";
+
 import AppButton from "@/components/AppButton.vue";
 import AppToggleExternalText from "@/components/AppToggleExternalText.vue";
 import AppToggleInternalText from "@/components/AppToggleInternalText.vue";
 import DatePicker from "@/components/DatePicker.vue";
 import DayPicker from "@/components/DayPicker.vue";
 import AppIcon from "@/components/AppIcon.vue";
+import TimePicker from "@/components/TimePicker.vue";
 
 export default defineComponent({
   name: "Create",
@@ -165,14 +143,19 @@ export default defineComponent({
     AppToggleExternalText,
     AppToggleInternalText,
     DatePicker,
-    DayPicker
+    DayPicker,
+    TimePicker
   },
-  props: {},
 
   data() {
     return {
       isHidden: true,
-      isDatePickerEvent: true
+      isDatePickerEvent: true,
+      startTime: set(new Date(), { hours: 9, minutes: 0 }),
+      endTime: set(new Date(), { hours: 21, minutes: 0 }),
+      timezone: "America/Vancouver",
+      eventTitle: "",
+      eventDescription: ""
     };
   },
 
@@ -285,24 +268,6 @@ select {
   margin: 1.5rem 0;
 }
 
-.time-picker input {
-  width: 4rem;
-  /*text-align: center;*/
-
-  /* Hide input spin buttons*/
-  -webkit-appearance: none;
-  -moz-appearance: textfield;
-}
-
-/* Display input spin buttons on Firefox hover*/
-.time-picker input:hover {
-  -moz-appearance: button;
-}
-
-.time-period select {
-  width: 5rem;
-}
-
 .timezone-picker {
   margin-bottom: 0.25rem;
 }
@@ -313,7 +278,6 @@ select {
 }
 
 /* Icon containers & icons*/
-.time-period,
 .timezone-picker {
   position: relative;
   display: flex;
@@ -321,7 +285,7 @@ select {
   align-items: center;
 }
 
-.time-period .icon-select-arrow,
+.icon-select-arrow,
 .timezone-picker .icon-select-arrow {
   position: absolute;
   right: 1rem;
