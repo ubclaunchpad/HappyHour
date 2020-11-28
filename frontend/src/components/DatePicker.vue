@@ -185,6 +185,8 @@ export default {
   justify-content: center;
   align-items: center;
   text-align: center;
+  width: 100%;
+  position: relative;
 }
 
 .overline {
@@ -202,6 +204,7 @@ export default {
 
 .main {
   width: 100%;
+  max-width: 20rem;
 }
 
 /* Month & Year */
@@ -256,10 +259,21 @@ export default {
 .navi-right {
   background: none;
   border: none;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
 }
 
 .navi-left:hover,
 .navi-right:hover {
   cursor: pointer;
+}
+
+.navi-left {
+  left: 0;
+}
+
+.navi-right {
+  right: 0;
 }
 </style>

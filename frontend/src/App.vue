@@ -59,6 +59,8 @@ ul {
   position: absolute;
   background: RGB(229, 229, 229);
   z-index: -2;
+  display: flex;
+  flex-direction: column;
 }
 
 /* Headline 1 */

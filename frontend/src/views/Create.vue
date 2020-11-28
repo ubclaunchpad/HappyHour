@@ -1,74 +1,68 @@
 <template>
-  <form class="main">
+  <form class="form">
     <!-- Left Components -->
-    <div class="main-left">
-      <!-- Date Card -->
-      <section class="date card">
-        <h5 class="heading">Pick the date</h5>
-        <!-- EventDateSelectors component -->
-        <DatePicker
-          v-if="isDatePickerEvent"
-          v-model:startTime="startTime"
-          v-model:endTime="endTime"
-          class="date-picker"
-        />
-        <DayPicker
-          v-if="!isDatePickerEvent"
-          v-model:startTime="startTime"
-          v-model:endTime="endTime"
-          class="day-picker"
-        />
-        <AppToggleExternalText
-          class="date-toggle"
-          toggle-left-text="Single"
-          toggle-right-text="Recurring"
-          :default-state="false"
-          @toggled="toggleEventType"
-        />
-        <AppToggleInternalText
-          style="display: none"
-          left-text="My Availability"
-          right-text="Group Availability"
-          :checked="false"
-          @update="toggleEventType()"
-        />
-      </section>
-    </div>
+    <!-- Date Card -->
+    <section class="date card">
+      <h5 class="heading">Pick the date</h5>
+      <!-- EventDateSelectors component -->
+      <DatePicker
+        v-if="isDatePickerEvent"
+        v-model:startTime="startTime"
+        v-model:endTime="endTime"
+        class="date-picker"
+      />
+      <DayPicker
+        v-if="!isDatePickerEvent"
+        v-model:startTime="startTime"
+        v-model:endTime="endTime"
+        class="day-picker"
+      />
+      <AppToggleExternalText
+        class="date-toggle"
+        toggle-left-text="Single"
+        toggle-right-text="Recurring"
+        :default-state="false"
+        @toggled="toggleEventType"
+      />
+      <AppToggleInternalText
+        style="display: none"
+        left-text="My Availability"
+        right-text="Group Availability"
+        :checked="false"
+        @update="toggleEventType()"
+      />
+    </section>
 
     <!-- Right Components -->
-    <div class="main-right">
-      <!-- Time  Card -->
-      <section class="time card">
-        <h5 class="heading">Pick the time</h5>
+    <!-- Time  Card -->
+    <section class="time card">
+      <h5 class="heading">Pick the time</h5>
 
-        <!-- EventTimePicker component -->
-        <div class="time-picker">
-          Between
-          <TimePicker v-model="startTime" />
-          and
-          <TimePicker v-model="endTime" />
-        </div>
+      <!-- EventTimePicker component -->
+      <div class="time-picker">
+        Between
+        <TimePicker v-model="startTime" />
+        and
+        <TimePicker v-model="endTime" />
+      </div>
 
-        <!-- EventTimezonePicker component-->
-        <div class="timezone-picker">
-          <AppIcon
-            class="icon-location"
-            width="12"
-            icon="location-pin"
-          ></AppIcon>
-          <select v-model="timezone" name="dropdown">
-            <option value="America/Vancouver"> America/Vancouver - PST</option>
-          </select>
-          <AppIcon
-            class="icon-select-arrow"
-            width="12"
-            icon="chevron-down"
-          ></AppIcon>
-        </div>
-      </section>
+      <!-- EventTimezonePicker component-->
+      <div class="timezone-picker">
+        <AppIcon class="icon-location" width="12" icon="location-pin"></AppIcon>
+        <select v-model="timezone" name="dropdown">
+          <option value="America/Vancouver"> America/Vancouver - PST</option>
+        </select>
+        <AppIcon
+          class="icon-select-arrow"
+          width="12"
+          icon="chevron-down"
+        ></AppIcon>
+      </div>
+    </section>
 
-      <!-- Event Card -->
-      <section class="event card">
+    <!-- Event Card -->
+    <section class="event card">
+      <section class="event-form">
         <h5>Event Name</h5>
 
         <input
@@ -102,10 +96,9 @@
             <textarea v-model="eventDescription" autofocus />
           </div>
         </section>
-
-        <AppButton class="btn-create" text="Create Event" type="submit" />
       </section>
-    </div>
+      <AppButton class="btn-create" text="Create Event" type="submit" />
+    </section>
   </form>
 </template>
 
@@ -194,6 +187,9 @@ select {
   background: rgb(255, 255, 255);
   box-shadow: var(--shadow-base);
   margin-bottom: 1rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 /* Input boxes */
@@ -209,22 +205,46 @@ select {
   background: rgb(255, 255, 255);
 }
 
+.event-form {
+  display: flex;
+  flex-direction: column;
+}
+
+@media screen and (min-width: 1150px) {
+  .card {
+    margin: 0;
+    padding: 3rem;
+  }
+}
+
 /*------------------------------------*\
   # MAIN COMPONENTS
 \*------------------------------------*/
 
-.main {
+.form {
   padding-left: 1rem;
   padding-right: 1rem;
   margin-top: 3rem;
+  max-width: 40rem;
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
 }
 
-.main-left,
-.main-right {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  align-items: center;
+@media screen and (min-width: 1150px) {
+  .form {
+    display: grid;
+    grid-template-areas:
+      "date time"
+      "date event";
+    width: 80vw;
+    height: 70vh;
+    max-width: 80rem;
+    margin: auto;
+    grid-gap: 1.5rem;
+    grid-template-rows: 1fr 2fr;
+    grid-template-columns: 3fr 2fr;
+  }
 }
 
 /*------------------------------------*\
@@ -233,17 +253,15 @@ select {
 
 /* ========= Date ========= */
 .date {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
+  grid-area: date;
   align-items: center;
-  height: 100%;
 }
 
 .date-picker {
   margin: 0 -1.25rem;
   margin-bottom: 2rem;
   max-width: 32rem;
+  padding: 0 1rem;
 }
 
 .heading {
@@ -257,10 +275,7 @@ select {
 /* ========= Time ========= */
 
 .time {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  width: 100%;
+  grid-area: time;
 }
 
 .time-picker {
@@ -304,9 +319,7 @@ select {
 /* ========= Event ========= */
 
 .event {
-  display: flex;
-  flex-direction: column;
-  height: 60%;
+  grid-area: event;
 }
 
 .event input {
