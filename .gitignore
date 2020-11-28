@@ -1,4 +1,4 @@
 .idea
 backend/ServiceAccountKey.json
-backend/credentials.json
+backend/GoogleAPI.json
 .DS_Store

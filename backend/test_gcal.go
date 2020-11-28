@@ -35,7 +35,7 @@ func GetGCalEvents(w http.ResponseWriter,
 	token := oauth2.Token{AccessToken: user.AccessToken}
 
 	//3. get user's calendar
-	srv := gcal.GetGCal("credentials.json", &token)
+	srv := gcal.GetGCal("GoogleAPI.json", &token)
 
 	//4. get all events
 	timeMin := time.Now()
@@ -50,7 +50,8 @@ func GetGCalEvents(w http.ResponseWriter,
 	}
 	for i, event := range events {
 		log.Printf("event %v: summary: %v, descr: %v, start: %v, end: %v", i,
-			event.Summary, event.Description, event.StartTime, event.EndTime)
+			event.Summary, event.Description, event.ConfirmedWindow.StartTime,
+			event.ConfirmedWindow.EndTime)
 	}
 
 	//5. send back all events
@@ -80,7 +81,7 @@ func TestUpdateCal(w http.ResponseWriter,
 
 	// update user's calendar
 	log.Println("updating calendar!")
-	u, err := gcal.UpdateCalendar(user)
+	u, err := gcal.UpdateCalendar("GoogleAPI.json", user)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		log.Fatalf("failed to update user's calendar: %v", err)
@@ -105,6 +106,8 @@ func TestConfirmEvent(w http.ResponseWriter,
 		return
 	}
 
+	//NOTE frontend also needs to send us confirmed start & end
+
 	//1. find event
 	event := &firebase.Event{FirebaseID: vars["id"]}
 	err := event.Get()
@@ -115,6 +118,8 @@ func TestConfirmEvent(w http.ResponseWriter,
 			http.StatusNotFound)
 		return
 	}
+
+	//NOTE we need to update the event here (to set confirmed start & end)
 
 	//2. find users associated with the event
 	userIDs := append(event.Owners, event.Users...)
@@ -134,7 +139,7 @@ func TestConfirmEvent(w http.ResponseWriter,
 
 		//3b. construct calendar srv
 		token := oauth2.Token{AccessToken: user.AccessToken}
-		srv := gcal.GetGCal("credentials.json", &token)
+		srv := gcal.GetGCal("GoogleAPI.json", &token)
 
 		//3c. create gcal event
 		_, err = gcal.CreateEvent(srv, event, userIDs)

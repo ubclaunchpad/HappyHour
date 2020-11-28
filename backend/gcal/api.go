@@ -109,7 +109,8 @@ func GetNextBlock(t time.Time) (time.Time, error) {
 	}
 }
 
-func GetFreeBlocks(startTime string, endTime string) ([]schema.Block, error) {
+func GetFreeBlocks(startTime string, endTime string, userId string) ([]schema.Block,
+	error) {
 	start, err := time.Parse(time.RFC3339, startTime)
 	if err != nil {
 		log.Printf("could not parse startTime!")
@@ -128,7 +129,7 @@ func GetFreeBlocks(startTime string, endTime string) ([]schema.Block, error) {
 		freeBlocks = append(freeBlocks, schema.Block{
 			StartTime: schema.Timestamp(s.Format(time.RFC3339)),
 			Users: []string{
-				"", //todo
+				userId,
 			},
 		})
 		s, err = GetNextBlock(s)
@@ -140,10 +141,10 @@ func GetFreeBlocks(startTime string, endTime string) ([]schema.Block, error) {
 	return freeBlocks, nil
 }
 
-func CreateCalendar(freeSlots []Slot) (*schema.Calendar, error) {
+func CreateCalendar(freeSlots []Slot, userId string) (*schema.Calendar, error) {
 	var allBlocks []schema.Block
 	for _, freeSlot := range freeSlots {
-		blocks, err := GetFreeBlocks(freeSlot.startTime, freeSlot.endTime)
+		blocks, err := GetFreeBlocks(freeSlot.startTime, freeSlot.endTime, userId)
 		if err != nil {
 			log.Printf("couldnt get blocks for a free slot!")
 			return nil, err
@@ -185,12 +186,12 @@ func GetGCal(filename string, token *oauth2.Token) *calendar.Service {
 	return srv
 }
 
-func UpdateCalendar(user *firebase.User) (*firebase.User, error){
+func UpdateCalendar(filename string, user *firebase.User) (*firebase.User, error){
 	//1. read access token
 	token := oauth2.Token{AccessToken: user.AccessToken}
 
 	//2. get user's calendar
-	srv := GetGCal("credentials.json", &token)
+	srv := GetGCal(filename, &token)
 
 	//3. get user's busy slots
 	timeMin := GetBlockStart(time.Now())
@@ -209,7 +210,8 @@ func UpdateCalendar(user *firebase.User) (*firebase.User, error){
 	free := GetFreeSlots(busy, min, max)
 
 	//5. convert free slots to Calendar
-	cal, err := CreateCalendar(free)
+	userId := user.FirebaseID
+	cal, err := CreateCalendar(free, userId)
 	if err != nil {
 		log.Printf("unable to save calendar of user: %v", err)
 		return nil, err
@@ -247,12 +249,12 @@ func CreateEvent(srv *calendar.Service, e *firebase.Event,
 		Summary: e.Summary,
 		Description: e.Description,
 		Start: &calendar.EventDateTime{
-			DateTime: e.StartTime,
+			DateTime: string(e.ConfirmedWindow.StartTime),
 		},
 		End: &calendar.EventDateTime{
-			DateTime: e.EndTime,
+			DateTime: string(e.ConfirmedWindow.EndTime),
 		},
-		Attendees: attendees, //need to get user emails from user id's TODO
+		Attendees: attendees,
 	}
 
 	_, err := srv.Events.Insert("primary", event).Do()
@@ -277,8 +279,10 @@ func GetEvents(srv *calendar.Service, timeMin string,
 		e := firebase.Event{
 			Summary: item.Summary,
 			Description: item.Description,
-			StartTime: item.Start.DateTime,
-			EndTime: item.End.DateTime,
+			ConfirmedWindow: schema.TimeWindow{
+				StartTime: schema.Timestamp(item.Start.DateTime),
+				EndTime: schema.Timestamp(item.End.DateTime),
+			},
 			Owners: []string{item.Creator.Email},
 			Users: attendees,
 		}

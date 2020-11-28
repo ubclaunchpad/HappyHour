@@ -28,4 +28,11 @@ Documented [here](https://firebase.google.com/docs/admin/setup#:~:text=The%20Adm
   
  NOTE: This file should be kept private, and
   shouldn't be committed.
+  
+## Google API Keys for Calendar Access
+Google oauth2 credentials need to be
+ downloaded from GCP:
+ 1. Go to APIs & Services tab on GCP 
+ 2. Download OAuth2.0 ClientIDs
+ 3. Save as `GoogleAPI.json` to root directory
  

@@ -36,7 +36,7 @@ COPY --from=builder /go/bin/app /go/bin/app
 COPY --from=builder /app/src/ServiceAccountKey.json /go/bin/ServiceAccountKey.json
 
 # Copy Google API keys from previous stage
-COPY --from=builder /app/src/credentials.json /go/bin/credentials.json
+COPY --from=builder /app/src/GoogleAPI.json /go/bin/GoogleAPI.json
 
 # Expose port (more for documentation than
 # anything, still needs -p 8080:8080)

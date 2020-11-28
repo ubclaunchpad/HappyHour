@@ -65,7 +65,7 @@ export default defineComponent({
               `firebaseID: ${firebaseID}, uname: ${uname}, email: ${email}`
             );
             axios
-              .post("http://localhost:8000/createUserCalendar", {
+              .post("", {
                 AccessToken: token,
                 FirebaseID: firebaseID,
                 Username: uname,

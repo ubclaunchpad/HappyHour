@@ -17,6 +17,11 @@ type User struct {
 	Calendar   Calendar // default user calendar
 }
 
+type TimeWindow struct {
+	StartTime Timestamp
+	EndTime   Timestamp
+}
+
 // Event describes a single event/meeting and includes.
 type Event struct {
 	FirebaseID string
@@ -24,10 +29,7 @@ type Event struct {
 	Owners     []string // FirebaseID of event owners
 
 	// time window during which event can be scheduled
-	ScheduleWindow struct {
-		StartTime Timestamp
-		EndTime   Timestamp
-	}
+	ScheduleWindow TimeWindow
 
 	Link string // link to this event
 
@@ -36,9 +38,12 @@ type Event struct {
 
 	Summary string
 	Description string
-	StartTime string //confirmed start time
-	EndTime string //confirmed end time
-	Confirmed bool //confirmed or not
+
+	// confirmed time window of the event
+	ConfirmedWindow TimeWindow
+
+	// confirmed or not
+	Confirmed bool
 }
 
 // Calendar describes a group of availabilities in 30min time blocks
