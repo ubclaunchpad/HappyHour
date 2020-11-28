@@ -2,28 +2,7 @@
   <div class="container">
     <!-- Left Arrow Icon -->
     <button class="navi-left" type="button" @click="prevMonth">
-      <svg
-        width="28"
-        height="28"
-        viewBox="0 0 28 28"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          d="M21 14H7"
-          stroke="#375786"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        />
-        <path
-          d="M14 21L7 14L14 7"
-          stroke="#375786"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        />
-      </svg>
+      <AppIcon icon="left-arrow" width="28"></AppIcon>
     </button>
 
     <!-- Main DatePicker Display -->
@@ -86,33 +65,14 @@
 
     <!-- Right Arrow Icon -->
     <button class="navi-right" type="button" @click="nextMonth">
-      <svg
-        width="28"
-        height="28"
-        viewBox="0 0 28 28"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          d="M7 14H21"
-          stroke="#375786"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        />
-        <path
-          d="M14 7L21 14L14 21"
-          stroke="#375786"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        />
-      </svg>
+      <AppIcon icon="right-arrow" width="28"></AppIcon>
     </button>
   </div>
 </template>
 
 <script>
+import AppIcon from "./AppIcon.vue";
+
 export default {
   // TODO: Style per design,  remove borders
   // TODO: Support drag & drop & multi-select -> ref CalendarDay.vue
@@ -123,12 +83,14 @@ export default {
   // TODO: Comment & clean up code
   // FIXME: Inconsistent sizing in each month
   name: "DatePicker",
+  components: {
+    AppIcon
+  },
   data() {
     return {
       currDate: new Date().getDate(),
       currMonthIndex: new Date().getMonth(),
-      currYear: new Date().getFullYear(),
-      dayShortNames: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
+      currYear: new Date().getFullYear()
     };
   },
   computed: {
@@ -140,6 +102,10 @@ export default {
           month: "long"
         }
       );
+    },
+
+    dayShortNames() {
+      return ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
     },
 
     // Returns array of overflowing dates in first week from the previous month
