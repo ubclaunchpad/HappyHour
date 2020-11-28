@@ -10,6 +10,7 @@ import RightArrow from "./app-icon/RightArrow.vue";
 import ChevronDown from "./app-icon/ChevronDown.vue";
 import Times from "./app-icon/Times.vue";
 import LocationPin from "./app-icon/LocationPin.vue";
+import Bars from "./app-icon/Bars.vue";
 
 const toCamelCase = (kebabCase: string) => {
   const words = kebabCase.split("-");
@@ -22,7 +23,8 @@ export default defineComponent({
     RightArrow,
     ChevronDown,
     Times,
-    LocationPin
+    LocationPin,
+    Bars
   },
   props: {
     icon: {
