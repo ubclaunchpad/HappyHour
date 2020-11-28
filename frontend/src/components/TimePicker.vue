@@ -39,7 +39,7 @@ export default defineComponent({
     }
   },
   methods: {
-    handleInput(evt) {
+    handleInput(evt: { target: { value: string } }) {
       const [hours, minutes] = evt.target.value.split(":").map(Number);
       this.$emit("update:modelValue", set(this.modelValue, { hours, minutes }));
     }
