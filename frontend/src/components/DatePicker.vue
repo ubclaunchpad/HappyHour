@@ -201,7 +201,7 @@ export default {
 \*------------------------------------*/
 
 .main {
-  margin: 0 5rem;
+  width: 100%;
 }
 
 /* Month & Year */

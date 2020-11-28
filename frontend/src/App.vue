@@ -21,6 +21,11 @@ export default defineComponent({
 @import "~normalize.css";
 @import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Sans&display=swap");
 /* Reset CSS in addition to Normalize.css*/
+
+:root {
+  --shadow-base: 0px 4px 4px rgba(0, 0, 0, 0.25);
+}
+
 * {
   margin: 0;
   padding: 0;

@@ -87,6 +87,8 @@ button {
   color: rgb(2, 15, 34);
   transition: all 0.2s ease-out;
   transform: translateX(100%);
+  box-shadow: var(--shadow-base);
+  z-index: 10;
 }
 
 .nav-open {
@@ -95,6 +97,7 @@ button {
 
 .router {
   margin-bottom: 0.5rem;
+  font-size: 1.5rem;
 }
 
 @media screen and (min-width: 768px) {
@@ -109,11 +112,13 @@ button {
     padding: 0;
     transform: translateX(0);
     display: flex;
+    box-shadow: none;
   }
 
   .router {
     margin-right: 1rem;
     margin-bottom: 0;
+    font-size: initial;
   }
 }
 

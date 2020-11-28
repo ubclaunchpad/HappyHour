@@ -1,5 +1,12 @@
 <template>
-  <input ref="input" type="time" required :value="time" @input="handleInput" />
+  <input
+    ref="input"
+    type="time"
+    required
+    :step="step"
+    :value="time"
+    @input="handleInput"
+  />
 </template>
 
 <script lang="ts">
@@ -26,6 +33,9 @@ export default defineComponent({
         minutes = "0" + minutes;
       }
       return `${hours}:${minutes}`;
+    },
+    step(): number {
+      return 60 * 30; // 30 minutes in seconds
     }
   },
   methods: {
@@ -39,7 +49,8 @@ export default defineComponent({
 
 <style scoped>
 input {
-  width: 12rem;
   text-align: center;
+  width: 100%;
+  appearance: none;
 }
 </style>

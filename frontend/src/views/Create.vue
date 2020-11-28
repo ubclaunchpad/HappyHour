@@ -4,7 +4,7 @@
     <div class="main-left">
       <!-- Date Card -->
       <section class="date card">
-        <h5>Pick the date</h5>
+        <h5 class="heading">Pick the date</h5>
         <!-- EventDateSelectors component -->
         <DatePicker
           v-if="isDatePickerEvent"
@@ -39,7 +39,7 @@
     <div class="main-right">
       <!-- Time  Card -->
       <section class="time card">
-        <h5>Pick the time</h5>
+        <h5 class="heading">Pick the time</h5>
 
         <!-- EventTimePicker component -->
         <div class="time-picker">
@@ -71,7 +71,12 @@
       <section class="event card">
         <h5>Event Name</h5>
 
-        <input v-model="eventTitle" type="text" required />
+        <input
+          v-model="eventTitle"
+          placeholder="My Awesome Event"
+          type="text"
+          required
+        />
 
         <button
           v-if="isHidden"
@@ -92,11 +97,7 @@
               type="button"
               @click="isHidden = true"
             >
-              <AppIcon
-                class="icon-select-arrow"
-                width="25"
-                icon="times"
-              ></AppIcon>
+              <AppIcon width="25" icon="times"></AppIcon>
             </button>
             <textarea v-model="eventDescription" autofocus />
           </div>
@@ -188,10 +189,11 @@ select {
 /* Card styling */
 .card {
   width: 100%;
-  padding: 1.75rem;
+  padding: 1.5rem;
   border-radius: 5px;
   background: rgb(255, 255, 255);
-  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  box-shadow: var(--shadow-base);
+  margin-bottom: 1rem;
 }
 
 /* Input boxes */
@@ -212,11 +214,9 @@ select {
 \*------------------------------------*/
 
 .main {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: center;
-  margin-top: 7.875rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  margin-top: 3rem;
 }
 
 .main-left,
@@ -225,10 +225,6 @@ select {
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
-  width: 560px; /*FIXME: */
-  height: 576px; /*FIXME: */
-  /* width: calc(100% / (1440 / 560)); /*560px for 1440px width*/
-  margin: 0 0.4375rem 0.875rem 0.4375rem;
 }
 
 /*------------------------------------*\
@@ -244,11 +240,16 @@ select {
   height: 100%;
 }
 
-.day-picker {
+.date-picker {
+  margin: 0 -1.25rem;
+  margin-bottom: 2rem;
+  max-width: 32rem;
 }
 
-.date-toggle {
+.heading {
+  margin-bottom: 1.5rem;
 }
+
 /*------------------------------------*\
   # RIGHT COMPONENTS
 \*------------------------------------*/
@@ -259,13 +260,17 @@ select {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  width: 100%;
 }
 
 .time-picker {
-  display: flex;
-  justify-content: space-between;
+  column-gap: 1rem;
+  row-gap: 0.5rem;
   align-items: center;
-  margin: 1.5rem 0;
+  justify-items: end;
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  margin-bottom: 1rem;
 }
 
 .timezone-picker {
@@ -305,7 +310,7 @@ select {
 }
 
 .event input {
-  margin: 1.5rem 0;
+  margin: 1rem 0;
 }
 
 .btn-add-desc {
@@ -341,14 +346,15 @@ select {
 /* Icon containers & icons*/
 .description-textarea-container {
   position: relative;
-  margin: 1.5rem 0;
+  margin: 1rem 0;
 }
 
 .btn-close {
   position: absolute;
-  top: 0.75rem;
-  right: 1rem;
+  top: 50%;
+  right: 0.5rem;
   cursor: pointer;
+  transform: translateY(-50%);
 }
 
 .btn-close:hover {
