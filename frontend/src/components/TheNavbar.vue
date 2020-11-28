@@ -22,7 +22,7 @@
         v-for="link in links"
         :key="link.path"
         :to="link.path"
-        class="router h6"
+        class="router"
         >{{ link.name }}
       </router-link>
     </nav>
@@ -63,6 +63,12 @@ button {
   background: none;
 }
 
+.open-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .close-nav {
   position: absolute;
   top: 1rem;
@@ -87,6 +93,10 @@ button {
   transform: translateX(0);
 }
 
+.router {
+  margin-bottom: 0.5rem;
+}
+
 @media screen and (min-width: 768px) {
   .nav-toggle {
     display: none;
@@ -103,6 +113,7 @@ button {
 
   .router {
     margin-right: 1rem;
+    margin-bottom: 0;
   }
 }
 
