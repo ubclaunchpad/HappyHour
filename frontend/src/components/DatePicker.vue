@@ -1,63 +1,147 @@
 <template>
   <div class="container">
-    <section>
-      <button @click="prevMonth">🢠</button>
-      <button @click="nextMonth">➪</button>
-    </section>
+    <!-- Left Arrow Icon -->
+    <button class="navi-left" type="button" @click="prevMonth">
+      <AppIcon icon="left-arrow" width="28"></AppIcon>
+    </button>
 
-    <section>
-      <h2>{{ currMonthName }}</h2>
-      <h2>{{ currYear }}</h2>
-    </section>
+    <!-- Main DatePicker Display -->
+    <div class="main">
+      <!-- Month & Year -->
+      <section class="month-year">
+        {{ currMonthName }}
+        {{ currYear }}
+      </section>
 
-    <section class="flex">
-      <p
-        class="text-center"
-        style="width:calc(100%/7)"
-        v-for="day in dayShortNames"
-        :key="day"
-      >
-        {{ day }}
-      </p>
-    </section>
+      <!-- Days -->
+      <section class="day-names">
+        <p
+          v-for="dayName in dayShortNames"
+          :key="dayName"
+          class="overline"
+          style="width:calc(100%/7)"
+        >
+          {{ dayName }}
+        </p>
+      </section>
 
-    <section class="flexwrap">
-      <p
-        class="text-center"
-        style="width:calc(100%/7)"
-        v-for="date in monthStartDate()"
-        :key="date"
-      ></p>
-      <p
-        class="text-center"
-        style="width:calc(100%/7)"
-        v-for="date in daysInMonth()"
-        :key="date"
-        :style="isCurrDate(date) ? 'font-bold text-orange-600' : ''"
-      >
-        {{ date }}
-      </p>
-    </section>
+      <!-- Previous overflow -->
+      <section class="dates-section">
+        <button
+          v-for="date in daysInPrevMonthOverflow"
+          :key="date"
+          class="overflow dates"
+          style="width:calc(100%/7)"
+          type="button"
+        >
+          {{ date }}
+        </button>
+
+        <!-- Viewing dates -->
+        <button
+          v-for="date in daysInMonth()"
+          :key="date"
+          class="dates subtitle2"
+          style="width:calc(100%/7)"
+          :class="isCurrDate(date) ? 'curr-date' : ''"
+          type="button"
+        >
+          {{ date }}
+        </button>
+
+        <!-- Next overlow -->
+        <button
+          v-for="date in daysInNextMonthOverflow"
+          :key="date"
+          class="overflow dates"
+          style="width:calc(100%/7)"
+          type="button"
+        >
+          {{ date }}
+        </button>
+      </section>
+    </div>
+    <!-- End Main DatePicker Display -->
+
+    <!-- Right Arrow Icon -->
+    <button class="navi-right" type="button" @click="nextMonth">
+      <AppIcon icon="right-arrow" width="28"></AppIcon>
+    </button>
   </div>
 </template>
 
 <script>
+import AppIcon from "./AppIcon.vue";
+
 export default {
+  // TODO: Style per design,  remove borders
+  // TODO: Support drag & drop & multi-select -> ref CalendarDay.vue
+  // TODO: Support drag drop multi-select cross months
+  // TODO: Store data -> props?
+  // TODO: Add typescripts
+  // TODO: Reconsider methods & computed
+  // TODO: Comment & clean up code
+  // FIXME: Inconsistent sizing in each month
+  name: "DatePicker",
+  components: {
+    AppIcon
+  },
   data() {
     return {
-      currDate: new Date().getUTCDate(),
+      currDate: new Date().getDate(),
       currMonthIndex: new Date().getMonth(),
-      currYear: new Date().getFullYear(),
-      dayShortNames: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
+      currYear: new Date().getFullYear()
     };
   },
+  computed: {
+    // Returns the full name of the viewing month
+    currMonthName() {
+      return new Date(this.currYear, this.currMonthIndex).toLocaleString(
+        "default",
+        {
+          month: "long"
+        }
+      );
+    },
+
+    dayShortNames() {
+      return ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+    },
+
+    // Returns array of overflowing dates in first week from the previous month
+    daysInPrevMonthOverflow() {
+      const lastDateOfPrevMonth = this.daysInMonth(); // 31
+
+      return [...Array(lastDateOfPrevMonth + 1).keys()].slice(
+        lastDateOfPrevMonth + 1 - this.monthStartDayIndex()
+      );
+    },
+
+    // Returns number of days overflowing into next month in the last week
+    daysInNextMonthOverflow() {
+      const lastDayNameIndex = new Date(
+        this.currYear,
+        this.currMonthIndex + 1,
+        0
+      ).getDay(); // 0 = Sun, 7 = Sat
+
+      return 6 - lastDayNameIndex;
+    }
+  },
+
   methods: {
+    // Return the number of days for the viewing month
     daysInMonth() {
       return new Date(this.currYear, this.currMonthIndex + 1, 0).getDate();
     },
-    monthStartDate() {
+
+    // Return the index of the starting dayName of the viewing month
+    // 0 = Sun, 7 = Sat
+    monthStartDayIndex() {
       return new Date(this.currYear, this.currMonthIndex).getDay();
     },
+
+    // Update currMonthIndex (used by currMonthName) with next month
     nextMonth() {
       if (this.currMonthIndex === 11) {
         this.currMonthIndex = 0;
@@ -66,6 +150,8 @@ export default {
         this.currMonthIndex++;
       }
     },
+
+    // Update currMonthIndex (used by currMonthName) with prev month
     prevMonth() {
       if (this.currMonthIndex === 0) {
         this.currMonthIndex = 11;
@@ -74,50 +160,120 @@ export default {
         this.currMonthIndex--;
       }
     },
-    isCurrDate(paramDateDay) {
+
+    // Return true if param is today's date
+    isCurrDate(paramDayNum) {
       const paramDate = new Date(
         this.currYear,
         this.currMonthIndex,
-        paramDateDay
+        paramDayNum
       ).toDateString();
       const currDate = new Date().toDateString();
+
       return paramDate === currDate;
-    }
-  },
-  computed: {
-    currMonthName() {
-      return new Date(this.currYear, this.currMonthIndex).toLocaleString(
-        "default",
-        {
-          month: "long"
-        }
-      );
     }
   }
 };
 </script>
 
 <style scoped>
-.flex {
+/*------------------------------------*\
+  # GLOBAL
+\*------------------------------------*/
+.container {
   display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  width: 100%;
+  position: relative;
 }
 
-.flexwrap {
+.overline {
+  font-weight: bold;
+}
+
+/*FIXME: To look into*/
+.subtitle2 {
+  font-weight: 500;
+}
+
+/*------------------------------------*\
+  # CALENDAR DATE PICKER COMPONENT
+\*------------------------------------*/
+
+.main {
+  width: 100%;
+  max-width: 20rem;
+}
+
+/* Month & Year */
+.month-year {
+  margin-bottom: 0.875rem;
+}
+
+/* Day Names */
+.day-names {
+  display: flex;
+  justify-content: center;
+
+  text-transform: uppercase;
+}
+
+/* Dates */
+.dates-section {
   display: flex;
   flex-wrap: wrap;
 }
 
-* {
-  text-align: center;
+.dates {
+  background: none;
+  padding: 0.7rem; /*FIXME: Only way to get perfect circle*/
+  margin: 0.3125rem 0;
+  border-radius: 50%;
 }
 
-.container {
-  margin: 2rem;
-  padding: 1rem;
-  width: 20%;
-  height: 50%;
-  border: 3px solid green;
-  margin-left: auto;
-  margin-right: auto;
+.dates:hover {
+  cursor: pointer;
+  background: rgba(55, 87, 134, 0.25);
+}
+
+.dates:focus {
+  background: rgba(55, 87, 134, 0.5);
+}
+
+.overflow {
+  color: rgba(213, 213, 213, 1);
+}
+
+.curr-date {
+  font-weight: bold;
+  background: rgba(55, 87, 134, 0.5);
+}
+
+/*------------------------------------*\
+  # DATE PICKER NAVIGATION
+\*------------------------------------*/
+
+.navi-left,
+.navi-right {
+  background: none;
+  border: none;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.navi-left:hover,
+.navi-right:hover {
+  cursor: pointer;
+}
+
+.navi-left {
+  left: 0;
+}
+
+.navi-right {
+  right: 0;
 }
 </style>

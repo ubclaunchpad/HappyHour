@@ -3,12 +3,17 @@
 </template>
 
 <script lang="ts">
+// TODO: Consider AppPrimaryButton & AppSecondaryButton
 import { defineComponent } from "vue";
 export default defineComponent({
   name: "AppButton",
   props: {
-    text: String
+    text: {
+      type: String,
+      required: true
+    }
   },
+  emits: ["update"],
   methods: {
     update() {
       this.$emit("update");
@@ -17,28 +22,17 @@ export default defineComponent({
 });
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 .button {
-  background: rgb(71, 96, 243);
-  border: 1px solid rgb(71, 96, 243);
-  box-sizing: border-box;
+  height: 2.5rem;
   border-radius: 5px;
-  padding: 10px 25px;
-
-  font-size: 16px;
-  line-height: 24px;
-  align-items: center;
-  letter-spacing: 0.12px;
-
-  color: rgb(255, 255, 255);
-
-  filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25));
+  border: 2px solid rgb(55, 87, 134);
+  background: rgb(255, 255, 255);
+  color: rgb(55, 87, 134);
+  cursor: pointer;
 }
 
 .button:hover {
-  cursor: pointer;
-  background: rgba(71, 96, 243, 0.8);
-  border: 1px solid rgba(71, 96, 243, 0.8);
+  background: rgba(255, 255, 255, 0.8);
 }
 </style>

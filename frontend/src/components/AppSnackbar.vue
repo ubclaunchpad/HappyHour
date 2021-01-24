@@ -1,19 +1,37 @@
 <!--Notification component shows the notification text
 Notification can be shown by usign v-if-->
 <template>
-  <div class="notification">
+  <div class="snackbar">
     <p class="msg">{{ text }}</p>
-    <i class="close" @click="update"></i>
+    <!--<i class="close" @click="update"></i>-->
+    <svg
+      class="close"
+      width="14"
+      height="14"
+      viewBox="0 0 14 14"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      @click="update"
+    >
+      <path
+        d="M14 1.41L12.59 0L7 5.59L1.41 0L0 1.41L5.59 7L0 12.59L1.41 14L7 8.41L12.59 14L14 12.59L8.41 7L14 1.41Z"
+        fill="white"
+      />
+    </svg>
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
 export default defineComponent({
-  name: "Notification",
+  name: "AppSnackbar",
   props: {
-    text: String
+    text: {
+      type: String,
+      required: true
+    }
   },
+  emits: ["update"],
   methods: {
     update() {
       this.$emit("update");
@@ -23,22 +41,14 @@ export default defineComponent({
 </script>
 
 <style scoped>
-.notification {
-  /*
-  position: relative;
-  top: 10vh;
-  background: rgb(71, 96, 243);
-  
-  border-radius: 4px;
-  */
-
+.snackbar {
   position: absolute;
   width: 480px;
   height: 56px;
   right: 0;
   top: 1.5rem;
-  color: RGB(255, 255, 255);
-  background: RGB(71, 96, 243);
+  color: rgbB(255, 255, 255);
+  background: rgb(55, 87, 134);
   border-radius: 4px;
   display: flex;
   align-items: center;
@@ -46,14 +56,7 @@ export default defineComponent({
 }
 
 .msg {
-  font-family: Open Sans;
-  font-style: normal;
-  font-weight: normal;
-  font-size: 16px;
-  line-height: 0%;
-
-  letter-spacing: 0.5px;
-  color: RGB(255, 255, 255);
+  color: rgb(255, 255, 255);
   padding: 1rem;
 }
 
@@ -71,6 +74,7 @@ export default defineComponent({
 .close:hover {
   opacity: 0.3;
 }
+
 .close:before,
 .close:after {
   position: absolute;
@@ -80,11 +84,5 @@ export default defineComponent({
   height: 21px;
   width: 2px;
   background-color: RGB(255, 255, 255);
-}
-.close:before {
-  transform: rotate(45deg);
-}
-.close:after {
-  transform: rotate(-45deg);
 }
 </style>

@@ -1,13 +1,11 @@
 <template>
-  <h1><em>When3Meet</em></h1>
+  <h4 class="logo">logo</h4>
 </template>
 
-<script>
-export default {};
-</script>
-
 <style scoped>
-h1 {
-  font-size: 1.25rem;
+.logo {
+  color: rgba(55, 87, 134, 1);
+  font-size: 1.5rem;
+  font-weight: bold;
 }
 </style>

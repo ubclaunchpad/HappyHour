@@ -1,74 +1,75 @@
 <template>
-  <div class="container">
-    <header class="heading">
-      <h3>{{ title }}</h3>
+  <div class="page-container">
+    <header>
+      <h5>{{ title }}</h5>
     </header>
 
-    <section class="main">
-      <div class="main-flex-child">
-        <div class="sub-heading">
-          <h3>Fill out your availability</h3>
-        </div>
+    <div class="main">
+      <div class="main-left">
+        <h5>Fill out your availability</h5>
 
-        <div class="calendar">
-          <Calendar
-            v-model:calendar="calendar"
-            :startTime="start"
-            :endTime="end"
-          />
-        </div>
+        <Calendar
+          v-model:calendar="calendar"
+          :start-time="start"
+          :end-time="end"
+          class="calendar"
+        />
 
-        <div class="timezone">(Time displayed in {{ timezone }})</div>
+        <AppSnackbar
+          v-show="notificationVisible"
+          :text="notificationText"
+          @update="notificationVisible = false"
+        />
+
+        <div class="timezone caption">(Time displayed in {{ timezone }})</div>
 
         <section class="toggle-buttons">
           <AppToggleInternalText
             v-model:checked="displayGroupAvail"
+            left-text="My Availability"
+            right-text="Group Availability"
             @update="switchCalendar()"
-            leftText="My Availability"
-            rightText="Group Availability"
           />
           <div class="buttons">
             <AppButton
               class="btn"
-              @update="handleSave()"
               text="Save Response"
+              @update="handleSave()"
             />
             <AppButton
               class="btn"
-              @update="copyLink()"
               text="Copy Event Link"
+              @update="copyLink()"
             />
           </div>
         </section>
       </div>
-
-      <div class="respondents">
-        <EventRespondents v-bind:respondents="['name1', 'name2', 'name3']" />
+      <div class="main-right">
+        <EventRespondents />
       </div>
-      <AppNotification
-        v-show="notificationVisible"
-        @update="this.notificationVisible = false"
-        :text="notificationText"
-      />
-    </section>
+    </div>
   </div>
 </template>
 
 <script lang="ts">
+//FIXME: AppSnackbar location
+//FIXME: Layout
+//FIXME: Multiple timers clashing in AppSnackbar notifications
 import { defineComponent } from "vue";
 import AppButton from "@/components/AppButton.vue";
 import AppToggleInternalText from "@/components/AppToggleInternalText.vue";
 import Calendar from "@/components/Calendar.vue";
 import EventRespondents from "@/components/EventRespondents.vue";
-import AppNotification from "@/components/AppNotification.vue";
+import AppSnackbar from "@/components/AppSnackbar.vue";
 
 const start = new Date("November 2, 2020 09:00:00");
 const end = new Date("November  8, 2020 21:30:00");
 
 export default defineComponent({
+  name: "Event",
   components: {
     AppButton,
-    AppNotification,
+    AppSnackbar,
     AppToggleInternalText,
     Calendar,
     EventRespondents
@@ -133,33 +134,61 @@ export default defineComponent({
 </script>
 
 <style scoped>
-.container {
-  margin: 1rem 10rem;
+/*------------------------------------*\
+  # GLOBAL
+\*------------------------------------*/
+
+/* Override Global Heading */
+header h5 {
+  text-align: center;
+  font-weight: 600;
 }
 
-.calendar {
-  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
-  background: rgb(255, 255, 255);
-  margin: 0;
-  padding: 0;
-  border-radius: 10px;
-  /*
-  justify-content: center;
-  align-items: center;
-  */
+h5 {
+  font-weight: 500;
 }
+
+.page-container {
+  margin-top: 0.5625rem;
+}
+/*------------------------------------*\
+  # MAIN COMPONENTS
+\*------------------------------------*/
 
 .main {
   display: flex;
   justify-content: center;
 }
 
-.main-flex-child {
-  flex-grow: 4;
-  /*margin: auto;*/
-  align-items: flex-start;
-  padding: 0 5rem;
+.main-left,
+.main-right {
   justify-content: center;
+  align-items: flex-start;
+  /*margin: auto;*/
+}
+
+.main-left {
+  flex-grow: 4;
+}
+
+/*------------------------------------*\
+  # LEFT COMPONENTS
+\*------------------------------------*/
+
+.calendar {
+  margin: 0;
+  padding: 0;
+  border-radius: 10px;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  background: rgb(255, 255, 255);
+}
+
+.timezone {
+  padding: 0 0 1rem 0;
+  margin: 0.5rem;
+  text-align: center;
+  letter-spacing: 0.4px;
+  color: rgb(125, 125, 125);
 }
 
 .toggle-buttons {
@@ -175,14 +204,7 @@ export default defineComponent({
 }
 
 .btn {
+  width: 17rem;
   margin: 0 1rem;
-}
-
-.timezone {
-  color: rgb(129, 146, 158);
-  padding: 0 0 1rem 0;
-  font-size: 12px;
-  font-family: "Open Sans";
-  margin: 0.5rem;
 }
 </style>

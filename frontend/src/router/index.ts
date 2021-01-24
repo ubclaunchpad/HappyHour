@@ -1,10 +1,10 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
-import Event from "../views/Event.vue";
+import Create from "../views/Create.vue";
 
 export const routes: Array<RouteRecordRaw> = [
   {
     path: "/",
-    component: Event
+    component: Create
   },
   {
     path: "/datepicker",
@@ -17,19 +17,14 @@ export const routes: Array<RouteRecordRaw> = [
     component: () => import("../views/Event.vue")
   },
   {
-    path: "/signup",
-    name: "Sign Up",
-    component: () => import("../views/Signup.vue")
-  },
-  {
     path: "/login",
     name: "Log In",
     component: () => import("../views/Login.vue")
   },
   {
-    path: "/faq",
-    name: "FAQ",
-    component: () => import("../views/Placeholder.vue")
+    path: "/signup",
+    name: "Sign Up",
+    component: () => import("../views/Signup.vue")
   },
   {
     path: "/about",

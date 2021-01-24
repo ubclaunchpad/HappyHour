@@ -1,70 +1,148 @@
 <template>
   <header class="container">
-    <button class="logo" @click="$router.push('/')">
+    <router-link class="logo" to="/">
       <TheLogo />
+    </router-link>
+    <button
+      aria-label="open navigation"
+      class="nav-toggle open-nav"
+      @click="isNavOpen = true"
+    >
+      <AppIcon icon="bars" />
     </button>
-    <nav>
+    <nav :class="['nav', { 'nav-open': isNavOpen }]">
+      <button
+        aria-label="close navigation"
+        class="nav-toggle close-nav"
+        @click="isNavOpen = false"
+      >
+        <AppIcon icon="times" width="32" />
+      </button>
       <router-link
-        class="router"
         v-for="link in links"
         :key="link.path"
         :to="link.path"
+        class="router"
         >{{ link.name }}
       </router-link>
     </nav>
   </header>
 </template>
 
-<script>
+<script lang="ts">
 import { defineComponent } from "vue";
+
+import TheLogo from "@/components/TheLogo.vue";
+import AppIcon from "@/components/AppIcon.vue";
 import { routes } from "../router";
-import TheLogo from "./TheLogo";
 
 export default defineComponent({
-  components: { TheLogo },
-  setup() {
-    return { links: routes };
+  name: "TheNavbar",
+  components: { AppIcon, TheLogo },
+  data() {
+    return {
+      isNavOpen: false
+    };
+  },
+  computed: {
+    links() {
+      return routes;
+    }
   }
 });
 </script>
 
 <style scoped>
+a {
+  text-decoration: none;
+  display: block;
+  color: inherit;
+}
+
+button {
+  background: none;
+}
+
+.open-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.close-nav {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+}
+
+.nav {
+  position: fixed;
+  height: 100vh;
+  background: white;
+  top: 0;
+  right: 0;
+  width: 60vw;
+  padding: 2rem;
+  padding-top: 4rem;
+  color: rgb(2, 15, 34);
+  transition: all 0.2s ease-out;
+  transform: translateX(100%);
+  box-shadow: var(--shadow-base);
+  z-index: 10;
+}
+
+.nav-open {
+  transform: translateX(0);
+}
+
+.router {
+  margin-bottom: 0.5rem;
+  font-size: 1.5rem;
+}
+
+@media screen and (min-width: 768px) {
+  .nav-toggle {
+    display: none;
+  }
+
+  .nav {
+    position: relative;
+    width: auto;
+    height: auto;
+    padding: 0;
+    transform: translateX(0);
+    display: flex;
+    box-shadow: none;
+  }
+
+  .router {
+    margin-right: 1rem;
+    margin-bottom: 0;
+    font-size: initial;
+  }
+}
+
 .container {
   display: flex;
   flex-wrap: wrap;
-  align-items: center;
   justify-content: space-between;
+  align-items: center;
+  padding: 1.25rem;
   background-color: rgb(255, 255, 255);
-  padding: 1rem 1.875rem;
-  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
 }
 
+/* Logo Button */
 .logo {
-  border: none;
   background: none;
   cursor: pointer;
-  color: rgb(48, 48, 48);
 }
 
 .logo:hover {
-  color: rgb(71, 96, 243);
-}
-
-/* Removed button border on focus - may be an  accessibility issues */
-.logo:focus {
-  outline: 0 !important;
-}
-
-/* Router Links */
-.router {
-  text-decoration: none;
-  font-weight: bold;
-  padding: 0 0.5rem;
-  color: rgb(48, 48, 48);
+  color: rgba(55, 87, 134, 0.8);
 }
 
 /* Highlight on active router page */
 .router.router-link-exact-active {
-  color: rgb(71, 96, 243);
+  color: rgb(55, 87, 134);
 }
 </style>
