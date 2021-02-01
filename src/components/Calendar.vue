@@ -2,7 +2,7 @@
   <div class="calendar">
     <div class="times">
       <header>Times</header>
-      <div class="time" v-for="time in timeList" :key="`calendar-${time}`">
+      <div v-for="time in timeList" :key="`calendar-${time}`" class="time">
         {{ time }}
       </div>
     </div>
