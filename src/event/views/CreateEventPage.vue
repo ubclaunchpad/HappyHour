@@ -124,13 +124,12 @@ import { set } from "date-fns";
 import AppButton from "@/components/AppButton.vue";
 import AppToggleExternalText from "@/components/AppToggleExternalText.vue";
 import AppToggleInternalText from "@/components/AppToggleInternalText.vue";
-import DatePicker from "@/components/DatePicker.vue";
-import DayPicker from "@/components/DayPicker.vue";
 import AppIcon from "@/components/AppIcon.vue";
-import TimePicker from "@/components/TimePicker.vue";
+import DatePicker from "../components/DatePicker.vue";
+import DayPicker from "../components/DayPicker.vue";
+import TimePicker from "../components/TimePicker.vue";
 
 export default defineComponent({
-  name: "Create",
   components: {
     AppButton,
     AppIcon,

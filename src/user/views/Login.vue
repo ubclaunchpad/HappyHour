@@ -1,18 +1,19 @@
 <template>
-  <div class="signup"><SignupPage /></div>
+  <div class="login"><LoginPage /></div>
 </template>
 
 <script>
-import SignupPage from "@/components/SignupPage.vue";
+import LoginPage from "../components/LoginPage.vue";
+
 export default {
   components: {
-    SignupPage
+    LoginPage
   }
 };
 </script>
 
 <style>
-.signup {
+.login {
   align-items: center;
   align-content: center;
 }

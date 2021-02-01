@@ -23,13 +23,18 @@
 import { eachDayOfInterval, getHours, isSameDay } from "date-fns";
 import { defineComponent, PropType } from "vue";
 
-import { Block, Calendar, Time } from "@/types";
-import { formatHour } from "@/utils/time";
 import CalendarDay from "./CalendarDay.vue";
+import { Block, Calendar } from "../client";
+import { formatHour } from "../utils";
 
 interface Day {
   date: string;
   blocks: Block[];
+}
+
+interface Time {
+  hour: number;
+  minutes: number;
 }
 
 const Interval = 30; // minutes

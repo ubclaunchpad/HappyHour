@@ -19,8 +19,8 @@
 import { format, parse } from "date-fns";
 import { defineComponent, PropType } from "vue";
 
-import { Block, Time } from "@/types";
-import { toTime } from "@/utils/time";
+import { Block, Time } from "../client";
+import { toTime } from "../utils";
 
 export default defineComponent({
   props: {

@@ -1,6 +1,6 @@
 <template>
-  <div class="login">
-    <div class="heading">Log In</div>
+  <div class="signup">
+    <div class="heading">Sign up</div>
     <div class="p1">
       <p>Username/Email:</p>
       <input v-model="username" class="input" />
@@ -8,19 +8,16 @@
       <input v-model="password" class="input" />
     </div>
     <div class="button">
-      <AppButton text="Log in" @update="logIn()" />
-    </div>
-    <div class="button">
-      <AppButton text="Log in with Google Account" @update="logInViaGoogle()" />
+      <AppButton text="Sign up" @update="signUp()" />
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { Auth } from "../auth";
-import firebase from "firebase/app";
 import { defineComponent } from "vue";
 import AppButton from "@/components/AppButton.vue";
+import { Auth } from "../client";
+
 export default defineComponent({
   components: {
     AppButton
@@ -32,9 +29,9 @@ export default defineComponent({
     };
   },
   methods: {
-    async logIn() {
+    async signUp() {
       try {
-        const user = Auth.signInWithEmailAndPassword(
+        const user = Auth.createUserWithEmailAndPassword(
           this.username,
           this.password
         );
@@ -42,24 +39,6 @@ export default defineComponent({
       } catch (err) {
         console.error("ERR: " + err);
       }
-    },
-    logInViaGoogle() {
-      const provider = new firebase.auth.GoogleAuthProvider();
-      provider.addScope("profile");
-      provider.addScope("email");
-      firebase
-        .auth()
-        .signInWithPopup(provider)
-        .then(function(result) {
-          if (result.credential) {
-            const credential = result.credential as firebase.auth.OAuthCredential;
-            const token = credential.accessToken;
-            console.log("OK - OAuth Token: " + token);
-          }
-        })
-        .catch(function(err) {
-          console.error("ERR: " + err);
-        });
     }
   }
 });
@@ -87,7 +66,7 @@ export default defineComponent({
   padding-top: 10px;
   margin-bottom: 10px;
 }
-.login {
+.signup {
   position: absolute;
   width: 556px;
   height: 484px;

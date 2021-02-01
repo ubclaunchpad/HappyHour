@@ -58,15 +58,14 @@
 import { defineComponent } from "vue";
 import AppButton from "@/components/AppButton.vue";
 import AppToggleInternalText from "@/components/AppToggleInternalText.vue";
-import Calendar from "@/components/Calendar.vue";
-import EventRespondents from "@/components/EventRespondents.vue";
 import AppSnackbar from "@/components/AppSnackbar.vue";
+import Calendar from "@/calendar/components/Calendar.vue";
+import EventRespondents from "../components/EventRespondents.vue";
 
 const start = new Date("November 2, 2020 09:00:00");
 const end = new Date("November  8, 2020 21:30:00");
 
 export default defineComponent({
-  name: "Event",
   components: {
     AppButton,
     AppSnackbar,
