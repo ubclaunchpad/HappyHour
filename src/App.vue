@@ -6,24 +6,34 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
-import TheNavbar from "./components/TheNavbar.vue";
+import { defineComponent } from 'vue'
+import TheNavbar from './components/TheNavbar.vue'
 
 export default defineComponent({
-  name: "App",
+  name: 'App',
   components: {
     TheNavbar
   }
-});
+})
 </script>
 
 <style>
-@import "~normalize.css";
-@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Sans&display=swap");
+@import '~normalize.css';
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans&display=swap');
 /* Reset CSS in addition to Normalize.css*/
 
 :root {
   --shadow-base: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  --color-text-primary: #020f22;
+  --color-text-secondary: #81929e;
+  --color-primary: #375786;
+  --color-secondary: #8fc0c6;
+  --color-background: #f2f7fa;
+  --color-disabled: #c4c4c4;
+  --color-failure: #cf5c36;
+  --color-success: #acc196;
+  --color-card: #fffffc;
+  --color-border: #c0cbd2;
 }
 
 * {
@@ -41,7 +51,7 @@ ul {
 
 /* Global Class Styling */
 #app {
-  font-family: "Open Sans", sans-serif;
+  font-family: 'Open Sans', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: rgba(2, 15, 34, 1);
