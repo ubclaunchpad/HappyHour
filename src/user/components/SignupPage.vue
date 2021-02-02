@@ -15,7 +15,7 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import AppButton from "@/components/AppButton.vue";
+import AppButton from "@/common/AppButton.vue";
 import { Auth } from "../client";
 
 export default defineComponent({

@@ -32,8 +32,8 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 
-import TheLogo from "@/components/TheLogo.vue";
-import AppIcon from "@/components/AppIcon.vue";
+import TheLogo from "@/common/TheLogo.vue";
+import AppIcon from "@/common/AppIcon.vue";
 import { routes } from "../router";
 
 export default defineComponent({

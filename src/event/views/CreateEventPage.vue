@@ -121,10 +121,10 @@
 import { defineComponent } from "vue";
 import { set } from "date-fns";
 
-import AppButton from "@/components/AppButton.vue";
-import AppToggleExternalText from "@/components/AppToggleExternalText.vue";
-import AppToggleInternalText from "@/components/AppToggleInternalText.vue";
-import AppIcon from "@/components/AppIcon.vue";
+import AppButton from "@/common/AppButton.vue";
+import AppToggleExternalText from "@/common/AppToggleExternalText.vue";
+import AppToggleInternalText from "@/common/AppToggleInternalText.vue";
+import AppIcon from "@/common/AppIcon.vue";
 import DatePicker from "../components/DatePicker.vue";
 import DayPicker from "../components/DayPicker.vue";
 import TimePicker from "../components/TimePicker.vue";

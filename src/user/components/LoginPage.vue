@@ -20,7 +20,7 @@
 import firebase from "firebase/app";
 import { defineComponent } from "vue";
 import { Auth } from "../client";
-import AppButton from "@/components/AppButton.vue";
+import AppButton from "@/common/AppButton.vue";
 
 export default defineComponent({
   components: {

@@ -56,9 +56,9 @@
 //FIXME: Layout
 //FIXME: Multiple timers clashing in AppSnackbar notifications
 import { defineComponent } from "vue";
-import AppButton from "@/components/AppButton.vue";
-import AppToggleInternalText from "@/components/AppToggleInternalText.vue";
-import AppSnackbar from "@/components/AppSnackbar.vue";
+import AppButton from "@/common/AppButton.vue";
+import AppToggleInternalText from "@/common/AppToggleInternalText.vue";
+import AppSnackbar from "@/common/AppSnackbar.vue";
 import Calendar from "@/calendar/components/Calendar.vue";
 import EventRespondents from "../components/EventRespondents.vue";
 

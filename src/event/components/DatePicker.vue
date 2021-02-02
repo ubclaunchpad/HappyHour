@@ -71,7 +71,7 @@
 </template>
 
 <script>
-import AppIcon from "./AppIcon.vue";
+import AppIcon from "@/common/AppIcon.vue";
 
 export default {
   // TODO: Style per design,  remove borders
