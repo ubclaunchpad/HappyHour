@@ -4,6 +4,10 @@
 
 ### Project setup
 
+First, make sure you have your local environment variables set up. To get access to the necessary keys, check the pins in the `#tm-when3meet` channel on Slack. Copy that file and save it as `.env.development.local` in the root directory.
+
+Next, install dependencies:
+
 ```
 yarn install
 ```
