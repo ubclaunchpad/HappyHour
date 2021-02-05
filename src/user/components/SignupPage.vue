@@ -2,13 +2,22 @@
   <div class="signup">
     <div class="heading">Sign up</div>
     <div class="p1">
-      <p>Username/Email:</p>
-      <input v-model="username" class="input" />
+      <p>Email:</p>
+      <input v-model="email" class="input" />
       <p>Password:</p>
       <input v-model="password" class="input" />
     </div>
     <div class="button">
       <AppButton text="Sign up" @update="signUp()" />
+    </div>
+    <div class="button">
+      <AppButton text="Login" @update="login()" />
+    </div>
+    <div class="button">
+      <AppButton text="Logout" @update="logout()" />
+    </div>
+    <div class="button">
+      <AppButton text="Delete" @update="deleteUser()" />
     </div>
   </div>
 </template>
@@ -16,7 +25,7 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import AppButton from "@/common/AppButton.vue";
-import { Auth } from "../client";
+import client from "../client";
 
 export default defineComponent({
   components: {
@@ -24,21 +33,22 @@ export default defineComponent({
   },
   data() {
     return {
-      username: "",
+      email: "",
       password: ""
     };
   },
   methods: {
     async signUp() {
-      try {
-        const user = Auth.createUserWithEmailAndPassword(
-          this.username,
-          this.password
-        );
-        console.log("OK - Token: " + user);
-      } catch (err) {
-        console.error("ERR: " + err);
-      }
+      client.createUser(this.email, this.password);
+    },
+    async login() {
+      client.login(this.email, this.password);
+    },
+    async logout() {
+      client.logout();
+    },
+    async deleteUser() {
+      client.deleteUser();
     }
   }
 });
