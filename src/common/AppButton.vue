@@ -1,5 +1,5 @@
 <template>
-  <button :class="'classname'" @click="update">{{ text }}</button>
+  <button :class="'btn-primary'" @click="update">{{ text }}</button>
 </template>
 
 <script lang="ts">
