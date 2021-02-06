@@ -32,11 +32,13 @@
           />
           <div class="buttons">
             <AppButton
+              :class="'btn-secondary'"
               class="btn"
               text="Save Response"
               @update="handleSave()"
             />
             <AppButton
+              :class="'btn-secondary'"
               class="btn"
               text="Copy Event Link"
               @update="copyLink()"

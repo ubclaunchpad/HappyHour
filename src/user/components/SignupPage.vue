@@ -8,7 +8,14 @@
       <input v-model="password" class="input" />
     </div>
     <div class="button">
-      <AppButton text="Sign up" @update="signUp()" />
+      <AppButton :class="'btn-primary'" text="Log in" @update="logIn()" />
+    </div>
+    <div class="button">
+      <AppButton
+        :class="'btn-secondary'"
+        text="Log in with Google Account"
+        @update="logInViaGoogle()"
+      />
     </div>
   </div>
 </template>
