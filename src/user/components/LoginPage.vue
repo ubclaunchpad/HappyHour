@@ -19,7 +19,7 @@
 <script lang="ts">
 import firebase from "firebase/app";
 import { defineComponent } from "vue";
-import { Auth } from "../client";
+import client from "../client";
 import AppButton from "@/common/AppButton.vue";
 
 export default defineComponent({
@@ -34,15 +34,9 @@ export default defineComponent({
   },
   methods: {
     async logIn() {
-      try {
-        const user = Auth.signInWithEmailAndPassword(
-          this.username,
-          this.password
-        );
-        console.log("OK - Token: " + user);
-      } catch (err) {
-        console.error("ERR: " + err);
-      }
+      client.login(this.username, this.password).then(() => {
+        window.location.href = "/";
+      });
     },
     logInViaGoogle() {
       const provider = new firebase.auth.GoogleAuthProvider();
