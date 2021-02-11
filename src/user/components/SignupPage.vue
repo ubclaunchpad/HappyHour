@@ -10,15 +10,6 @@
     <div class="button">
       <AppButton text="Sign up" @update="signUp()" />
     </div>
-    <div class="button">
-      <AppButton text="Login" @update="login()" />
-    </div>
-    <div class="button">
-      <AppButton text="Logout" @update="logout()" />
-    </div>
-    <div class="button">
-      <AppButton text="Delete" @update="deleteUser()" />
-    </div>
   </div>
 </template>
 
@@ -38,17 +29,8 @@ export default defineComponent({
     };
   },
   methods: {
-    async signUp() {
+    signUp() {
       client.createUser(this.email, this.password);
-    },
-    async login() {
-      client.login(this.email, this.password);
-    },
-    async logout() {
-      client.logout();
-    },
-    async deleteUser() {
-      client.deleteUser();
     }
   }
 });
