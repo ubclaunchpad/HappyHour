@@ -1,4 +1,8 @@
 <template>
+  <div style="margin: 20rem">
+    <TextInput placeholder="test placeholder" type="textarea" />
+  </div>
+
   <form class="form">
     <!-- Left Components -->
     <!-- Date Card -->
@@ -121,6 +125,7 @@
 import { defineComponent } from "vue";
 import { set } from "date-fns";
 
+import TextInput from "@/common/TextInput.vue";
 import AppButton from "@/common/AppButton.vue";
 import AppToggleExternalText from "@/common/AppToggleExternalText.vue";
 import AppToggleInternalText from "@/common/AppToggleInternalText.vue";
@@ -137,7 +142,8 @@ export default defineComponent({
     AppToggleInternalText,
     DatePicker,
     DayPicker,
-    TimePicker
+    TimePicker,
+    TextInput
   },
 
   data() {
