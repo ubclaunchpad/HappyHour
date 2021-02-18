@@ -124,7 +124,7 @@
           <AppButton
             :class="'btn-primary'"
             class="btn-create"
-            text="Create Event"
+            content="Create Event"
             type="submit"
           />
         </div>
@@ -135,10 +135,10 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import AppButton from "@/components/AppButton.vue";
-import AppToggleExternalText from "@/components/AppToggleExternalText.vue";
-import EventDatePicker from "@/components/EventDatePicker.vue";
-import EventDayPicker from "@/components/EventDayPicker.vue";
+import AppButton from "@/common/AppButton.vue";
+import AppToggleExternalText from "@/common/AppToggleExternalText.vue";
+import EventDatePicker from "@/event/components/DatePicker.vue";
+import EventDayPicker from "@/event/components/DayPicker.vue";
 
 export default defineComponent({
   //TODO: Store data -> props?

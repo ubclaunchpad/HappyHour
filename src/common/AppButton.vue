@@ -1,5 +1,5 @@
 <template>
-  <button :class="'btn-primary'" @click="update">{{ text }}</button>
+  <button :class="'btn-primary'" @click="update">{{ content }}</button>
 </template>
 
 <script lang="ts">
@@ -7,7 +7,10 @@ import { defineComponent } from "vue";
 export default defineComponent({
   name: "AppButton",
   props: {
-    text: String
+    content: {
+      type: null,
+      default: null
+    }
   },
   methods: {
     update() {
