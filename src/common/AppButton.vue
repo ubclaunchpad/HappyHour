@@ -1,5 +1,7 @@
 <template>
-  <button :class="'btn-primary'" @click="update">{{ content }}</button>
+  <button :class="'btn-primary'" @click="update">
+    <slot>{{ content }}</slot>
+  </button>
 </template>
 
 <script lang="ts">
