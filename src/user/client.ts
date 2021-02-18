@@ -1,7 +1,9 @@
-import { app, db } from "@/db";
+import { db } from "@/db";
 import { Calendar } from "@/calendar/client";
+import firebase from "firebase/app";
+import "firebase/auth";
 
-const Auth = app.auth();
+const Auth = firebase.auth();
 
 export interface User {
   username: string;
@@ -9,16 +11,19 @@ export interface User {
   // calendar: Calendar;
 }
 
-// TODO: Fill this in with methods
+function saveUserToDb(user: firebase.User) {
+  db.ref("users/" + user.uid).set({
+    username: user.email,
+    email: user.email
+  });
+}
+
 const client = {
   createUser(email: string, password: string) {
     try {
       const user = Auth.createUserWithEmailAndPassword(email, password).then(
         user => {
-          db.ref("users/" + user.user?.uid).set({
-            username: "placeholder",
-            email: email
-          });
+          user.user && saveUserToDb(user.user);
         }
       );
       console.log("OK - Token: " + user);
@@ -34,6 +39,29 @@ const client = {
       })
       .catch(err => {
         console.log(err);
+      });
+  },
+  googleLogin() {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    return firebase
+      .auth()
+      .signInWithPopup(provider)
+      .then(result => {
+        if (result.credential) {
+          const credential = result.credential as firebase.auth.OAuthCredential;
+          const token = credential.accessToken;
+          console.log("OK - OAuth Token: " + token);
+        }
+        if (result.user != null) {
+          db.ref("users/" + result.user.uid).once("value", async snapshot => {
+            if (!snapshot.val()) {
+              result.user && saveUserToDb(result.user);
+            }
+          });
+        }
+      })
+      .catch(function(err) {
+        console.error("ERR: " + err);
       });
   },
   logout() {
