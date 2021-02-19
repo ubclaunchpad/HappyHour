@@ -1,6 +1,6 @@
 <template>
   <div style="margin: 20rem">
-    <TextInput placeholder="test placeholder" type="textarea" />
+    <TextInput placeholder="test placeholder" type="inputs" />
   </div>
 
   <form class="form">
