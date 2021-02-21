@@ -14,6 +14,7 @@ export default defineComponent({
       default: null
     }
   },
+  emits: ["update"],
   methods: {
     update() {
       this.$emit("update");
