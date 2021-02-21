@@ -3,6 +3,13 @@ import { Calendar } from "@/calendar/client";
 import firebase from "firebase/app";
 import "firebase/auth";
 
+const googleCalendarClient = {
+  apiKey: process.env.VUE_APP_GOOGLE_API_KEY,
+  clientId: process.env.VUE_APP_GOOGLE_CLIENT_ID,
+  discoveryDocs: [process.env.VUE_APP_GOOGLE_DISCOVERY_DOC],
+  scope: process.env.VUE_APP_GOOGLE_SCOPE
+};
+
 const Auth = firebase.auth();
 
 export interface User {
@@ -26,9 +33,11 @@ const client = {
           user.user && saveUserToDb(user.user);
         }
       );
-      console.log("OK - Token: " + user);
+      console.log("OK - Token: ");
+      console.log(user);
     } catch (err) {
       console.error("ERR: " + err);
+      // we should delete the user account here if we cannot save the user to db!
     }
   },
   login(email: string, password: string) {
@@ -41,28 +50,69 @@ const client = {
         console.log(err);
       });
   },
+  // googleLogin() {
+  //   const provider = new firebase.auth.GoogleAuthProvider();
+  //   return firebase
+  //     .auth()
+  //     .signInWithPopup(provider)
+  //     .then(result => {
+  //       if (result.credential) {
+  //         const credential = result.credential as firebase.auth.OAuthCredential;
+  //         const token = credential.accessToken;
+  //         console.log("OK - OAuth Token: ");
+  //         console.log(token);
+  //       }
+  //       if (result.user != null) {
+  //         db.ref("users/" + result.user.uid).once("value", async snapshot => {
+  //           if (!snapshot.val()) {
+  //             result.user && saveUserToDb(result.user);
+  //           }
+  //         });
+  //       }
+  //     })
+  //     .catch(function(err) {
+  //       console.error("ERR: " + err);
+  //     });
+  // },
   googleLogin() {
-    const provider = new firebase.auth.GoogleAuthProvider();
-    return firebase
-      .auth()
-      .signInWithPopup(provider)
-      .then(result => {
-        if (result.credential) {
-          const credential = result.credential as firebase.auth.OAuthCredential;
-          const token = credential.accessToken;
-          console.log("OK - OAuth Token: " + token);
-        }
-        if (result.user != null) {
-          db.ref("users/" + result.user.uid).once("value", async snapshot => {
-            if (!snapshot.val()) {
-              result.user && saveUserToDb(result.user);
-            }
-          });
-        }
-      })
-      .catch(function(err) {
-        console.error("ERR: " + err);
+    return new Promise((resolve, reject) => {
+      gapi.load("client:auth2", () => {
+        gapi.client.init(googleCalendarClient).then(() => {
+          gapi.auth2
+            .getAuthInstance()
+            .signIn()
+            .then(googleUser => {
+              console.log(googleUser);
+              const credential = firebase.auth.GoogleAuthProvider.credential(
+                googleUser.getAuthResponse().id_token
+              );
+              console.log(credential);
+              firebase
+                .auth()
+                .signInWithCredential(credential)
+                .then(result => {
+                  console.log(result);
+                  if (result.user != null) {
+                    console.log("user not null");
+                    db.ref("users/" + result.user.uid)
+                      .once("value")
+                      .then(snapshot => {
+                        if (!snapshot.val()) {
+                          console.log("snapshot exists");
+                          result.user && saveUserToDb(result.user);
+                          return resolve();
+                        }
+                      });
+                  }
+                })
+                .catch(function(err) {
+                  console.error("ERR: " + err);
+                  return reject("rejected :(");
+                });
+            });
+        });
       });
+    });
   },
   logout() {
     if (Auth.currentUser) {

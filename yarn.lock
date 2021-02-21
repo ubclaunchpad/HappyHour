@@ -1139,6 +1139,13 @@
     cssnano-preset-default "^4.0.0"
     postcss "^7.0.0"
 
+"@maxim_mazurok/gapi.client.calendar@latest":
+  version "3.0.20210215"
+  resolved "https://registry.yarnpkg.com/@maxim_mazurok/gapi.client.calendar/-/gapi.client.calendar-3.0.20210215.tgz#afea352c9205a949336f39b0faf83d405a3a3a54"
+  integrity sha512-tHsEXuXPXTYJHDvkJpvJD+DeFQ6DNH2131+AYX7Clh7n7deDfQqdYUW94mb4MJALyAMCZ2+1Md8YgV4DOp4fUA==
+  dependencies:
+    "@types/gapi.client" "*"
+
 "@mrmlnc/readdir-enhanced@^2.2.1":
   version "2.2.1"
   resolved "https://registry.yarnpkg.com/@mrmlnc/readdir-enhanced/-/readdir-enhanced-2.2.1.tgz#524af240d1a360527b730475ecfa1344aa540dde"
@@ -1298,6 +1305,30 @@
     "@types/express-serve-static-core" "*"
     "@types/qs" "*"
     "@types/serve-static" "*"
+
+"@types/gapi.auth2@^0.0.53":
+  version "0.0.53"
+  resolved "https://registry.yarnpkg.com/@types/gapi.auth2/-/gapi.auth2-0.0.53.tgz#5171ef99f4b88fd8d6478254c0da8370d288b4f8"
+  integrity sha512-Ktd4EE6FUxs7aco8F/3jyOMqamoYTzaH9UjirxEZwQ/BpAzlXhzNhdcK/9aoiCaRRRYwggTv/ZlwQVU7lK7Ilw==
+  dependencies:
+    "@types/gapi" "*"
+
+"@types/gapi.client.calendar@^3.0.10":
+  version "3.0.10"
+  resolved "https://registry.yarnpkg.com/@types/gapi.client.calendar/-/gapi.client.calendar-3.0.10.tgz#4b089d9af2753a07cf1d46adc83b1a7cedb8e355"
+  integrity sha512-NUStEVbHPOhFsw4cWE2CThe5eKpTlmz+fSu8mvEc7j+IDVNgk1kS4C6hZzBCdlIjFfOzdQM3Cyqkt5kt7ze3kA==
+  dependencies:
+    "@maxim_mazurok/gapi.client.calendar" latest
+
+"@types/gapi.client@*", "@types/gapi.client@^1.0.4":
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/@types/gapi.client/-/gapi.client-1.0.4.tgz#f766c9e30c17fc315d68039e3148f19bea19f643"
+  integrity sha512-MVC0ukq+bVfmQnrkaJdyFBJVuQ7W9QtqH4aGqQaEmLBj/fwsbQ7IMk8M6q2LffEoKlYBuJNpGz4nTnckthoIpg==
+
+"@types/gapi@*", "@types/gapi@^0.0.39":
+  version "0.0.39"
+  resolved "https://registry.yarnpkg.com/@types/gapi/-/gapi-0.0.39.tgz#bc7fa8cd0cb175b36e3609790fb2ed73a33f6881"
+  integrity sha512-R1TZeZbvvbIC60DBJMhuOEivQHzOQtzl3uMDOOENTYQTSSDB6oEMpJo8HVPOTWivdUTbyEcB5qQOVr/JCKRlCQ==
 
 "@types/glob@^7.1.1":
   version "7.1.3"
