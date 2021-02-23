@@ -1,9 +1,9 @@
-import { db } from "@/db";
+import { app, db } from "@/db";
 import { Calendar } from "@/calendar/client";
 import firebase from "firebase/app";
 import "firebase/auth";
 
-const Auth = firebase.auth();
+const Auth = app.auth();
 
 export interface User {
   username: string;
