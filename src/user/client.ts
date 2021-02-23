@@ -30,7 +30,7 @@ const client = {
     return Auth.signInWithEmailAndPassword(email, password)
       .then(userCredentials => {
         const user = userCredentials.user;
-        console.log(user?.uid);
+        console.log("login success! user ID: ", user?.uid);
       })
       .catch(err => {
         console.log(err);
