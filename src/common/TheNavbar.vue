@@ -19,7 +19,7 @@
         <AppIcon icon="times" width="32" />
       </button>
       <router-link
-        v-for="link in links"
+        v-for="link in authLinks"
         :key="link.path"
         :to="link.path"
         class="router"
@@ -31,6 +31,8 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
+
+import firebase from "firebase/app";
 
 import TheLogo from "@/common/TheLogo.vue";
 import AppIcon from "@/common/AppIcon.vue";
@@ -45,8 +47,26 @@ export default defineComponent({
     };
   },
   computed: {
-    links() {
-      return routes;
+    authLinks() {
+      if (this.authState()) {
+        return routes.filter(
+          link => link.meta != undefined && link.meta.requiresAuth == true
+        );
+      } else {
+        return routes.filter(
+          link => link.meta != undefined && link.meta.requiresAuth == false
+        );
+      }
+    }
+  },
+  beforeMount() {
+    this.authState();
+  },
+  methods: {
+    async authState() {
+      firebase.auth().onAuthStateChanged(user => {
+        return user;
+      });
     }
   }
 });

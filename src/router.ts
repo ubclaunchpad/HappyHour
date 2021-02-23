@@ -3,24 +3,47 @@ import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
 import CreateEventPage from "./event/views/CreateEventPage.vue";
 import EventPage from "./event/views/EventPage.vue";
 import RegistrationPage from "./user/views/RegistrationPage.vue";
-import LoginPage from "./user/views/Login.vue";
+import Login from "./user/views/Login.vue";
 
 export const routes: Array<RouteRecordRaw> = [
   {
-    path: "/",
-    component: CreateEventPage
-  },
-  {
-    path: "/event",
-    component: EventPage
+    path: "/login",
+    component: Login,
+    name: "Log In",
+    meta: { requiresAuth: false }
   },
   {
     path: "/register",
-    component: RegistrationPage
+    component: RegistrationPage,
+    name: "Sign Up",
+    meta: { requiresAuth: false }
   },
   {
-    path: "/login",
-    component: LoginPage
+    // placeholder
+    path: "/",
+    component: CreateEventPage,
+    name: "About",
+    meta: { requiresAuth: false }
+  },
+  {
+    path: "/event",
+    component: EventPage,
+    name: "Event",
+    meta: { requiresAuth: true }
+  },
+  {
+    // placeholder
+    path: "/",
+    component: CreateEventPage,
+    name: "Settings",
+    meta: { requiresAuth: true }
+  },
+  {
+    // placeholder
+    path: "/",
+    component: CreateEventPage,
+    name: "About",
+    meta: { requiresAuth: true }
   }
 ];
 
