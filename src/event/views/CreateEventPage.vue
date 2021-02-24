@@ -1,6 +1,33 @@
 <template>
-  <div style="margin: 20rem">
-    <TextInput placeholder="test placeholder" type="inputs" />
+  <div>
+    <TextInput class="input" type="input" placeholder="My Awesome Event">
+      <template #suffix>
+        <button
+          class="btn-close-new button"
+          type="button"
+          @click="isHidden = true"
+        >
+          <AppIcon width="25" icon="times"></AppIcon>
+        </button>
+      </template>
+    </TextInput>
+
+    <TextInput
+      class="textarea"
+      type="textarea"
+      placeholder="Enter Description"
+      resize="none"
+    >
+      <template #suffix>
+        <button
+          class="btn-close-new button"
+          type="button"
+          @click="isHidden = true"
+        >
+          <AppIcon width="25" icon="times"></AppIcon>
+        </button>
+      </template>
+    </TextInput>
   </div>
 
   <form class="form">
@@ -112,7 +139,6 @@
 //TODO: Validate legal time 0-24hr
 //TODO: Validate empty space Event Name " "
 //TODO: Support 24HR via auto-changing AM/PM
-//TODO: Move svg to a separate files
 //TODO: Move Event components to separate files
 //TODO: Add responsive support
 //TODO: POST to backend
@@ -376,6 +402,26 @@ select {
 }
 
 .btn-close:hover {
+  opacity: 0.3;
+}
+
+/* .btn-close-new {
+  position: absolute;
+  top: 50%;
+  right: 0.5rem;
+  cursor: pointer;
+  transform: translateY(-50%);
+}
+
+.btn-close-new:hover {
+  opacity: 0.3;
+} */
+
+.button {
+  cursor: pointer;
+}
+
+.button:hover {
   opacity: 0.3;
 }
 </style>
