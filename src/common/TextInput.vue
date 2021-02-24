@@ -2,6 +2,7 @@
   <form class="input-container">
     <component
       :is="currInputComponent"
+      :autofocus="autofocus"
       :placeholder="placeholder"
       :required="required"
       :resize="resize"
@@ -31,7 +32,8 @@ export default defineComponent({
     value: { type: String, required: false, default: "" },
     placeholder: { type: String, required: false, default: "" },
     required: { type: Boolean, required: false, default: false },
-    resize: { type: String, required: false, default: "both" }
+    resize: { type: String, required: false, default: "both" },
+    autofocus: { type: Boolean, required: false, default: false }
   },
 
   setup(props) {
@@ -45,25 +47,6 @@ export default defineComponent({
 </script>
 
 <style scoped>
-/* input,
-textarea {
-  height: 2.5rem;
-  padding: 0.5rem;
-  border: 1px solid rgb(240, 243, 245);
-  border-radius: 5px;
-  background: rgb(255, 255, 255);
-}
-
-input {
-  margin: 1rem 0;
-}
-
-textarea {
-  width: 100%;
-  min-height: 3.5rem;
-  resize: none;
-} */
-
 input,
 textarea {
   width: 100%;
@@ -75,8 +58,7 @@ textarea {
 
 .input-container {
   position: relative;
-  max-width: fit-content;
-  /* width: 100%; */
+  /* max-width: fit-content; */
 }
 
 .suffix {

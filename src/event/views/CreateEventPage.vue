@@ -1,35 +1,4 @@
 <template>
-  <div>
-    <TextInput class="input" type="input" placeholder="My Awesome Event">
-      <template #suffix>
-        <button
-          class="btn-close-new button"
-          type="button"
-          @click="isHidden = true"
-        >
-          <AppIcon width="25" icon="times"></AppIcon>
-        </button>
-      </template>
-    </TextInput>
-
-    <TextInput
-      class="textarea"
-      type="textarea"
-      placeholder="Enter Description"
-      resize="none"
-    >
-      <template #suffix>
-        <button
-          class="btn-close-new button"
-          type="button"
-          @click="isHidden = true"
-        >
-          <AppIcon width="25" icon="times"></AppIcon>
-        </button>
-      </template>
-    </TextInput>
-  </div>
-
   <form class="form">
     <!-- Left Components -->
     <!-- Date Card -->
@@ -96,10 +65,11 @@
       <section class="event-form">
         <h5>Event Name</h5>
 
-        <input
+        <TextInput
           v-model="eventTitle"
+          class="textinput"
+          type="input"
           placeholder="My Awesome Event"
-          type="text"
           required
         />
 
@@ -115,17 +85,24 @@
         <!-- EventDescription Component -->
         <section v-if="!isHidden" class="event-description">
           <h5>Description</h5>
-
-          <div class="description-textarea-container">
-            <button
-              class="btn-close button"
-              type="button"
-              @click="isHidden = true"
-            >
-              <AppIcon width="25" icon="times"></AppIcon>
-            </button>
-            <textarea v-model="eventDescription" autofocus />
-          </div>
+          <TextInput
+            v-model="eventDescription"
+            class="textarea"
+            type="textarea"
+            placeholder="Enter Description"
+            resize="none"
+            autofocus
+          >
+            <template #suffix>
+              <button
+                class="btn-close-new button"
+                type="button"
+                @click="isHidden = true"
+              >
+                <AppIcon width="25" icon="times"></AppIcon>
+              </button>
+            </template>
+          </TextInput>
         </section>
       </section>
       <AppButton class="btn-create" text="Create Event" type="submit" />
@@ -353,7 +330,7 @@ select {
   grid-area: event;
 }
 
-.event input {
+.textinput {
   margin: 1rem 0;
 }
 
@@ -370,12 +347,6 @@ select {
   opacity: 0.8;
 }
 
-.event-description textarea {
-  width: 100%;
-  min-height: 3.5rem;
-  resize: none;
-}
-
 .btn-create {
   width: 100%;
   background: rgb(55, 87, 134);
@@ -387,35 +358,9 @@ select {
   background: rgba(255, 255, 255, 0);
 }
 
-/* Icon containers & icons*/
-.description-textarea-container {
-  position: relative;
+.textarea {
   margin: 1rem 0;
 }
-
-.btn-close {
-  position: absolute;
-  top: 50%;
-  right: 0.5rem;
-  cursor: pointer;
-  transform: translateY(-50%);
-}
-
-.btn-close:hover {
-  opacity: 0.3;
-}
-
-/* .btn-close-new {
-  position: absolute;
-  top: 50%;
-  right: 0.5rem;
-  cursor: pointer;
-  transform: translateY(-50%);
-}
-
-.btn-close-new:hover {
-  opacity: 0.3;
-} */
 
 .button {
   cursor: pointer;
