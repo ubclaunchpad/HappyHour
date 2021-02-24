@@ -16,6 +16,12 @@
         @update:blocks="updateCalendar"
       />
     </div>
+    <div class="button">
+      <AppButton text="fetch events" @update="getEvents()" />
+    </div>
+    <div class="button">
+      <AppButton text="fetch busy slots" @update="getBusyTimes()" />
+    </div>
   </div>
 </template>
 
@@ -24,8 +30,10 @@ import { eachDayOfInterval, getHours, isSameDay } from "date-fns";
 import { defineComponent, PropType } from "vue";
 
 import CalendarDay from "./CalendarDay.vue";
-import { Block, Calendar } from "../client";
+import client, { Block, Calendar } from "../client";
 import { formatHour } from "../utils";
+import AppButton from "@/common/AppButton.vue";
+import gapiClient from "@/calendar/gapiClient";
 
 interface Day {
   date: string;
@@ -42,7 +50,8 @@ const MinsInHour = 60;
 
 export default defineComponent({
   components: {
-    CalendarDay
+    CalendarDay,
+    AppButton
   },
   props: {
     calendar: {
@@ -107,7 +116,13 @@ export default defineComponent({
         );
         this.$emit("update:calendar", { blocks: [...otherBlocks, ...blocks] });
       }
+    },
+    getEvents() {
+      gapiClient.startClient(false);
     }
+    // getBusyTimes() {
+    //   client.updateCalendar();
+    // }
   }
 });
 </script>

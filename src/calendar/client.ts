@@ -182,6 +182,8 @@ const createCalendar = (freeSlots: Slot[]): Calendar => {
   return cal;
 };
 
+/* exported */
+
 export interface Block {
   startTime: Date;
   availableUsers: string[];
@@ -196,9 +198,56 @@ export interface Time {
   minutes: number;
 }
 
-// TODO: Fill this in with methods
 const client = {
-  // stub
+  // getAllEvents() {
+  //   gapi.client.calendar.events
+  //     .list({
+  //       calendarId: "primary",
+  //       timeMin: new Date().toISOString(),
+  //       showDeleted: false,
+  //       singleEvents: true,
+  //       maxResults: 10,
+  //       orderBy: "startTime"
+  //     })
+  //     .then(response => {
+  //       const events = response.result.items;
+  //       if (events && events.length > 0) {
+  //         for (const event of events) {
+  //           console.log(event);
+  //         }
+  //       } else {
+  //         console.log("no events!");
+  //       }
+  //     });
+  // },
+  async updateCalendar() {
+    /* get user's busy slots */
+    const timeMin: Date = getBlockStart(new Date());
+    const timeMax: Date = new Date(
+      timeMin.getFullYear(),
+      timeMin.getMonth(),
+      timeMin.getDate() + 1,
+      timeMin.getHours(),
+      timeMin.getMinutes()
+    );
+    console.log(`min: ${timeMin}, max: ${timeMax}`);
+    const busy = await getBusyTimes(timeMin, timeMax);
+    console.log("busy!");
+    console.log(busy);
+
+    /* get user's free slots from busy slots */
+    const free = getFreeSlots(busy, timeMin, timeMax);
+    console.log("free!");
+    console.log(free);
+
+    /* get the new calendar based on gcal info */
+    const calendar = createCalendar(free);
+    console.log(calendar.blocks.length);
+    for (let i = 0; i < calendar.blocks.length; i++) {
+      console.log(`block ${i} - start: `);
+      console.log(calendar.blocks[i]);
+    }
+  }
 };
 
 export default client;
