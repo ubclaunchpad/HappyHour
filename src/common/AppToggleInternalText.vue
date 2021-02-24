@@ -105,6 +105,7 @@ export default {
   background-color: white;
   /* In case the label gets really long, the toggle shouldn't shrink. */
   flex-shrink: 0;
+  border: 2px solid var(--accent);
   transition: background-color 0.25s ease-in-out;
 }
 .switch::before {
