@@ -8,28 +8,51 @@ const Auth = app.auth();
 export interface User {
   username: string;
   email: string;
+  uid: string;
   // calendar: Calendar;
 }
 
-function saveUserToDb(user: firebase.User) {
+function saveUserToDb(user: User) {
   db.ref("users/" + user.uid).set({
     username: user.email,
     email: user.email
   });
 }
 
+function createUserObject(user: firebase.User) {
+  const { uid, email } = user;
+  const newUser = {
+    uid: uid,
+    email: email || "",
+    username: email || ""
+  };
+  return newUser;
+}
+
 const client = {
   createUser(email: string, password: string) {
-    try {
-      const user = Auth.createUserWithEmailAndPassword(email, password).then(
-        user => {
-          user.user && saveUserToDb(user.user);
+    Auth.createUserWithEmailAndPassword(email, password)
+      .then(user => {
+        if (user.user) {
+          const newUser = createUserObject(user.user);
+          saveUserToDb(newUser);
+        } else {
+          throw new Error("No User returned from firebase");
         }
-      );
-      console.log("OK - Token: " + user);
-    } catch (err) {
-      console.error("ERR: " + err);
-    }
+        console.log("OK - Token: " + user);
+      })
+      .catch(err => {
+        const errorCode = err.code;
+        const errorMessage = err.message;
+        if (errorCode == "auth/weak-password") {
+          alert("The password is too weak.");
+        } else if (errorCode == "auth/email-already-in-use") {
+          alert("An account associated with this email already exists");
+        } else {
+          alert(errorMessage);
+        }
+        console.log("ERR", err);
+      });
   },
   login(email: string, password: string) {
     return Auth.signInWithEmailAndPassword(email, password)
@@ -54,8 +77,9 @@ const client = {
         }
         if (result.user != null) {
           db.ref("users/" + result.user.uid).once("value", async snapshot => {
-            if (!snapshot.val()) {
-              result.user && saveUserToDb(result.user);
+            if (!snapshot.val() && result.user) {
+              const newUser = createUserObject(result.user);
+              saveUserToDb(newUser);
             }
           });
         }
