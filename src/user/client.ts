@@ -1,8 +1,6 @@
 import { app, db } from "@/db";
 import { Calendar } from "@/calendar/client";
-import firebase from "firebase/app";
 import "firebase/auth";
-import gapiClient from "@/calendar/gapiClient";
 
 const Auth = app.auth();
 
@@ -10,13 +8,6 @@ export interface User {
   username: string;
   email: string;
   // calendar: Calendar;
-}
-
-function saveUserToDb(user: firebase.User) {
-  db.ref("users/" + user.uid).set({
-    username: user.email,
-    email: user.email
-  });
 }
 
 const client = {
@@ -44,41 +35,6 @@ const client = {
       .catch(err => {
         console.log(err);
       });
-  },
-  googleLogin() {
-    return new Promise<void>((resolve, reject) => {
-      gapiClient
-        .startClient(true)
-        .then(googleUser => {
-          console.log(googleUser);
-          const credential = firebase.auth.GoogleAuthProvider.credential(
-            googleUser.getAuthResponse().id_token
-          );
-          return firebase.auth().signInWithCredential(credential);
-        })
-        .then(result => {
-          console.log(result);
-          if (result.user != null) {
-            console.log("user not null");
-            db.ref("users/" + result.user.uid)
-              .once("value")
-              .then(snapshot => {
-                if (!snapshot.val()) {
-                  console.log("snapshot exists");
-                  result.user && saveUserToDb(result.user);
-                  return resolve();
-                } else {
-                  // idk what to do in this case?
-                }
-              });
-          }
-        })
-        .catch(err => {
-          console.error("ERR: ");
-          console.log(err);
-          return reject(err);
-        });
-    });
   },
   logout() {
     if (Auth.currentUser) {

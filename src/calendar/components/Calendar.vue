@@ -33,7 +33,6 @@ import CalendarDay from "./CalendarDay.vue";
 import client, { Block, Calendar } from "../client";
 import { formatHour } from "../utils";
 import AppButton from "@/common/AppButton.vue";
-import gapiClient from "@/calendar/gapiClient";
 
 interface Day {
   date: string;
@@ -118,7 +117,8 @@ export default defineComponent({
       }
     },
     getEvents() {
-      gapiClient.startClient(false);
+      // gapiClient.startClient(false);
+      client.getAllEvents();
     }
     // getBusyTimes() {
     //   client.updateCalendar();

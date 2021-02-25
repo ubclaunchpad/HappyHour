@@ -1,3 +1,10 @@
+const googleCalendarClient = {
+  apiKey: process.env.VUE_APP_GOOGLE_API_KEY,
+  clientId: process.env.VUE_APP_GOOGLE_CLIENT_ID,
+  discoveryDocs: [process.env.VUE_APP_GOOGLE_DISCOVERY_DOC],
+  scope: process.env.VUE_APP_GOOGLE_SCOPE
+};
+
 /* helpers, not exported */
 interface Slot {
   startTime: Date;
@@ -220,6 +227,52 @@ const client = {
   //       }
   //     });
   // },
+  // async startClient() {
+  //   return new Promise<any>((resolve, reject) => {
+  //     gapi.load("client:auth2", () => {
+  //       console.log("first login!");
+  //       this.getAllEvents();
+  //       return resolve();
+  //     });
+  //   });
+  // },
+  async getAllEvents() {
+    gapi.load("client:auth2", () => {
+      gapi.auth2.authorize(
+        {
+          // eslint-disable-next-line @typescript-eslint/camelcase
+          client_id: googleCalendarClient.clientId,
+          scope: googleCalendarClient.scope,
+          prompt: "none"
+        },
+        authResponse => {
+          if (authResponse.error) {
+            console.log("here's the error: " + authResponse.error);
+          }
+          gapi.client
+            .request({
+              path:
+                "https://www.googleapis.com/calendar/v3/calendars/primary/events",
+              params: {
+                timeMin: new Date().toISOString(),
+                showDeleted: false,
+                singleEvents: true,
+                maxResults: 10,
+                orderBy: "startTime"
+              }
+            })
+            .then(res => {
+              console.log("response!");
+              console.log(res.body);
+            })
+            .catch(err => {
+              console.log("error!");
+              console.log(err);
+            });
+        }
+      );
+    });
+  },
   async updateCalendar() {
     /* get user's busy slots */
     const timeMin: Date = getBlockStart(new Date());
