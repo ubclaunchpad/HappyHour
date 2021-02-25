@@ -1,10 +1,10 @@
-import { db } from "@/db";
+import { app, db } from "@/db";
 import { Calendar } from "@/calendar/client";
 import firebase from "firebase/app";
 import "firebase/auth";
 import gapiClient from "@/calendar/gapiClient";
 
-const Auth = firebase.auth();
+const Auth = app.auth();
 
 export interface User {
   username: string;
@@ -24,14 +24,15 @@ const client = {
     try {
       const user = Auth.createUserWithEmailAndPassword(email, password).then(
         user => {
-          user.user && saveUserToDb(user.user);
+          db.ref("users/" + user.user?.uid).set({
+            username: "placeholder",
+            email: email
+          });
         }
       );
-      console.log("OK - Token: ");
-      console.log(user);
+      console.log("OK - Token: " + user);
     } catch (err) {
       console.error("ERR: " + err);
-      // we should delete the user account here if we cannot save the user to db!
     }
   },
   login(email: string, password: string) {

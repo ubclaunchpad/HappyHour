@@ -36,7 +36,7 @@ export default defineComponent({
   methods: {
     async logIn() {
       client.login(this.username, this.password).then(() => {
-        this.$router.push("/");
+        window.location.href = "/";
       });
     },
     logInViaGoogle() {
