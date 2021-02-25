@@ -1,17 +1,10 @@
 <template>
-  <form class="input-container">
-    <component
-      :is="currInputComponent"
-      :autofocus="autofocus"
-      :placeholder="placeholder"
-      :required="required"
-      :resize="resize"
-      :style="{ resize }"
-    />
+  <div class="input-container">
+    <component :is="currInputComponent" v-bind="$attrs" />
     <div class="suffix">
       <slot name="suffix"></slot>
     </div>
-  </form>
+  </div>
 </template>
 
 <script lang="ts">
@@ -28,12 +21,7 @@ export default defineComponent({
   },
 
   props: {
-    type: { type: String, required: true, default: "input" },
-    value: { type: String, required: false, default: "" },
-    placeholder: { type: String, required: false, default: "" },
-    required: { type: Boolean, required: false, default: false },
-    resize: { type: String, required: false, default: "both" },
-    autofocus: { type: Boolean, required: false, default: false }
+    type: { type: String, required: true, default: "input" }
   },
 
   setup(props) {
@@ -54,6 +42,7 @@ textarea {
   border: 1px solid rgb(240, 243, 245);
   border-radius: 5px;
   background: rgb(255, 255, 255);
+  resize: vertical;
 }
 
 .input-container {
