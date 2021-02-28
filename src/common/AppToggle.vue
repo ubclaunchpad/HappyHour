@@ -9,10 +9,8 @@
     />
 
     <span class="switch">
-      <span :class="{ leftEnabled: !modelValue, leftDisabled: modelValue }">{{
-        leftText
-      }}</span>
-      <span :class="{ rightDisabled: !modelValue, rightEnabled: modelValue }">{{
+      <span :class="['trigger', { disabled: modelValue }]">{{ leftText }}</span>
+      <span :class="['trigger', { disabled: !modelValue }]">{{
         rightText
       }}</span>
     </span>
@@ -21,7 +19,6 @@
 
 <script>
 export default {
-  name: "Switch",
   props: {
     leftText: {
       type: String,
@@ -36,52 +33,29 @@ export default {
       required: true
     }
   },
-  emits: ["update:checked"],
-  methods: {
-    update() {
-      this.$emit("update");
-    }
-  }
+  emits: ["update:modelValue"]
 };
 </script>
 
 <style scoped>
 .container {
-  /* width variable */
-  --switch-container-width: 20rem;
-  /* dimensions */
-  width: var(--switch-container-width);
   cursor: pointer;
   display: flex;
-  align-items: center;
+  box-sizing: border-box;
+  min-width: 20rem;
 }
 
-.leftDisabled {
-  flex-shrink: 0;
-  margin-left: calc(var(--switch-container-width) * -1 / 2 + 2rem);
-  color: #a0aec0;
-  z-index: 1;
+.trigger {
+  flex: 1;
+  color: var(--color-text-primary);
+  text-align: center;
+  padding: 8px;
+  opacity: 1;
+  transition: opacity 0.375s ease-in-out;
 }
 
-.leftEnabled {
-  flex-shrink: 0;
-  margin-left: calc(var(--switch-container-width) * -1 / 2 + 2rem);
-  color: #020f22;
-  z-index: 1;
-}
-
-.rightDisabled {
-  flex-shrink: 0;
-  margin-left: 5rem;
-  color: #a0aec0;
-  z-index: 1;
-}
-
-.rightEnabled {
-  flex-shrink: 0;
-  margin-left: 5rem;
-  color: #020f22;
-  z-index: 1;
+.trigger.disabled {
+  opacity: 0.3;
 }
 
 /* Visually hide the checkbox input */
@@ -96,40 +70,33 @@ export default {
 }
 
 .switch {
-  /* colour variables */
-  --switch-container-size: 80px;
-  --switch-size: calc(var(--switch-container-size) / 2);
-  --gray: #cbd5e0;
-  --dark-gray: #a0aec0;
-  --accent: #375786;
   /* Vertically center the inner circle */
   display: flex;
   align-items: center;
   position: relative;
-  height: var(--switch-size);
-  flex-basis: var(--switch-container-width);
   /* Make the container element rounded */
-  border-radius: var(--switch-size);
-  border: 2px solid var(--dark-gray);
+  border-radius: 9999px;
+  border: 2px solid var(--color-border);
   background-color: white;
-  /* In case the label gets really long, the toggle shouldn't shrink. */
-  flex-shrink: 0;
+  width: 100%;
 }
 
 .switch::before {
   content: "";
-  /* position: absolute; */
-  height: calc(var(--switch-size) - 4px);
-  width: calc(var(--switch-container-width) / 2);
+  position: absolute;
+  left: -2px;
+  height: 100%;
+  width: 50%;
   /* Make the inner circle fully rounded */
-  border-radius: var(--switch-size);
-  background-color: white;
-  border: 2px solid var(--accent);
+  border-radius: 9999px;
+  border: 2px solid var(--color-primary);
   transition: transform 0.375s ease-in-out;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
 
 .input:checked + .switch::before {
   /* Move the inner circle to the right */
-  transform: translateX(calc(var(--switch-container-width) / 2));
+  transform: translateX(calc(100% - 4px));
 }
 </style>
