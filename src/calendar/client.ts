@@ -206,36 +206,6 @@ export interface Time {
 }
 
 const client = {
-  // getAllEvents() {
-  //   gapi.client.calendar.events
-  //     .list({
-  //       calendarId: "primary",
-  //       timeMin: new Date().toISOString(),
-  //       showDeleted: false,
-  //       singleEvents: true,
-  //       maxResults: 10,
-  //       orderBy: "startTime"
-  //     })
-  //     .then(response => {
-  //       const events = response.result.items;
-  //       if (events && events.length > 0) {
-  //         for (const event of events) {
-  //           console.log(event);
-  //         }
-  //       } else {
-  //         console.log("no events!");
-  //       }
-  //     });
-  // },
-  // async startClient() {
-  //   return new Promise<any>((resolve, reject) => {
-  //     gapi.load("client:auth2", () => {
-  //       console.log("first login!");
-  //       this.getAllEvents();
-  //       return resolve();
-  //     });
-  //   });
-  // },
   async getAllEvents() {
     gapi.load("client:auth2", () => {
       gapi.auth2.authorize(

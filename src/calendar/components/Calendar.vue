@@ -19,9 +19,6 @@
     <div class="button">
       <AppButton text="fetch events" @update="getEvents()" />
     </div>
-    <div class="button">
-      <AppButton text="fetch busy slots" @update="getBusyTimes()" />
-    </div>
   </div>
 </template>
 
@@ -117,12 +114,8 @@ export default defineComponent({
       }
     },
     getEvents() {
-      // gapiClient.startClient(false);
       client.getAllEvents();
     }
-    // getBusyTimes() {
-    //   client.updateCalendar();
-    // }
   }
 });
 </script>
