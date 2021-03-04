@@ -4,6 +4,7 @@ import CreateEventPage from "./event/views/CreateEventPage.vue";
 import EventPage from "./event/views/EventPage.vue";
 import RegistrationPage from "./user/views/RegistrationPage.vue";
 import LoginPage from "./user/views/Login.vue";
+import UserDashboard from "./user/views/UserDashboard.vue";
 
 export const routes: Array<RouteRecordRaw> = [
   {
@@ -21,6 +22,10 @@ export const routes: Array<RouteRecordRaw> = [
   {
     path: "/login",
     component: LoginPage
+  },
+  {
+    path: "/dashboard",
+    component: UserDashboard
   }
 ];
 
