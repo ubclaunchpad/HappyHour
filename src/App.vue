@@ -67,7 +67,7 @@ ul {
   overflow: hidden;
   overflow-y: auto;
   position: absolute;
-  background: RGB(229, 229, 229);
+  background: var(--color-background);
   z-index: -2;
   display: flex;
   flex-direction: column;
