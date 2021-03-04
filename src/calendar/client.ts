@@ -206,6 +206,7 @@ export interface Time {
 }
 
 const client = {
+  // function to fetch 10 upcoming events (only used for testing)
   async getAllEvents() {
     gapi.load("client:auth2", () => {
       gapi.auth2.authorize(
@@ -254,22 +255,61 @@ const client = {
       timeMin.getMinutes()
     );
     console.log(`min: ${timeMin}, max: ${timeMax}`);
-    const busy = await getBusyTimes(timeMin, timeMax);
-    console.log("busy!");
-    console.log(busy);
+    gapi.load("client:auth2", () => {
+      gapi.auth2.authorize(
+        {
+          // eslint-disable-next-line @typescript-eslint/camelcase
+          client_id: googleCalendarClient.clientId,
+          scope: googleCalendarClient.scope,
+          prompt: "none"
+        },
+        authResponse => {
+          if (authResponse.error) {
+            console.log("here's the error: " + authResponse.error);
+          }
+          /* get user's busy slots */
+          gapi.client
+            .request({
+              path: "https://www.googleapis.com/calendar/v3/freeBusy",
+              method: "POST",
+              body: {
+                timeMin: timeMin.toISOString(),
+                timeMax: timeMax.toISOString(),
+                timeZone: "PST",
+                items: [{ id: "primary" }]
+              }
+            })
+            .then(res => {
+              console.log("freebusy response!");
+              console.log(res);
+              if (res.result.calendars && res.result.calendars.primary.busy) {
+                const busyTimes = res.result.calendars.primary.busy;
+                const busy = retrieveSlots(busyTimes);
+                console.log("printing busy times: ");
+                console.log(busy);
+                /* get user's free slots from busy slots */
+                const free = getFreeSlots(busy, timeMin, timeMax);
+                console.log("free!");
+                console.log(free);
 
-    /* get user's free slots from busy slots */
-    const free = getFreeSlots(busy, timeMin, timeMax);
-    console.log("free!");
-    console.log(free);
-
-    /* get the new calendar based on gcal info */
-    const calendar = createCalendar(free);
-    console.log(calendar.blocks.length);
-    for (let i = 0; i < calendar.blocks.length; i++) {
-      console.log(`block ${i} - start: `);
-      console.log(calendar.blocks[i]);
-    }
+                /* get the new calendar based on gcal info */
+                const calendar = createCalendar(free);
+                console.log(calendar.blocks.length);
+                for (let i = 0; i < calendar.blocks.length; i++) {
+                  console.log(`block ${i} - start: `);
+                  console.log(calendar.blocks[i]);
+                }
+              } else {
+                console.log("no busy times!");
+              }
+            })
+            .catch(err => {
+              console.log("freebusy error!");
+              console.log(err);
+            });
+        }
+      );
+    });
   }
 };
 

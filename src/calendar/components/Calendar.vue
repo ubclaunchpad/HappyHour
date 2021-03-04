@@ -19,6 +19,9 @@
     <div class="button">
       <AppButton text="fetch events" @update="getEvents()" />
     </div>
+    <div class="button">
+      <AppButton text="fetch freebusy" @update="getFreeBusy()" />
+    </div>
   </div>
 </template>
 
@@ -115,6 +118,9 @@ export default defineComponent({
     },
     getEvents() {
       client.getAllEvents();
+    },
+    getFreeBusy() {
+      client.updateCalendar();
     }
   }
 });
