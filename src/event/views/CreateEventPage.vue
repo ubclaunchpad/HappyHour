@@ -6,30 +6,21 @@
       <h5 class="heading">Pick the date</h5>
       <!-- EventDateSelectors component -->
       <DatePicker
-        v-if="isDatePickerEvent"
+        v-if="!isChecked"
         v-model:startTime="startTime"
         v-model:endTime="endTime"
         class="date-picker"
       />
       <DayPicker
-        v-if="!isDatePickerEvent"
+        v-if="isChecked"
         v-model:startTime="startTime"
         v-model:endTime="endTime"
         class="day-picker"
       />
-      <AppToggleExternalText
-        class="date-toggle"
-        toggle-left-text="Single"
-        toggle-right-text="Recurring"
-        :default-state="false"
-        @toggled="toggleEventType"
-      />
-      <AppToggleInternalText
-        style="display: none"
-        left-text="My Availability"
-        right-text="Group Availability"
-        :checked="false"
-        @update="toggleEventType()"
+      <AppToggle
+        v-model="isChecked"
+        left-text="Single Event"
+        right-text="Recurring"
       />
     </section>
 
@@ -122,8 +113,7 @@ import { defineComponent } from "vue";
 import { set } from "date-fns";
 
 import AppButton from "@/common/AppButton.vue";
-import AppToggleExternalText from "@/common/AppToggleExternalText.vue";
-import AppToggleInternalText from "@/common/AppToggleInternalText.vue";
+import AppToggle from "@/common/AppToggle.vue";
 import AppIcon from "@/common/AppIcon.vue";
 import DatePicker from "../components/DatePicker.vue";
 import DayPicker from "../components/DayPicker.vue";
@@ -133,8 +123,7 @@ export default defineComponent({
   components: {
     AppButton,
     AppIcon,
-    AppToggleExternalText,
-    AppToggleInternalText,
+    AppToggle,
     DatePicker,
     DayPicker,
     TimePicker
@@ -148,7 +137,8 @@ export default defineComponent({
       endTime: set(new Date(), { hours: 21, minutes: 0 }),
       timezone: "America/Vancouver",
       eventTitle: "",
-      eventDescription: ""
+      eventDescription: "",
+      isChecked: true
     };
   },
 
