@@ -100,32 +100,7 @@ const retrieveSlots = (
   return slots;
 };
 
-const getBusyTimes = async (timeMin: Date, timeMax: Date): Promise<Slot[]> => {
-  try {
-    const res = await gapi.client.calendar.freebusy.query({
-      resource: {
-        timeMin: timeMin.toISOString(),
-        timeMax: timeMax.toISOString(),
-        timeZone: "PST",
-        items: [{ id: "primary" }]
-      }
-    });
-    if (res.result.calendars && res.result.calendars.primary.busy) {
-      const busyTimes = res.result.calendars.primary.busy;
-      console.log("printing busy times: ");
-      console.log(busyTimes);
-      return retrieveSlots(busyTimes);
-    } else {
-      return [];
-    }
-  } catch (err) {
-    console.log(`error with freebusy request: `);
-    console.log(err);
-    return [];
-  }
-};
-
-const getFreeSlots = (
+const generateFreeSlots = (
   busySlots: Slot[],
   timeMin: Date,
   timeMax: Date
@@ -161,6 +136,22 @@ const getFreeSlots = (
   return freeSlots;
 };
 
+const getBusyBlocks = (startTime: Date, endTime: Date): Block[] => {
+  let s = getBlockEnd(startTime);
+  const e = getBlockStart(endTime);
+
+  /* create blocks between s & e */
+  const busyBlocks: Block[] = [];
+  while (s < e) {
+    busyBlocks.push({
+      startTime: s,
+      availableUsers: []
+    });
+    s = getNextBlock(s);
+  }
+  return busyBlocks;
+};
+
 const getFreeBlocks = (startTime: Date, endTime: Date): Block[] => {
   let s = getBlockStart(startTime);
   const e = getBlockEnd(endTime);
@@ -177,9 +168,21 @@ const getFreeBlocks = (startTime: Date, endTime: Date): Block[] => {
   return freeBlocks;
 };
 
-const createCalendar = (freeSlots: Slot[]): Calendar => {
+const createBusyCalendar = (slots: Slot[]): Calendar => {
   let calendarBlocks: Block[] = [];
-  for (const slot of freeSlots) {
+  for (const slot of slots) {
+    const blocks = getBusyBlocks(slot.startTime, slot.endTime);
+    calendarBlocks = calendarBlocks.concat(blocks);
+  }
+  const cal: Calendar = {
+    blocks: calendarBlocks
+  };
+  return cal;
+};
+
+const createFreeCalendar = (slots: Slot[]): Calendar => {
+  let calendarBlocks: Block[] = [];
+  for (const slot of slots) {
     const blocks = getFreeBlocks(slot.startTime, slot.endTime);
     calendarBlocks = calendarBlocks.concat(blocks);
   }
@@ -187,6 +190,102 @@ const createCalendar = (freeSlots: Slot[]): Calendar => {
     blocks: calendarBlocks
   };
   return cal;
+};
+
+const freeBusyRequest = async (
+  timeMin: Date,
+  timeMax: Date
+): Promise<gapi.client.calendar.TimePeriod[]> => {
+  return new Promise<gapi.client.calendar.TimePeriod[]>((resolve, reject) => {
+    gapi.load("client:auth2", () => {
+      gapi.auth2.authorize(
+        {
+          // eslint-disable-next-line @typescript-eslint/camelcase
+          client_id: googleCalendarClient.clientId,
+          scope: googleCalendarClient.scope,
+          prompt: "none"
+        },
+        async authResponse => {
+          if (authResponse.error) {
+            return reject(authResponse.error);
+          }
+          try {
+            const token =
+              "ya29.a0AfH6SMCabhZA7109mLH-RVAzhEVE_gcviSsyy2Pbe_RrlisfwZzRSL-TxWf6iWXHnQDXPfnNuKsIn3ZgDcx5TOokOCjqiLV_XD1iZVnsmPVNJdbZbnnvcJGkSiTm-lefNEGcWgssOJC6_jXc3vKYmlGV4KP-";
+            const res = await gapi.client.request({
+              path: "https://www.googleapis.com/calendar/v3/freeBusy",
+              method: "POST",
+              body: {
+                timeMin: timeMin.toISOString(),
+                timeMax: timeMax.toISOString(),
+                timeZone: "PST",
+                items: [{ id: "primary" }]
+              },
+              headers: {
+                Authorization: `Bearer ${token}`
+              }
+            });
+            if (res.result.calendars && res.result.calendars.primary.busy) {
+              const busyTimes = res.result.calendars.primary.busy;
+              console.log(busyTimes);
+              return resolve(busyTimes);
+            }
+          } catch (err) {
+            console.log("request error: " + err);
+            return reject(err);
+          }
+        }
+      );
+    });
+  });
+};
+export const freeBusyRequestNew = async (
+  timeMin: Date,
+  timeMax: Date,
+  token: string | undefined
+): Promise<gapi.client.calendar.TimePeriod[]> => {
+  return new Promise<gapi.client.calendar.TimePeriod[]>((resolve, reject) => {
+    gapi.load("client:auth2", async () => {
+      gapi.auth2.authorize(
+        {
+          // eslint-disable-next-line @typescript-eslint/camelcase
+          client_id: googleCalendarClient.clientId,
+          scope: googleCalendarClient.scope,
+          prompt: "none"
+        },
+        async authResponse => {
+          if (authResponse.error) {
+            return reject(authResponse.error);
+          }
+          try {
+            // const token = "ya29.a0AfH6SMCabhZA7109mLH-RVAzhEVE_gcviSsyy2Pbe_RrlisfwZzRSL-TxWf6iWXHnQDXPfnNuKsIn3ZgDcx5TOokOCjqiLV_XD1iZVnsmPVNJdbZbnnvcJGkSiTm-lefNEGcWgssOJC6_jXc3vKYmlGV4KP-";
+            const res = await gapi.client.request({
+              path: "https://www.googleapis.com/calendar/v3/freeBusy",
+              method: "POST",
+              body: {
+                timeMin: timeMin.toISOString(),
+                timeMax: timeMax.toISOString(),
+                timeZone: "PST",
+                items: [{ id: "primary" }]
+              },
+              headers: {
+                Authorization: `Bearer ${token}`
+              }
+            });
+            if (res.result.calendars && res.result.calendars.primary.busy) {
+              const busyTimes = res.result.calendars.primary.busy;
+              console.log(busyTimes);
+              return resolve(busyTimes);
+            }
+          } catch (err) {
+            console.log("request error: ");
+            console.log(err);
+            return reject(err);
+          }
+        }
+      );
+    });
+  });
 };
 
 /* exported */
@@ -206,110 +305,47 @@ export interface Time {
 }
 
 const client = {
-  // function to fetch 10 upcoming events (only used for testing)
-  async getAllEvents() {
-    gapi.load("client:auth2", () => {
-      gapi.auth2.authorize(
-        {
-          // eslint-disable-next-line @typescript-eslint/camelcase
-          client_id: googleCalendarClient.clientId,
-          scope: googleCalendarClient.scope,
-          prompt: "none"
-        },
-        authResponse => {
-          if (authResponse.error) {
-            console.log("here's the error: " + authResponse.error);
-          }
-          gapi.client
-            .request({
-              path:
-                "https://www.googleapis.com/calendar/v3/calendars/primary/events",
-              params: {
-                timeMin: new Date().toISOString(),
-                showDeleted: false,
-                singleEvents: true,
-                maxResults: 10,
-                orderBy: "startTime"
-              }
-            })
-            .then(res => {
-              console.log("response!");
-              console.log(res.body);
-            })
-            .catch(err => {
-              console.log("error!");
-              console.log(err);
-            });
-        }
-      );
-    });
+  async getBusySlots(timeMin: Date, timeMax: Date): Promise<Slot[]> {
+    timeMin = getBlockStart(timeMin);
+    timeMax = getBlockStart(timeMax);
+    return freeBusyRequest(timeMin, timeMax)
+      .then(busyTimes => {
+        const busy = retrieveSlots(busyTimes);
+        console.log("printing busy slots: ");
+        console.log(busy);
+        return busy;
+      })
+      .catch(err => {
+        return Promise.reject(err);
+      });
   },
-  async updateCalendar() {
-    /* get user's busy slots */
-    const timeMin: Date = getBlockStart(new Date());
-    const timeMax: Date = new Date(
-      timeMin.getFullYear(),
-      timeMin.getMonth(),
-      timeMin.getDate() + 1,
-      timeMin.getHours(),
-      timeMin.getMinutes()
-    );
-    console.log(`min: ${timeMin}, max: ${timeMax}`);
-    gapi.load("client:auth2", () => {
-      gapi.auth2.authorize(
-        {
-          // eslint-disable-next-line @typescript-eslint/camelcase
-          client_id: googleCalendarClient.clientId,
-          scope: googleCalendarClient.scope,
-          prompt: "none"
-        },
-        authResponse => {
-          if (authResponse.error) {
-            console.log("here's the error: " + authResponse.error);
-          }
-          /* get user's busy slots */
-          gapi.client
-            .request({
-              path: "https://www.googleapis.com/calendar/v3/freeBusy",
-              method: "POST",
-              body: {
-                timeMin: timeMin.toISOString(),
-                timeMax: timeMax.toISOString(),
-                timeZone: "PST",
-                items: [{ id: "primary" }]
-              }
-            })
-            .then(res => {
-              console.log("freebusy response!");
-              console.log(res);
-              if (res.result.calendars && res.result.calendars.primary.busy) {
-                const busyTimes = res.result.calendars.primary.busy;
-                const busy = retrieveSlots(busyTimes);
-                console.log("printing busy times: ");
-                console.log(busy);
-                /* get user's free slots from busy slots */
-                const free = getFreeSlots(busy, timeMin, timeMax);
-                console.log("free!");
-                console.log(free);
-
-                /* get the new calendar based on gcal info */
-                const calendar = createCalendar(free);
-                console.log(calendar.blocks.length);
-                for (let i = 0; i < calendar.blocks.length; i++) {
-                  console.log(`block ${i} - start: `);
-                  console.log(calendar.blocks[i]);
-                }
-              } else {
-                console.log("no busy times!");
-              }
-            })
-            .catch(err => {
-              console.log("freebusy error!");
-              console.log(err);
-            });
-        }
-      );
-    });
+  async getFreeSlots(timeMin: Date, timeMax: Date): Promise<Slot[]> {
+    return this.getBusySlots(timeMin, timeMax)
+      .then(busySlots => {
+        const free = generateFreeSlots(busySlots, timeMin, timeMax);
+        console.log("printing free slots: ");
+        console.log(free);
+        return free;
+      })
+      .catch(err => {
+        return Promise.reject(err);
+      });
+  },
+  convertToBusyCalendar(slots: Slot[]): Calendar {
+    const calendar = createBusyCalendar(slots);
+    for (let i = 0; i < calendar.blocks.length; i++) {
+      console.log(`BUSY block ${i} - start: `);
+      console.log(calendar.blocks[i]);
+    }
+    return calendar;
+  },
+  convertToFreeCalendar(slots: Slot[]): Calendar {
+    const calendar = createFreeCalendar(slots);
+    for (let i = 0; i < calendar.blocks.length; i++) {
+      console.log(`FREE block ${i} - start: `);
+      console.log(calendar.blocks[i]);
+    }
+    return calendar;
   }
 };
 

@@ -17,10 +17,10 @@
       />
     </div>
     <div class="button">
-      <AppButton text="fetch events" @update="getEvents()" />
+      <AppButton text="fetch busy slots" @update="getBusyCalendar()" />
     </div>
     <div class="button">
-      <AppButton text="fetch freebusy" @update="getFreeBusy()" />
+      <AppButton text="fetch free slots" @update="getFreeCalendar()" />
     </div>
   </div>
 </template>
@@ -116,11 +116,43 @@ export default defineComponent({
         this.$emit("update:calendar", { blocks: [...otherBlocks, ...blocks] });
       }
     },
-    getEvents() {
-      client.getAllEvents();
+    async getBusyCalendar(): Promise<any> {
+      const timeMin: Date = new Date();
+      const timeMax: Date = new Date(
+        timeMin.getFullYear(),
+        timeMin.getMonth(),
+        timeMin.getDate(),
+        timeMin.getHours() + 2,
+        timeMin.getMinutes()
+      );
+      try {
+        const busySlots = await client.getBusySlots(timeMin, timeMax);
+        console.log("printing busy slots from calendar component: ");
+        console.log(busySlots);
+        const calendar = client.convertToBusyCalendar(busySlots);
+        return calendar;
+      } catch (err) {
+        console.log("error: " + err);
+      }
     },
-    getFreeBusy() {
-      client.updateCalendar();
+    async getFreeCalendar(): Promise<any> {
+      const timeMin: Date = new Date();
+      const timeMax: Date = new Date(
+        timeMin.getFullYear(),
+        timeMin.getMonth(),
+        timeMin.getDate(),
+        timeMin.getHours() + 2,
+        timeMin.getMinutes()
+      );
+      try {
+        const freeSlots = await client.getFreeSlots(timeMin, timeMax);
+        console.log("printing free slots from calendar component: ");
+        console.log(freeSlots);
+        const calendar = client.convertToFreeCalendar(freeSlots);
+        return calendar;
+      } catch (err) {
+        console.log("error: " + err);
+      }
     }
   }
 });
