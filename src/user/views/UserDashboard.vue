@@ -8,7 +8,7 @@
         <header class="event-status-header">
           <div class="subtitle1">Scheduled</div>
         </header>
-        <ul>
+        <ul style="overflow: hidden; overflow-y: auto; height: 100%">
           <li v-for="event in events" :key="event.id">
             <template v-if="event.isScheduled">
               <DashboardEvent :event="event" />
@@ -41,6 +41,11 @@
 </template>
 
 <script lang="ts">
+// TODO: Turn article into component
+// TODO: Handle overflow events scrollbar
+// TODO: Better class names
+// TODO: Better page layout
+
 import { defineComponent, computed } from "vue";
 import DashboardEvent from "@/user/components/DashboardEvent.vue";
 
