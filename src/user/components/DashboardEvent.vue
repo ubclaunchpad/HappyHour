@@ -1,16 +1,45 @@
 <template>
-  <h1>Hello World</h1>
-  <!-- <div class="dashboard-event-container">
-    <div class="status-block"></div>
-    <div>Hello</div>
-  </div> -->
+  <div class="dashboard-event-container">
+    <span
+      class="status-block"
+      :class="{ scheduled: event.isScheduled, unscheduled: !event.isScheduled }"
+    ></span>
+
+    <div class="event-info">
+      <div><!-- spacer  for vertical flex--></div>
+      <div class="event-text">
+        <div class="event-left">{{ event.name }}</div>
+        <div class="event-right">
+          {{ event.time || eventResponses }}
+        </div>
+      </div>
+
+      <div class="separator"></div>
+    </div>
+  </div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineComponent, computed } from "vue";
 
 export default defineComponent({
-  name: "DashboardEvent"
+  name: "DashboardEvent",
+
+  props: {
+    event: { type: Object, required: true }
+  },
+
+  setup(props) {
+    const eventResponses = computed(
+      () =>
+        `${props.event.responses} ${
+          props.event.responses === 0 || props.event.responses === 1
+            ? "response"
+            : "responses"
+        }`
+    );
+    return { eventResponses };
+  }
 });
 </script>
 
@@ -22,6 +51,30 @@ export default defineComponent({
 .status-block {
   width: 0.5rem;
   height: 2rem;
-  background: red;
+}
+
+.scheduled {
+  background: var(--color-success);
+}
+
+.unscheduled {
+  background: var(--color-failure);
+}
+
+.event-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 100%;
+  margin: 0 1rem;
+}
+
+.event-text {
+  display: flex;
+  justify-content: space-between;
+}
+
+.separator {
+  border-bottom: 1px solid var(--color-text-secondary);
 }
 </style>

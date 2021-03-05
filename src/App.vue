@@ -54,7 +54,7 @@ ul {
   font-family: "Open Sans", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  color: rgba(2, 15, 34, 1);
+  color: var(--color-text-primary);
 }
 
 .root-container {

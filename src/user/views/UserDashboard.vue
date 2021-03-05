@@ -1,15 +1,34 @@
 <template>
   <main class="dashboard-container">
-    <!-- Tommy -->
     <section class="events card">
-      <DashboardEvent />
-      <header>
+      <header class="card-heading">
         <h5>My Events</h5>
       </header>
-      <div>
-        <div class="subtitle1">Scheduled</div>
-        <div class="subtitle1">Unscheduled</div>
-      </div>
+      <article class="event-status">
+        <header class="event-status-header">
+          <div class="subtitle1">Scheduled</div>
+        </header>
+        <ul>
+          <li v-for="event in events" :key="event.id">
+            <template v-if="event.isScheduled">
+              <DashboardEvent :event="event" />
+            </template>
+          </li>
+        </ul>
+      </article>
+
+      <article class="event-status">
+        <header class="event-status-header">
+          <div class="subtitle1">Unscheduled</div>
+        </header>
+        <ul>
+          <li v-for="event in events" :key="event.id">
+            <template v-if="!event.isScheduled">
+              <DashboardEvent :event="event" />
+            </template>
+          </li>
+        </ul>
+      </article>
     </section>
 
     <!-- Jill -->
@@ -23,7 +42,6 @@
 
 <script lang="ts">
 import { defineComponent, computed } from "vue";
-import Calendar from "@/calendar/components/Calendar.vue";
 import DashboardEvent from "@/user/components/DashboardEvent.vue";
 
 const start = new Date("November 2, 2020 09:00:00");
@@ -32,7 +50,7 @@ const end = new Date("November  8, 2020 21:30:00");
 export default defineComponent({
   name: "UserDashboard",
 
-  component: { Calendar, DashboardEvent },
+  components: { DashboardEvent },
 
   props: {},
 
@@ -42,31 +60,34 @@ export default defineComponent({
 
     const events = [
       {
+        id: 0,
         name: "Team Meeting",
-        time: "Sep 15th, 14:00-15:00",
+        time: "Sep 15th, 14:00  -15:00",
         isScheduled: true
       },
       {
+        id: 1,
         name: "Project Debrief",
         time: "Sep 20th, 9:00 - 10:00",
         isScheduled: true
       },
       {
+        id: 2,
         name: "Meet up with the homies",
-        time: "Every Monday, 17:00 = 19:00",
+        time: "Every Monday, 17:00 - 19:00",
         isScheduled: true
       },
       {
-        name: "Team Meeting",
-        time: "Sep 15th, 14:00-15:00",
+        id: 3,
+        name: "110 Group Meeting",
         isScheduled: false,
         responses: 6
       },
       {
-        name: "110 Group Meeting",
-        time: "Volunteer",
+        id: 4,
+        name: "Volunteer",
         isScheduled: false,
-        responses: 4
+        responses: 1
       }
     ];
     return { startTime, endTime, events };
@@ -79,10 +100,10 @@ export default defineComponent({
   # GLOBAL
 \*------------------------------------*/
 .card {
-  background: #fffffc;
+  background: var(--color-card);
   height: 36rem;
   border-radius: 5px;
-  margin: 2rem;
+  margin: 0.5rem;
 }
 /*------------------------------------*\
   # MAIN COMPONENTS
@@ -96,22 +117,39 @@ export default defineComponent({
   margin: 5rem;
 }
 
+.event-status {
+  margin: 2.5rem 0;
+}
+
 .events,
 .schedule {
   padding: 2rem;
   height: 75%;
 }
 
+.card-heading {
+  margin-bottom: 2rem;
+}
+
+.event-status-header {
+  margin: 1rem 0;
+}
+
 /*------------------------------------*\
   # LEFT COMPONENTS
 \*------------------------------------*/
 .events {
-  flex-grow: 3;
+  flex-grow: 2;
 }
 /*------------------------------------*\
   # RIGHT COMPONENTS
 \*------------------------------------*/
 .schedule {
-  flex-grow: 4;
+  flex-grow: 5;
+}
+
+li {
+  /* margin-bottom: 1rem; */
+  margin: 1rem 0;
 }
 </style>
