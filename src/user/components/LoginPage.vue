@@ -37,42 +37,13 @@ export default defineComponent({
   methods: {
     async logIn() {
       client.login(this.username, this.password).then(() => {
-        window.location.href = "/";
+        this.$router.push("/");
       });
     },
     logInViaGoogle() {
-      const provider = new firebase.auth.GoogleAuthProvider();
-      provider.addScope("profile");
-      provider.addScope("email");
-      provider.addScope("https://www.googleapis.com/auth/calendar");
-      firebase
-        .auth()
-        .signInWithPopup(provider)
-        .then(function(result) {
-          if (result.credential) {
-            const credential = result.credential as firebase.auth.OAuthCredential;
-            const token = credential.accessToken;
-            console.log("OK - OAuth Token: " + token);
-            // const timeMin: Date = new Date();
-            // const timeMax: Date = new Date(
-            //   timeMin.getFullYear(),
-            //   timeMin.getMonth(),
-            //   timeMin.getDate(),
-            //   timeMin.getHours() + 5,
-            //   timeMin.getMinutes()
-            // );
-            // freeBusyRequestNew(timeMin, timeMax, token)
-            //   .then(() => {
-            //     console.log("made the request!");
-            //   })
-            //   .catch(err => {
-            //     console.log(err);
-            //   });
-          }
-        })
-        .catch(function(err) {
-          console.error("ERR: " + err);
-        });
+      client.googleLogin().then(() => {
+        this.$router.push("/");
+      });
     }
   }
 });
