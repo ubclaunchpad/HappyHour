@@ -31,11 +31,16 @@
       </article>
     </section>
 
-    <!-- Jill -->
     <section class="schedule card">
       <header>
         <h5>My Set Schedule</h5>
       </header>
+      <Calendar
+        v-model:calendar="calendar"
+        :start-time="startTime"
+        :end-time="endTime"
+        class="calendar"
+      />
     </section>
   </main>
 </template>
@@ -46,23 +51,32 @@
 // TODO: Better class names
 // TODO: Better page layout
 
-import { defineComponent, computed } from "vue";
+import { defineComponent, computed, ref } from "vue";
 import DashboardEvent from "@/user/components/DashboardEvent.vue";
+import Calendar from "@/calendar/components/Calendar.vue";
 
-const start = new Date("November 2, 2020 09:00:00");
-const end = new Date("November  8, 2020 21:30:00");
+const start = new Date("March 2, 2021 09:00:00");
+const end = new Date("March  8, 2021 21:30:00");
 
 export default defineComponent({
   name: "UserDashboard",
 
-  components: { DashboardEvent },
+  components: { DashboardEvent, Calendar },
 
-  props: {},
+  props: {
+    timezone: {
+      type: String,
+      required: true,
+      default: () => "PST - Vancouver time"
+    }
+  },
 
   setup() {
     const startTime = computed(() => start.toISOString());
     const endTime = computed(() => end.toISOString());
-
+    const calendar = {
+      blocks: ref([])
+    };
     const events = [
       {
         id: 0,
@@ -95,7 +109,7 @@ export default defineComponent({
         responses: 1
       }
     ];
-    return { startTime, endTime, events };
+    return { startTime, endTime, events, calendar };
   }
 });
 </script>
@@ -156,5 +170,13 @@ export default defineComponent({
 li {
   /* margin-bottom: 1rem; */
   margin: 1rem 0;
+}
+
+.calendar {
+  margin: 0;
+  padding: 0;
+  border-radius: 10px;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  background: rgb(255, 255, 255);
 }
 </style>
