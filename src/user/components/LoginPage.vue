@@ -22,7 +22,7 @@ import { defineComponent } from "vue";
 import client from "../client";
 import AppButton from "@/common/AppButton.vue";
 import router from "@/router";
-import { freeBusyRequestNew } from "../../calendar/client";
+// import { freeBusyRequestNew } from "../../calendar/client";
 
 export default defineComponent({
   components: {
@@ -53,21 +53,21 @@ export default defineComponent({
             const credential = result.credential as firebase.auth.OAuthCredential;
             const token = credential.accessToken;
             console.log("OK - OAuth Token: " + token);
-            const timeMin: Date = new Date();
-            const timeMax: Date = new Date(
-              timeMin.getFullYear(),
-              timeMin.getMonth(),
-              timeMin.getDate(),
-              timeMin.getHours() + 2,
-              timeMin.getMinutes()
-            );
-            freeBusyRequestNew(timeMin, timeMax, token)
-              .then(() => {
-                console.log("made the request!");
-              })
-              .catch(err => {
-                console.log(err);
-              });
+            // const timeMin: Date = new Date();
+            // const timeMax: Date = new Date(
+            //   timeMin.getFullYear(),
+            //   timeMin.getMonth(),
+            //   timeMin.getDate(),
+            //   timeMin.getHours() + 5,
+            //   timeMin.getMinutes()
+            // );
+            // freeBusyRequestNew(timeMin, timeMax, token)
+            //   .then(() => {
+            //     console.log("made the request!");
+            //   })
+            //   .catch(err => {
+            //     console.log(err);
+            //   });
           }
         })
         .catch(function(err) {

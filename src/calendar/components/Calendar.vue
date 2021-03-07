@@ -22,6 +22,9 @@
     <div class="button">
       <AppButton text="fetch free slots" @update="getFreeCalendar()" />
     </div>
+    <div class="button">
+      <AppButton text="free busy test" @update="freeBusyTest()" />
+    </div>
   </div>
 </template>
 
@@ -152,6 +155,22 @@ export default defineComponent({
         return calendar;
       } catch (err) {
         console.log("error: " + err);
+      }
+    },
+    async freeBusyTest() {
+      const timeMin: Date = new Date();
+      const timeMax: Date = new Date(
+        timeMin.getFullYear(),
+        timeMin.getMonth(),
+        timeMin.getDate(),
+        timeMin.getHours() + 5,
+        timeMin.getMinutes()
+      );
+      try {
+        await client.testFreeBusy(timeMin, timeMax);
+        console.log("didnt fail?");
+      } catch (err) {
+        console.log(err);
       }
     }
   }
