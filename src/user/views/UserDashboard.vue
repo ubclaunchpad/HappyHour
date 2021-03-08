@@ -1,14 +1,14 @@
 <template>
-  <main class="dashboard-container">
+  <main class="dashboard">
     <section class="events card">
-      <header class="card-heading">
+      <header class="card__heading">
         <h5>My Events</h5>
       </header>
       <article class="event-status">
-        <header class="event-status-header">
+        <header class="event-status__header">
           <div class="subtitle1">Scheduled</div>
         </header>
-        <ul style="overflow: hidden; overflow-y: auto; height: 100%">
+        <ul class="dashboard-events">
           <li v-for="event in events" :key="event.id">
             <template v-if="event.isScheduled">
               <DashboardEvent :event="event" />
@@ -18,10 +18,10 @@
       </article>
 
       <article class="event-status">
-        <header class="event-status-header">
+        <header class="event-status__header">
           <div class="subtitle1">Unscheduled</div>
         </header>
-        <ul>
+        <ul class="dashboard-events">
           <li v-for="event in events" :key="event.id">
             <template v-if="!event.isScheduled">
               <DashboardEvent :event="event" />
@@ -32,15 +32,24 @@
     </section>
 
     <section class="schedule card">
-      <header>
+      <header class="card__heading">
         <h5>My Set Schedule</h5>
       </header>
       <Calendar
         v-model:calendar="calendar"
         :start-time="startTime"
         :end-time="endTime"
-        class="calendar"
+        class="schedule__calendar"
       />
+      <div class="schedule__subsection">
+        <div><!-- spacer  for flex--></div>
+        <div class="schedule__timezone caption">
+          (Time displayed in PST—Vancouver)
+        </div>
+        <button class="schedule__edit button" type="button">
+          Edit Schedule
+        </button>
+      </div>
     </section>
   </main>
 </template>
@@ -48,35 +57,36 @@
 <script lang="ts">
 // TODO: Turn article into component
 // TODO: Handle overflow events scrollbar
-// TODO: Better class names
 // TODO: Better page layout
+// TODO: Toggle Edit Schedule => View schedule
+// TODO: Fix Calendar select
+// TODO: Fix Calendar design
+// TODO: Prevent overflow of Calendar on zooming
+// TODO: Mobile support
+// TODO: Figure out "Cannot find name 'Calendar'.Vetur(2304)""
 
-import { defineComponent, computed, ref } from "vue";
+import { defineComponent, computed, ref, reactive } from "vue";
 import DashboardEvent from "@/user/components/DashboardEvent.vue";
 import Calendar from "@/calendar/components/Calendar.vue";
 
-const start = new Date("March 2, 2021 09:00:00");
-const end = new Date("March  8, 2021 21:30:00");
+const start = new Date("April 1, 2021 09:00:00");
+const end = new Date("April  7, 2021 21:30:00");
 
 export default defineComponent({
   name: "UserDashboard",
 
   components: { DashboardEvent, Calendar },
 
-  props: {
-    timezone: {
-      type: String,
-      required: true,
-      default: () => "PST - Vancouver time"
-    }
-  },
+  props: {},
 
   setup() {
     const startTime = computed(() => start.toISOString());
     const endTime = computed(() => end.toISOString());
-    const calendar = {
-      blocks: ref([])
-    };
+    const isEditable = ref(false);
+
+    const calendar = reactive({
+      blocks: []
+    });
     const events = [
       {
         id: 0,
@@ -109,8 +119,9 @@ export default defineComponent({
         responses: 1
       }
     ];
-    return { startTime, endTime, events, calendar };
-  }
+    return { startTime, endTime, events, calendar, isEditable };
+  },
+  methods: {}
 });
 </script>
 
@@ -128,7 +139,7 @@ export default defineComponent({
   # MAIN COMPONENTS
 \*------------------------------------*/
 
-.dashboard-container {
+.dashboard {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -136,22 +147,13 @@ export default defineComponent({
   margin: 5rem;
 }
 
-.event-status {
-  margin: 2.5rem 0;
-}
-
-.events,
-.schedule {
+.card {
   padding: 2rem;
   height: 75%;
 }
 
-.card-heading {
+.card__heading {
   margin-bottom: 2rem;
-}
-
-.event-status-header {
-  margin: 1rem 0;
 }
 
 /*------------------------------------*\
@@ -160,6 +162,19 @@ export default defineComponent({
 .events {
   flex-grow: 2;
 }
+
+.events li {
+  margin: 1rem 0;
+}
+
+.event-status {
+  margin: 2.5rem 0;
+}
+
+.event-status__header {
+  margin: 1rem 0;
+}
+
 /*------------------------------------*\
   # RIGHT COMPONENTS
 \*------------------------------------*/
@@ -167,16 +182,27 @@ export default defineComponent({
   flex-grow: 5;
 }
 
-li {
-  /* margin-bottom: 1rem; */
-  margin: 1rem 0;
-}
-
-.calendar {
+.schedule__calendar {
   margin: 0;
   padding: 0;
   border-radius: 10px;
-  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-  background: rgb(255, 255, 255);
+}
+
+.schedule__subsection {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1rem;
+}
+
+.schedule__timezone {
+  /* Colour is not in App.vue */
+  color: #7d7d7d;
+}
+
+.schedule__edit {
+  color: var(--color-primary);
+  text-decoration: underline;
+  font-weight: 600;
+  cursor: pointer;
 }
 </style>
