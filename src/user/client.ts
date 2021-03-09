@@ -10,21 +10,24 @@ export interface User {
   email: string;
   uid: string;
   // calendar: Calendar;
+  accessToken?: string;
 }
 
 function saveUserToDb(user: User) {
   db.ref("users/" + user.uid).set({
     username: user.email,
-    email: user.email
+    email: user.email,
+    accessToken: user.accessToken
   });
 }
 
-function createUserObject(user: firebase.User) {
+function createUserObject(user: firebase.User, token: string) {
   const { uid, email } = user;
   const newUser = {
     uid: uid,
     email: email || "",
-    username: email || ""
+    username: email || "",
+    accessToken: token || ""
   };
   return newUser;
 }
@@ -34,7 +37,7 @@ const client = {
     Auth.createUserWithEmailAndPassword(email, password)
       .then(user => {
         if (user.user) {
-          const newUser = createUserObject(user.user);
+          const newUser = createUserObject(user.user, "");
           saveUserToDb(newUser);
         } else {
           throw new Error("No User returned from firebase");
@@ -71,15 +74,16 @@ const client = {
       .auth()
       .signInWithPopup(provider)
       .then(result => {
+        let token: string;
         if (result.credential) {
           const credential = result.credential as firebase.auth.OAuthCredential;
-          const token = credential.accessToken;
+          token = credential.accessToken || "";
           console.log("OK - OAuth Token: " + token);
         }
         if (result.user != null) {
           db.ref("users/" + result.user.uid).once("value", async snapshot => {
             if (!snapshot.val() && result.user) {
-              const newUser = createUserObject(result.user);
+              const newUser = createUserObject(result.user, token);
               saveUserToDb(newUser);
             }
           });
@@ -87,6 +91,22 @@ const client = {
       })
       .catch(function(err) {
         console.error("ERR: " + err);
+      });
+  },
+  getAccessToken(): Promise<string> {
+    console.log("current user: " + Auth.currentUser?.uid);
+    return db
+      .ref("users/" + Auth.currentUser?.uid)
+      .once("value")
+      .then(snapshot => {
+        const user = snapshot.val();
+        console.log(user);
+        console.log("returning token: " + user.accessToken);
+        return user.accessToken;
+      })
+      .catch(err => {
+        console.log("error: " + err);
+        return "";
       });
   },
   logout() {

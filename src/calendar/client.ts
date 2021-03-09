@@ -1,8 +1,5 @@
-import firebase from "firebase";
-import { app } from "@/db";
 import "firebase/auth";
-
-const Auth = app.auth();
+import userClient from "../user/client";
 
 const googleCalendarClient = {
   apiKey: process.env.VUE_APP_GOOGLE_API_KEY,
@@ -203,126 +200,33 @@ const freeBusyRequest = async (
   timeMax: Date
 ): Promise<gapi.client.calendar.TimePeriod[]> => {
   return new Promise<gapi.client.calendar.TimePeriod[]>((resolve, reject) => {
-    gapi.load("client:auth2", () => {
-      gapi.auth2.authorize(
-        {
-          // eslint-disable-next-line @typescript-eslint/camelcase
-          client_id: googleCalendarClient.clientId,
-          scope: googleCalendarClient.scope,
-          prompt: "none"
-        },
-        async authResponse => {
-          if (authResponse.error) {
-            return reject(authResponse.error);
-          }
-          try {
-            const token =
-              "ya29.a0AfH6SMCabhZA7109mLH-RVAzhEVE_gcviSsyy2Pbe_RrlisfwZzRSL-TxWf6iWXHnQDXPfnNuKsIn3ZgDcx5TOokOCjqiLV_XD1iZVnsmPVNJdbZbnnvcJGkSiTm-lefNEGcWgssOJC6_jXc3vKYmlGV4KP-";
-            const res = await gapi.client.request({
-              path: "https://www.googleapis.com/calendar/v3/freeBusy",
-              method: "POST",
-              body: {
-                timeMin: timeMin.toISOString(),
-                timeMax: timeMax.toISOString(),
-                timeZone: "PST",
-                items: [{ id: "primary" }]
-              },
-              headers: {
-                Authorization: `Bearer ${token}`
-              }
-            });
-            if (res.result.calendars && res.result.calendars.primary.busy) {
-              const busyTimes = res.result.calendars.primary.busy;
-              console.log(busyTimes);
-              return resolve(busyTimes);
-            }
-          } catch (err) {
-            console.log("request error: " + err);
-            return reject(err);
-          }
-        }
-      );
-    });
-  });
-};
-const freeBusyRequestNew = async (
-  timeMin: Date,
-  timeMax: Date
-): Promise<gapi.client.calendar.TimePeriod[]> => {
-  return new Promise<gapi.client.calendar.TimePeriod[]>((resolve, reject) => {
     gapi.load("client:auth2", async () => {
-      // try {
-      //   const res = await gapi.client.request({
-      //     path: "https://www.googleapis.com/calendar/v3/freeBusy",
-      //     method: "POST",
-      //     body: {
-      //       timeMin: timeMin.toISOString(),
-      //       timeMax: timeMax.toISOString(),
-      //       timeZone: "PST",
-      //       items: [{ id: "primary" }]
-      //     },
-      //     headers: {
-      //       Authorization: `Bearer ${token}`
-      //     }
-      //   });
-      //   if (res.result.calendars && res.result.calendars.primary.busy) {
-      //     const busyTimes = res.result.calendars.primary.busy;
-      //     console.log(busyTimes);
-      //     return resolve(busyTimes);
-      //   }
-      // } catch (err) {
-      //   console.log("request error: ");
-      //   console.log(err);
-      //   return reject(err);
-      // }
-      if (Auth.currentUser) {
-        console.log("current user exists");
-        console.log(Auth.currentUser);
-        // return resolve(Auth.currentUser);
-        return resolve();
-      } else {
-        console.log("current user doesnt exist");
-        console.log(Auth.currentUser);
-        return reject();
+      try {
+        const accessToken = await userClient.getAccessToken();
+        console.log("access token in calendar: " + accessToken);
+        const res = await gapi.client.request({
+          path: "https://www.googleapis.com/calendar/v3/freeBusy",
+          method: "POST",
+          body: {
+            timeMin: timeMin.toISOString(),
+            timeMax: timeMax.toISOString(),
+            timeZone: "PST",
+            items: [{ id: "primary" }]
+          },
+          headers: {
+            Authorization: `Bearer ${accessToken}`
+          }
+        });
+        if (res.result.calendars && res.result.calendars.primary.busy) {
+          const busyTimes = res.result.calendars.primary.busy;
+          console.log(busyTimes);
+          return resolve(busyTimes);
+        }
+      } catch (err) {
+        console.log("request error: ");
+        console.log(err);
+        return reject(err);
       }
-      // gapi.auth2.authorize(
-      //   {
-      //     // eslint-disable-next-line @typescript-eslint/camelcase
-      //     client_id: googleCalendarClient.clientId,
-      //     scope: googleCalendarClient.scope,
-      //     prompt: "none"
-      //   },
-      //   async authResponse => {
-      //     if (authResponse.error) {
-      //       return reject(authResponse.error);
-      //     }
-      //     try {
-      //       // const token = "ya29.a0AfH6SMCabhZA7109mLH-RVAzhEVE_gcviSsyy2Pbe_RrlisfwZzRSL-TxWf6iWXHnQDXPfnNuKsIn3ZgDcx5TOokOCjqiLV_XD1iZVnsmPVNJdbZbnnvcJGkSiTm-lefNEGcWgssOJC6_jXc3vKYmlGV4KP-";
-      //       const res = await gapi.client.request({
-      //         path: "https://www.googleapis.com/calendar/v3/freeBusy",
-      //         method: "POST",
-      //         body: {
-      //           timeMin: timeMin.toISOString(),
-      //           timeMax: timeMax.toISOString(),
-      //           timeZone: "PST",
-      //           items: [{ id: "primary" }]
-      //         },
-      //         headers: {
-      //           Authorization: `Bearer ${token}`
-      //         }
-      //       });
-      //       if (res.result.calendars && res.result.calendars.primary.busy) {
-      //         const busyTimes = res.result.calendars.primary.busy;
-      //         console.log(busyTimes);
-      //         return resolve(busyTimes);
-      //       }
-      //     } catch (err) {
-      //       console.log("request error: ");
-      //       console.log(err);
-      //       return reject(err);
-      //     }
-      //   }
-      // );
     });
   });
 };
@@ -347,7 +251,7 @@ const client = {
   async testFreeBusy(timeMin: Date, timeMax: Date) {
     timeMin = getBlockStart(timeMin);
     timeMax = getBlockStart(timeMax);
-    return freeBusyRequestNew(timeMin, timeMax)
+    return freeBusyRequest(timeMin, timeMax)
       .then(() => {
         console.log("resolved");
       })
