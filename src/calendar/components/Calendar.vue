@@ -56,6 +56,10 @@ export default defineComponent({
     endTime: {
       type: String,
       required: true
+    },
+    editMode: {
+      type: Boolean,
+      required: false
     }
   },
   computed: {

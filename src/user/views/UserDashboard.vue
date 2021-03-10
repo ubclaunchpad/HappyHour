@@ -39,6 +39,7 @@
         v-model:calendar="calendar"
         :start-time="startTime"
         :end-time="endTime"
+        :edit-mode="editMode"
         class="schedule__calendar"
       />
       <div class="schedule__subsection">
@@ -46,7 +47,11 @@
         <div class="schedule__timezone caption">
           (Time displayed in PST—Vancouver)
         </div>
-        <button class="schedule__edit button" type="button">
+        <button
+          class="schedule__edit button"
+          type="button"
+          @click="switchEditMode"
+        >
           Edit Schedule
         </button>
       </div>
@@ -121,7 +126,18 @@ export default defineComponent({
     ];
     return { startTime, endTime, events, calendar, isEditable };
   },
-  methods: {}
+
+  data() {
+    return {
+      editMode: false
+    };
+  },
+  methods: {
+    switchEditMode: function() {
+      this.editMode = true;
+      console.log("Switched to Edit Mode");
+    }
+  }
 });
 </script>
 
