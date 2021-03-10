@@ -1,24 +1,31 @@
 <template>
-  <table>
-    <tr>
-      <th v-for="(day, i) in days" :key="i" class="body2">{{ day[0] }}</th>
-    </tr>
-    <tr>
-      <td
+  <div class="day-picker">
+    <!-- Day names ordered via data() -->
+    <ul class="days button">
+      <li
+        v-for="(day, i) in days"
+        :key="i"
+        class="day-name button"
+        :class="{ selected: day[1] }"
+      >
+        {{ day[0] }}
+      </li>
+    </ul>
+
+    <!-- Selectable day blocks -->
+    <ul class="days button">
+      <li
         v-for="(day, i) in days"
         :key="i"
         :class="{ selected: day[1] }"
+        class="day-block"
         @click="day[1] = !day[1]"
-      ></td>
-    </tr>
-  </table>
+      ></li>
+    </ul>
+  </div>
 </template>
 
-<script>
-//TODO: Make buttons for day selection
-//FIXME: Flexbox instead of tables
-//FIXME: Styling
-//FIXME: Relative units
+<script lang="ts">
 import { defineComponent } from "vue";
 export default defineComponent({
   name: "DayPicker",
@@ -26,51 +33,54 @@ export default defineComponent({
   data() {
     return {
       // Each day of the week has name and selected state
+      // Ordered as listed
       days: [
+        ["Sun", false],
         ["Mon", false],
         ["Tue", false],
         ["Wed", false],
         ["Thu", false],
         ["Fri", false],
-        ["Sat", false],
-        ["Sun", false]
+        ["Sat", false]
       ]
     };
-  },
-
-  methods: {}
+  }
 });
 </script>
 
 <style scoped>
-.body2 {
+.days {
+  display: flex;
+  justify-content: space-around;
+  width: 100%;
+  margin: 2rem;
+}
+
+.button {
   font-weight: 600;
 }
 
-table {
-  width: 100%;
-  padding: 20px;
-  border-collapse: separate;
-  border-spacing: 7px 49px;
+.day-name {
+  width: 4rem;
+  text-align: center;
 }
 
-tr {
-  padding: 20px;
-}
+/* Underline day names when selected */
+/* .day-name.selected {
+  text-decoration: underline;
+} */
 
-td {
-  width: 57px;
-  height: 238px;
-  border: 3px solid rgb(196, 196, 196);
+.day-block {
+  width: 4rem;
+  height: 15rem;
+  background: var(--color-card);
+  border: 3px solid var(--color-disabled);
   border-radius: 8px;
-  background: rgb(255, 255, 252);
+  cursor: pointer;
 }
 
-td.selected {
-  width: 57px;
-  height: 238px;
-  border: 0px solid rgb(196, 196, 196);
-  border-radius: 8px;
-  background: rgba(55, 87, 134, 0.5);
+.day-block.selected {
+  background: var(--color-primary);
+  opacity: 0.5;
 }
 </style>
