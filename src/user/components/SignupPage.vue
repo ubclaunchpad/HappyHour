@@ -31,6 +31,7 @@ export default defineComponent({
   methods: {
     signUp() {
       client.createUser(this.email, this.password);
+      this.$router.push("/");
     }
   }
 });
