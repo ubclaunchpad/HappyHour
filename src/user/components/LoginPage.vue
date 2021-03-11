@@ -22,8 +22,9 @@
 <script lang="ts">
 import firebase from "firebase/app";
 import { defineComponent } from "vue";
-import { Auth } from "../client";
+import client from "../client";
 import AppButton from "@/common/AppButton.vue";
+import router from "@/router";
 
 export default defineComponent({
   components: {
@@ -37,33 +38,14 @@ export default defineComponent({
   },
   methods: {
     async logIn() {
-      try {
-        const user = Auth.signInWithEmailAndPassword(
-          this.username,
-          this.password
-        );
-        console.log("OK - Token: " + user);
-      } catch (err) {
-        console.error("ERR: " + err);
-      }
+      client.login(this.username, this.password).then(() => {
+        this.$router.push("/");
+      });
     },
     logInViaGoogle() {
-      const provider = new firebase.auth.GoogleAuthProvider();
-      provider.addScope("profile");
-      provider.addScope("email");
-      firebase
-        .auth()
-        .signInWithPopup(provider)
-        .then(function(result) {
-          if (result.credential) {
-            const credential = result.credential as firebase.auth.OAuthCredential;
-            const token = credential.accessToken;
-            console.log("OK - OAuth Token: " + token);
-          }
-        })
-        .catch(function(err) {
-          console.error("ERR: " + err);
-        });
+      client.googleLogin().then(() => {
+        this.$router.push("/");
+      });
     }
   }
 });

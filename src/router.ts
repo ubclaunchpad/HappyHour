@@ -3,6 +3,7 @@ import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
 import CreateEventPage from "./event/views/CreateEventPage.vue";
 import EventPage from "./event/views/EventPage.vue";
 import RegistrationPage from "./user/views/RegistrationPage.vue";
+import LoginPage from "./user/views/Login.vue";
 
 export const routes: Array<RouteRecordRaw> = [
   {
@@ -10,12 +11,17 @@ export const routes: Array<RouteRecordRaw> = [
     component: CreateEventPage
   },
   {
-    path: "/event",
-    component: EventPage
+    path: "/event/:id",
+    component: EventPage,
+    props: true
   },
   {
     path: "/register",
     component: RegistrationPage
+  },
+  {
+    path: "/login",
+    component: LoginPage
   }
 ];
 
