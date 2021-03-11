@@ -1,26 +1,27 @@
 <template>
   <div class="day-picker">
     <!-- Day names ordered via data() -->
-    <ul class="days button">
+    <ul class="days">
       <li
-        v-for="(day, i) in days"
-        :key="i"
-        class="day-name button"
-        :class="{ selected: day[1] }"
+        v-for="day in days"
+        :key="day"
+        class="day-name day"
+        :class="{ selected: day.isSelected }"
       >
-        {{ day[0] }}
+        {{ day.dayName }}
       </li>
     </ul>
 
     <!-- Selectable day blocks -->
     <ul class="days button">
-      <li
-        v-for="(day, i) in days"
-        :key="i"
-        :class="{ selected: day[1] }"
-        class="day-block"
-        @click="day[1] = !day[1]"
-      ></li>
+      <li v-for="day in days" :key="day">
+        <button
+          type="button"
+          class="day-block day button"
+          :class="{ selected: day.isSelected }"
+          @click="day.isSelected = !day.isSelected"
+        ></button>
+      </li>
     </ul>
   </div>
 </template>
@@ -30,39 +31,40 @@ import { defineComponent } from "vue";
 export default defineComponent({
   name: "DayPicker",
 
-  data() {
-    return {
-      // Each day of the week has name and selected state
-      // Ordered as listed
-      days: [
-        ["Sun", false],
-        ["Mon", false],
-        ["Tue", false],
-        ["Wed", false],
-        ["Thu", false],
-        ["Fri", false],
-        ["Sat", false]
-      ]
-    };
-  }
+  data: () => ({
+    // Days ordered as listed
+    days: [
+      { dayName: "Sun", isSelected: false },
+      { dayName: "Mon", isSelected: false },
+      { dayName: "Tue", isSelected: false },
+      { dayName: "Wed", isSelected: false },
+      { dayName: "Thu", isSelected: false },
+      { dayName: "Fri", isSelected: false },
+      { dayName: "Sat", isSelected: false }
+    ]
+  })
 });
 </script>
 
 <style scoped>
+.day-picker {
+  width: 100%;
+}
+
 .days {
   display: flex;
   justify-content: space-around;
-  width: 100%;
-  margin: 2rem;
+  margin: 2rem 0;
 }
 
-.button {
-  font-weight: 600;
+.day {
+  width: 100%;
 }
 
 .day-name {
-  width: 4rem;
   text-align: center;
+  text-transform: capitalize;
+  font-weight: 600;
 }
 
 /* Underline day names when selected */
@@ -70,17 +72,39 @@ export default defineComponent({
   text-decoration: underline;
 } */
 
+.button {
+  cursor: pointer;
+}
+
 .day-block {
-  width: 4rem;
+  padding: 0 1.5rem;
   height: 15rem;
   background: var(--color-card);
   border: 3px solid var(--color-disabled);
   border-radius: 8px;
-  cursor: pointer;
 }
 
 .day-block.selected {
   background: var(--color-primary);
   opacity: 0.5;
+}
+
+/*------------------------------------*\
+  # MEDIA QUERIES
+\*------------------------------------*/
+@media screen and (max-width: 520px) {
+  /* For <520px: */
+  .day-block {
+    padding: 0 1rem;
+    height: 10rem;
+  }
+}
+
+/* Good for min-width 250px */
+@media screen and (max-width: 400px) {
+  /* For <400px: */
+  .day-block {
+    padding: 0 0.75rem;
+  }
 }
 </style>
