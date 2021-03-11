@@ -43,7 +43,6 @@
         class="schedule__calendar"
       />
       <div class="schedule__subsection">
-        <div><!-- spacer  for flex--></div>
         <div class="schedule__timezone caption">
           (Time displayed in PST—Vancouver)
         </div>
@@ -213,6 +212,7 @@ export default defineComponent({
 .schedule__timezone {
   /* Colour is not in App.vue */
   color: #7d7d7d;
+  margin: auto;
 }
 
 .schedule__edit {
