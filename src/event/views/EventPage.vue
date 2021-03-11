@@ -57,7 +57,7 @@
 //FIXME: AppSnackbar location
 //FIXME: Layout
 //FIXME: Multiple timers clashing in AppSnackbar notifications
-import { computed, defineComponent, reactive, watch, ref } from "vue";
+import { computed, defineComponent, watch, ref } from "vue";
 import AppButton from "@/common/AppButton.vue";
 import AppToggleInternalText from "@/common/AppToggleInternalText.vue";
 import AppSnackbar from "@/common/AppSnackbar.vue";
@@ -85,7 +85,7 @@ export default defineComponent({
     const displayGroupAvail = ref(false);
     const notificationText = ref("Some Notification");
     const notificationVisible = ref(false);
-    const calendar = reactive<CalendarType>({ blocks: [] });
+    const calendar = ref<CalendarType>({ blocks: [] });
 
     // computed
     const event = computed(() => client.getEventById(props.id));
@@ -96,7 +96,10 @@ export default defineComponent({
       event.value.scheduleWindow.endTime.toISOString()
     );
 
-    watch(event, newEvent => (calendar.blocks = newEvent.calendar.blocks));
+    watch(
+      event,
+      newEvent => (calendar.value.blocks = newEvent.calendar.blocks)
+    );
 
     return {
       event,
@@ -110,7 +113,7 @@ export default defineComponent({
         // save the calendar
         // alert("handleSave is called");
         // and show notification with "Availability saved!"
-        await client.addUserAvailability(calendar);
+        await client.addUserAvailability(calendar.value);
         notificationVisible.value = true;
         notificationText.value = "Availability saved!";
         setTimeout(() => (notificationVisible.value = false), 5000);
