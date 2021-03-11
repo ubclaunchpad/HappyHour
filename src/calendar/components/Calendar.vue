@@ -17,13 +17,10 @@
       />
     </div>
     <div class="button">
-      <AppButton text="fetch busy slots" @update="getBusyCalendar()" />
+      <AppButton text="busy blocks" @update="getBusyBlocks()" />
     </div>
     <div class="button">
-      <AppButton text="fetch free slots" @update="getFreeCalendar()" />
-    </div>
-    <div class="button">
-      <AppButton text="free busy test" @update="freeBusyTest()" />
+      <AppButton text="free blocks" @update="getFreeBlocks()" />
     </div>
   </div>
 </template>
@@ -119,58 +116,58 @@ export default defineComponent({
         this.$emit("update:calendar", { blocks: [...otherBlocks, ...blocks] });
       }
     },
-    async getBusyCalendar(): Promise<any> {
-      const timeMin: Date = new Date();
+    async getBusyBlocks(): Promise<any> {
+      const currentTime: Date = new Date();
+      const timeMin: Date = new Date(
+        currentTime.getFullYear(),
+        currentTime.getMonth(),
+        currentTime.getDate(),
+        currentTime.getHours() - 5,
+        30
+      );
       const timeMax: Date = new Date(
         timeMin.getFullYear(),
         timeMin.getMonth(),
         timeMin.getDate(),
-        timeMin.getHours() + 5,
-        timeMin.getMinutes()
+        timeMin.getHours() + 4,
+        0
       );
+      console.log(`min: ${timeMin}, max: ${timeMax}`);
       try {
-        const busySlots = await client.getBusySlots(timeMin, timeMax);
-        console.log("printing busy slots from calendar component: ");
-        console.log(busySlots);
-        const calendar = client.convertToBusyCalendar(busySlots);
-        return calendar;
+        const busyBlocks = await client.findBusyBlocks(timeMin, timeMax);
+        console.log("printing busy blocks from calendar component: ");
+        console.log(busyBlocks);
+        return busyBlocks;
       } catch (err) {
         console.log("error: " + err);
+        return err;
       }
     },
-    async getFreeCalendar(): Promise<any> {
-      const timeMin: Date = new Date();
+    async getFreeBlocks(): Promise<any> {
+      const currentTime: Date = new Date();
+      const timeMin: Date = new Date(
+        currentTime.getFullYear(),
+        currentTime.getMonth(),
+        currentTime.getDate(),
+        currentTime.getHours() - 5,
+        30
+      );
       const timeMax: Date = new Date(
         timeMin.getFullYear(),
         timeMin.getMonth(),
         timeMin.getDate(),
-        timeMin.getHours() + 5,
-        timeMin.getMinutes()
+        timeMin.getHours() + 4,
+        0
       );
+      console.log(`min: ${timeMin}, max: ${timeMax}`);
       try {
-        const freeSlots = await client.getFreeSlots(timeMin, timeMax);
-        console.log("printing free slots from calendar component: ");
-        console.log(freeSlots);
-        const calendar = client.convertToFreeCalendar(freeSlots);
-        return calendar;
+        const freeBlocks = await client.findFreeBlocks(timeMin, timeMax);
+        console.log("printing free blocks from calendar component: ");
+        console.log(freeBlocks);
+        return freeBlocks;
       } catch (err) {
         console.log("error: " + err);
-      }
-    },
-    async freeBusyTest() {
-      const timeMin: Date = new Date();
-      const timeMax: Date = new Date(
-        timeMin.getFullYear(),
-        timeMin.getMonth(),
-        timeMin.getDate(),
-        timeMin.getHours() + 5,
-        timeMin.getMinutes()
-      );
-      try {
-        await client.testFreeBusy(timeMin, timeMax);
-        console.log("didnt fail?");
-      } catch (err) {
-        console.log(err);
+        return err;
       }
     }
   }

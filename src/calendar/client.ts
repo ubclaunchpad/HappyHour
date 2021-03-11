@@ -1,13 +1,6 @@
 import "firebase/auth";
 import userClient from "../user/client";
 
-const googleCalendarClient = {
-  apiKey: process.env.VUE_APP_GOOGLE_API_KEY,
-  clientId: process.env.VUE_APP_GOOGLE_CLIENT_ID,
-  discoveryDocs: [process.env.VUE_APP_GOOGLE_DISCOVERY_DOC],
-  scope: process.env.VUE_APP_GOOGLE_SCOPE
-};
-
 /* helpers, not exported */
 interface Slot {
   startTime: Date;
@@ -91,8 +84,6 @@ const retrieveSlots = (
     const startTime = period.start?.toString();
     const endTime = period.end?.toString();
     if (startTime !== undefined && endTime !== undefined) {
-      console.log(new Date(startTime));
-      console.log(new Date(endTime));
       const slot: Slot = {
         startTime: new Date(startTime),
         endTime: new Date(endTime)
@@ -101,42 +92,6 @@ const retrieveSlots = (
     }
   }
   return slots;
-};
-
-const generateFreeSlots = (
-  busySlots: Slot[],
-  timeMin: Date,
-  timeMax: Date
-): Slot[] => {
-  const freeSlots: Slot[] = [];
-  if (busySlots.length < 1) {
-    freeSlots.push({
-      startTime: timeMin,
-      endTime: timeMax
-    });
-  } else {
-    for (let i = 0; i < busySlots.length; i++) {
-      const slot = busySlots[i];
-      if (i == 0 && timeMin < slot.startTime) {
-        freeSlots.push({
-          startTime: timeMin,
-          endTime: slot.startTime
-        });
-      } else if (i > 0 && busySlots[i - 1].endTime < slot.startTime) {
-        freeSlots.push({
-          startTime: busySlots[i - 1].endTime,
-          endTime: slot.startTime
-        });
-      }
-      if (i == busySlots.length - 1 && slot.endTime < timeMax) {
-        freeSlots.push({
-          startTime: slot.endTime,
-          endTime: timeMax
-        });
-      }
-    }
-  }
-  return freeSlots;
 };
 
 const getBusyBlocks = (startTime: Date, endTime: Date): Block[] => {
@@ -155,44 +110,31 @@ const getBusyBlocks = (startTime: Date, endTime: Date): Block[] => {
   return busyBlocks;
 };
 
-const getFreeBlocks = (startTime: Date, endTime: Date): Block[] => {
-  let s = getBlockStart(startTime);
-  const e = getBlockEnd(endTime);
-
-  /* create blocks between s & e */
-  const freeBlocks: Block[] = [];
-  while (s < e) {
-    freeBlocks.push({
-      startTime: s,
-      availableUsers: []
-    });
-    s = getNextBlock(s);
-  }
-  return freeBlocks;
-};
-
-const createBusyCalendar = (slots: Slot[]): Calendar => {
-  let calendarBlocks: Block[] = [];
+const generateBusyBlocks = (slots: Slot[]): Block[] => {
+  let busyBlocks: Block[] = [];
   for (const slot of slots) {
     const blocks = getBusyBlocks(slot.startTime, slot.endTime);
-    calendarBlocks = calendarBlocks.concat(blocks);
+    busyBlocks = busyBlocks.concat(blocks);
   }
-  const cal: Calendar = {
-    blocks: calendarBlocks
-  };
-  return cal;
+  return busyBlocks;
 };
 
-const createFreeCalendar = (slots: Slot[]): Calendar => {
-  let calendarBlocks: Block[] = [];
-  for (const slot of slots) {
-    const blocks = getFreeBlocks(slot.startTime, slot.endTime);
-    calendarBlocks = calendarBlocks.concat(blocks);
+const generateFreeBlocks = (
+  busyBlocks: Block[],
+  timeMin: Date,
+  timeMax: Date
+): Block[] => {
+  const freeBlocks: Block[] = [];
+  const busyStartTimes = busyBlocks.map(busyBlock =>
+    busyBlock.startTime.getTime()
+  );
+  while (timeMin < timeMax) {
+    if (!busyStartTimes.includes(timeMin.getTime())) {
+      freeBlocks.push({ startTime: timeMin, availableUsers: [] });
+    }
+    timeMin = getNextBlock(timeMin);
   }
-  const cal: Calendar = {
-    blocks: calendarBlocks
-  };
-  return cal;
+  return freeBlocks;
 };
 
 const freeBusyRequest = async (
@@ -219,7 +161,6 @@ const freeBusyRequest = async (
         });
         if (res.result.calendars && res.result.calendars.primary.busy) {
           const busyTimes = res.result.calendars.primary.busy;
-          console.log(busyTimes);
           return resolve(busyTimes);
         }
       } catch (err) {
@@ -232,7 +173,6 @@ const freeBusyRequest = async (
 };
 
 /* exported */
-
 export interface Block {
   startTime: Date;
   availableUsers: string[];
@@ -248,59 +188,34 @@ export interface Time {
 }
 
 const client = {
-  async testFreeBusy(timeMin: Date, timeMax: Date) {
-    timeMin = getBlockStart(timeMin);
-    timeMax = getBlockStart(timeMax);
-    return freeBusyRequest(timeMin, timeMax)
-      .then(() => {
-        console.log("resolved");
-      })
-      .catch(err => {
-        console.log("rejected");
-        console.log(err);
-      });
-  },
-  async getBusySlots(timeMin: Date, timeMax: Date): Promise<Slot[]> {
+  findBusyBlocks(timeMin: Date, timeMax: Date): Promise<Block[]> {
     timeMin = getBlockStart(timeMin);
     timeMax = getBlockStart(timeMax);
     return freeBusyRequest(timeMin, timeMax)
       .then(busyTimes => {
-        const busy = retrieveSlots(busyTimes);
-        console.log("printing busy slots: ");
-        console.log(busy);
-        return busy;
+        return retrieveSlots(busyTimes);
       })
-      .catch(err => {
-        return Promise.reject(err);
-      });
-  },
-  async getFreeSlots(timeMin: Date, timeMax: Date): Promise<Slot[]> {
-    return this.getBusySlots(timeMin, timeMax)
       .then(busySlots => {
-        const free = generateFreeSlots(busySlots, timeMin, timeMax);
-        console.log("printing free slots: ");
-        console.log(free);
-        return free;
+        return generateBusyBlocks(busySlots);
       })
       .catch(err => {
         return Promise.reject(err);
       });
   },
-  convertToBusyCalendar(slots: Slot[]): Calendar {
-    const calendar = createBusyCalendar(slots);
-    for (let i = 0; i < calendar.blocks.length; i++) {
-      console.log(`BUSY block ${i} - start: `);
-      console.log(calendar.blocks[i]);
-    }
-    return calendar;
+  findFreeBlocks(timeMin: Date, timeMax: Date): Promise<Block[]> {
+    return this.findBusyBlocks(timeMin, timeMax)
+      .then(busyBlocks => {
+        return generateFreeBlocks(busyBlocks, timeMin, timeMax);
+      })
+      .catch(err => {
+        return Promise.reject(err);
+      });
   },
-  convertToFreeCalendar(slots: Slot[]): Calendar {
-    const calendar = createFreeCalendar(slots);
-    for (let i = 0; i < calendar.blocks.length; i++) {
-      console.log(`FREE block ${i} - start: `);
-      console.log(calendar.blocks[i]);
-    }
-    return calendar;
+  createCalendar(blocks: Block[]): Calendar {
+    const cal: Calendar = {
+      blocks: blocks
+    };
+    return cal;
   }
 };
 
