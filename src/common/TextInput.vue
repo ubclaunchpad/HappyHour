@@ -25,7 +25,7 @@ export default defineComponent({
   },
 
   props: {
-    type: { type: String, required: true },
+    type: { type: String, default: "input" },
     resize: { type: String, default: "" }
   },
 

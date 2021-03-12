@@ -81,8 +81,8 @@
             class="textarea"
             type="textarea"
             placeholder="Enter Description"
-            resize="none"
             autofocus
+            resize="vertical"
           >
             <template #suffix>
               <button
