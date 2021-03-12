@@ -59,7 +59,6 @@
         <TextInput
           v-model="eventTitle"
           class="textinput"
-          type="input"
           placeholder="My Awesome Event"
           required
         />
