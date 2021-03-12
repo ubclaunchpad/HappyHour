@@ -7,10 +7,15 @@
       <p>Password:</p>
       <input v-model="password" class="input" />
     </div>
-    <AppButton variant="primary" class="button" @update="logIn()"
+    <AppButton variant="primary" type="submit" class="button" @update="logIn()"
       >Login</AppButton
     >
-    <AppButton variant="primary" class="button" @update="logInViaGoogle()">
+    <AppButton
+      variant="primary"
+      type="button"
+      class="button"
+      @update="logInViaGoogle()"
+    >
       <GoogleLogo variant="secondary" class="btn-logo" />
       Login with Google
     </AppButton>
