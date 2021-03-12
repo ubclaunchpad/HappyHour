@@ -1,6 +1,10 @@
 <template>
   <div class="input-container">
-    <component :is="currInputComponent" v-bind="$attrs" />
+    <component
+      :is="currInputComponent"
+      v-bind="$attrs"
+      :style="resizeAttribute"
+    />
     <div class="suffix">
       <slot name="suffix"></slot>
     </div>
@@ -8,7 +12,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, computed } from "vue";
+import { defineComponent, computed } from "vue";
 import TextInputInput from "@/common/TextInputInput.vue";
 import TextInputTextarea from "@/common/TextInputTextarea.vue";
 
@@ -21,7 +25,8 @@ export default defineComponent({
   },
 
   props: {
-    type: { type: String, required: true, default: "input" }
+    type: { type: String, required: true },
+    resize: { type: String, default: "" }
   },
 
   setup(props) {
@@ -29,7 +34,9 @@ export default defineComponent({
       props.type === "textarea" ? TextInputTextarea : TextInputInput
     );
 
-    return { currInputComponent };
+    const resizeAttribute = computed(() => `resize: ${props.resize}`);
+
+    return { currInputComponent, resizeAttribute };
   }
 });
 </script>
@@ -38,11 +45,9 @@ export default defineComponent({
 input,
 textarea {
   width: 100%;
-  padding: 0.5rem;
-  border: 1px solid rgb(240, 243, 245);
+  border: 1px solid var(--color-border);
   border-radius: 5px;
-  background: rgb(255, 255, 255);
-  resize: vertical;
+  padding: 0.5rem;
 }
 
 .input-container {
@@ -52,7 +57,7 @@ textarea {
 
 .suffix {
   position: absolute;
-  top: 50%;
+  top: 1.5rem;
   right: 0.5rem;
   transform: translateY(-50%);
 }
