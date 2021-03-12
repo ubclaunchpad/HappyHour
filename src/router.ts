@@ -12,8 +12,9 @@ export const routes: Array<RouteRecordRaw> = [
     component: CreateEventPage
   },
   {
-    path: "/event",
-    component: EventPage
+    path: "/event/:id",
+    component: EventPage,
+    props: true
   },
   {
     path: "/register",
