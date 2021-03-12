@@ -20,8 +20,6 @@
 </template>
 
 <script lang="ts">
-// TODO: Figure out how time/event frequency is being handled
-
 import { defineComponent, computed } from "vue";
 
 export default defineComponent({

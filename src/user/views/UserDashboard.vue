@@ -4,7 +4,7 @@
       <header class="card__heading">
         <h5>My Events</h5>
       </header>
-      <article class="event-status">
+      <div class="event-status">
         <header class="event-status__header">
           <div class="subtitle1">Scheduled</div>
         </header>
@@ -15,9 +15,9 @@
             </template>
           </li>
         </ul>
-      </article>
+      </div>
 
-      <article class="event-status">
+      <div class="event-status">
         <header class="event-status__header">
           <div class="subtitle1">Unscheduled</div>
         </header>
@@ -28,7 +28,7 @@
             </template>
           </li>
         </ul>
-      </article>
+      </div>
     </section>
 
     <section class="schedule card">
