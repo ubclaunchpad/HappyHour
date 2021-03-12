@@ -7,15 +7,13 @@
       <p>Password:</p>
       <input v-model="password" class="input" />
     </div>
-    <div class="button">
-      <AppButton content="Log in" @update="logIn()" />
-    </div>
-    <div class="button">
-      <AppButton
-        content="Log in with Google Account"
-        @update="logInViaGoogle()"
-      />
-    </div>
+    <AppButton variant="primary" class="button" @update="logIn()"
+      >Login</AppButton
+    >
+    <AppButton variant="primary" class="button" @update="logInViaGoogle()">
+      <GoogleLogo variant="secondary" class="btn-logo" />
+      Login with Google
+    </AppButton>
   </div>
 </template>
 
@@ -24,11 +22,12 @@ import firebase from "firebase/app";
 import { defineComponent } from "vue";
 import client from "../client";
 import AppButton from "@/common/AppButton.vue";
-import router from "@/router";
+import GoogleLogo from "@/common/app-icon/GoogleLogo.vue";
 
 export default defineComponent({
   components: {
-    AppButton
+    AppButton,
+    GoogleLogo
   },
   data() {
     return {
@@ -65,14 +64,16 @@ export default defineComponent({
   border-radius: 5px;
   margin-bottom: 20px;
 }
+
 .p1 {
   text-align: left;
 }
+
 .button {
   width: 422px;
-  padding-top: 10px;
-  margin-bottom: 10px;
+  margin-bottom: 1.25rem;
 }
+
 .login {
   position: absolute;
   width: 556px;
@@ -82,5 +83,9 @@ export default defineComponent({
   background: #ffffff;
   border-radius: 8px;
   padding: 55px;
+}
+
+.btn-logo {
+  margin-right: 0.5rem;
 }
 </style>

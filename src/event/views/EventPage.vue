@@ -33,18 +33,12 @@
             @update="switchCalendar()"
           />
           <div class="buttons">
-            <AppButton
-              :class="'btn-secondary'"
-              class="btn"
-              content="Save Response"
-              @update="handleSave()"
-            />
-            <AppButton
-              :class="'btn-secondary'"
-              class="btn"
-              content="Copy Event Link"
-              @update="copyLink()"
-            />
+            <AppButton variant="secondary" class="btn" @update="handleSave()"
+              >Save Response</AppButton
+            >
+            <AppButton variant="secondary" class="btn" @update="copyLink()"
+              >Copy Event Link</AppButton
+            >
           </div>
         </section>
       </div>

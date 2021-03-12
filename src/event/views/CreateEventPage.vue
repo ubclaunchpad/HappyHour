@@ -96,7 +96,7 @@
           </TextInput>
         </section>
       </section>
-      <AppButton class="btn-create" text="Create Event" type="submit" />
+      <AppButton variant="primary" type="submit">Create Event</AppButton>
     </section>
   </form>
 </template>
