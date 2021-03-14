@@ -16,7 +16,7 @@
 </template>
 
 <script lang="ts">
-import { format, parse } from "date-fns";
+import { format, setHours, setMinutes } from "date-fns";
 import { defineComponent, PropType } from "vue";
 
 import { Block, Time } from "../client";
@@ -83,10 +83,9 @@ export default defineComponent({
         blocks = this.blocks.filter(block => !this.equalsBlock(time, block));
       } else {
         const newBlock: Block = {
-          startTime: parse(
-            `${this.dateText} ${time.hour}:${time.minutes}`,
-            "E MMM d H:mm",
-            new Date()
+          startTime: setHours(
+            setMinutes(new Date(this.date), time.minutes),
+            time.hour
           ),
           availableUsers: ["1"] // stub
         };

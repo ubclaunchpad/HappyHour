@@ -3,9 +3,9 @@
     <div class="heading">Log In</div>
     <div class="p1">
       <p>Username/Email:</p>
-      <input v-model="username" class="input" />
+      <TextInput v-model="username" />
       <p>Password:</p>
-      <input v-model="password" class="input" />
+      <TextInput v-model="password" />
     </div>
     <div class="button">
       <AppButton text="Log in" @update="logIn()" />
@@ -22,11 +22,12 @@ import { defineComponent } from "vue";
 import client from "../client";
 import AppButton from "@/common/AppButton.vue";
 import router from "@/router";
-// import { freeBusyRequestNew } from "../../calendar/client";
+import TextInput from "@/common/TextInput.vue";
 
 export default defineComponent({
   components: {
-    AppButton
+    AppButton,
+    TextInput
   },
   data() {
     return {

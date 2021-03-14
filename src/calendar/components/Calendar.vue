@@ -67,9 +67,6 @@ export default defineComponent({
     }
   },
   computed: {
-    blocks(): Block[] {
-      return this.calendar.blocks;
-    },
     days(): Day[] {
       return eachDayOfInterval({
         start: this.start,
@@ -77,7 +74,9 @@ export default defineComponent({
       }).map(date => {
         return {
           date: date.toISOString(),
-          blocks: this.blocks.filter(block => isSameDay(block.startTime, date))
+          blocks: this.calendar.blocks.filter(block =>
+            isSameDay(block.startTime, date)
+          )
         };
       });
     },
@@ -110,7 +109,7 @@ export default defineComponent({
     updateCalendar({ blocks, date }: { blocks: Block[]; date: string }) {
       const originalBlocks = this.days.find(day => day.date === date)?.blocks;
       if (originalBlocks) {
-        const otherBlocks = this.blocks.filter(
+        const otherBlocks = this.calendar.blocks.filter(
           block => !originalBlocks.includes(block)
         );
         this.$emit("update:calendar", { blocks: [...otherBlocks, ...blocks] });
