@@ -1,5 +1,11 @@
+const googleCalendarClient = {
+  apiKey: process.env.VUE_APP_GOOGLE_API_KEY,
+  clientId: process.env.VUE_APP_GOOGLE_CLIENT_ID,
+  discoveryDocs: [process.env.VUE_APP_GOOGLE_DISCOVERY_DOC],
+  scope: process.env.VUE_APP_GOOGLE_SCOPE
+};
+
 import { app, db } from "@/db";
-import { Calendar } from "@/calendar/client";
 import firebase from "firebase/app";
 import "firebase/auth";
 
@@ -10,24 +16,21 @@ export interface User {
   email: string;
   uid: string;
   // calendar: Calendar;
-  accessToken?: string;
 }
 
 function saveUserToDb(user: User) {
   db.ref("users/" + user.uid).set({
     username: user.email,
-    email: user.email,
-    accessToken: user.accessToken
+    email: user.email
   });
 }
 
-function createUserObject(user: firebase.User, token: string) {
+function createUserObject(user: firebase.User): User {
   const { uid, email } = user;
   const newUser = {
     uid: uid,
     email: email || "",
-    username: email || "",
-    accessToken: token || ""
+    username: email || ""
   };
   return newUser;
 }
@@ -37,7 +40,7 @@ const client = {
     Auth.createUserWithEmailAndPassword(email, password)
       .then(user => {
         if (user.user) {
-          const newUser = createUserObject(user.user, "");
+          const newUser = createUserObject(user.user);
           saveUserToDb(newUser);
         } else {
           throw new Error("No User returned from firebase");
@@ -68,46 +71,80 @@ const client = {
       });
   },
   googleLogin() {
-    const provider = new firebase.auth.GoogleAuthProvider();
-    provider.addScope("https://www.googleapis.com/auth/calendar");
-    return firebase
-      .auth()
-      .signInWithPopup(provider)
-      .then(result => {
-        let token: string;
-        if (result.credential) {
-          const credential = result.credential as firebase.auth.OAuthCredential;
-          token = credential.accessToken || "";
-          console.log("OK - OAuth Token: " + token);
-        }
-        if (result.user != null) {
-          db.ref("users/" + result.user.uid).once("value", async snapshot => {
-            if (!snapshot.val() && result.user) {
-              const newUser = createUserObject(result.user, token);
-              saveUserToDb(newUser);
-            }
+    return new Promise((resolve, reject) => {
+      gapi.load("auth2", async () => {
+        gapi.auth2
+          .init({
+            // eslint-disable-next-line @typescript-eslint/camelcase
+            client_id: googleCalendarClient.clientId,
+            scope: googleCalendarClient.scope
+          })
+          .then(googleAuth => {
+            googleAuth
+              .signIn()
+              .then(googleUser => {
+                console.log(googleUser);
+                const accessToken = googleUser.getAuthResponse().access_token;
+                console.log(`access token: ${accessToken}`);
+                const credential = firebase.auth.GoogleAuthProvider.credential(
+                  null,
+                  accessToken
+                );
+                return firebase.auth().signInWithCredential(credential);
+              })
+              .then(result => {
+                if (result.credential) {
+                  const credential = result.credential as firebase.auth.OAuthCredential;
+                }
+                if (result.user != null) {
+                  db.ref("users/" + result.user.uid).once(
+                    "value",
+                    async snapshot => {
+                      if (!snapshot.val() && result.user) {
+                        const newUser = createUserObject(result.user);
+                        saveUserToDb(newUser);
+                        return resolve(newUser);
+                      }
+                    }
+                  );
+                }
+              })
+              .catch(err => {
+                console.error("error in googleLogin: " + err);
+                return reject(err);
+              });
           });
-        }
-      })
-      .catch(function(err) {
-        console.error("ERR: " + err);
       });
+    });
   },
   getAccessToken(): Promise<string> {
-    console.log("current user: " + Auth.currentUser?.uid);
-    return db
-      .ref("users/" + Auth.currentUser?.uid)
-      .once("value")
-      .then(snapshot => {
-        const user = snapshot.val();
-        console.log(user);
-        console.log("returning token: " + user.accessToken);
-        return user.accessToken;
-      })
-      .catch(err => {
-        console.log("error: " + err);
-        return "";
+    return new Promise((resolve, reject) => {
+      gapi.load("auth2", async () => {
+        gapi.auth2
+          .init({
+            // eslint-disable-next-line @typescript-eslint/camelcase
+            client_id: googleCalendarClient.clientId,
+            scope: googleCalendarClient.scope
+          })
+          .then(googleAuth => {
+            const currentUser = gapi.auth2.getAuthInstance().currentUser;
+            console.log("current user: ");
+            console.log(currentUser);
+            if (currentUser) {
+              const accessToken = currentUser.get().getAuthResponse()
+                .access_token;
+              console.log(`getting access token from gapi: ${accessToken}`);
+              return resolve(accessToken);
+            } else {
+              return resolve("");
+            }
+          })
+          .catch((err: any) => {
+            console.error("error in getAccessToken: " + err);
+            return reject(err);
+          });
       });
+    });
   },
   logout() {
     if (Auth.currentUser) {

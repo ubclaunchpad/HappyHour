@@ -7,53 +7,8 @@ interface Slot {
   endTime: Date;
 }
 
-const getBlockStart = (d: Date): Date => {
-  const min = d.getMinutes();
-  if (min > 0 && min < 30) {
-    return new Date(
-      d.getFullYear(),
-      d.getMonth(),
-      d.getDate(),
-      d.getHours(),
-      30
-    );
-  } else if (min > 30 && min < 60) {
-    return new Date(
-      d.getFullYear(),
-      d.getMonth(),
-      d.getDate(),
-      d.getHours() + 1
-    );
-  } else {
-    return d;
-  }
-};
-
-const getBlockEnd = (d: Date): Date => {
-  const min = d.getMinutes();
-  if (min > 0 && min < 30) {
-    return new Date(
-      d.getFullYear(),
-      d.getMonth(),
-      d.getDate(),
-      d.getHours(),
-      0
-    );
-  } else if (min > 30 && min < 60) {
-    return new Date(
-      d.getFullYear(),
-      d.getMonth(),
-      d.getDate(),
-      d.getHours(),
-      30
-    );
-  } else {
-    return d;
-  }
-};
-
 /* requires a valid 30-min block start time */
-/* return the next 30-min block start */
+/* returns the next 30-min block start time */
 const getNextBlock = (d: Date): Date => {
   const min = d.getMinutes();
   if (min == 0) {
@@ -76,40 +31,20 @@ const getNextBlock = (d: Date): Date => {
   }
 };
 
-const retrieveSlots = (
-  timePeriod: gapi.client.calendar.TimePeriod[]
-): Slot[] => {
-  const slots: Slot[] = [];
-  for (const period of timePeriod) {
-    const startTime = period.start?.toString();
-    const endTime = period.end?.toString();
-    if (startTime !== undefined && endTime !== undefined) {
-      const slot: Slot = {
-        startTime: new Date(startTime),
-        endTime: new Date(endTime)
-      };
-      slots.push(slot);
-    }
-  }
-  return slots;
-};
-
+/* splits a given startTime - endTime interval/slot into 30-min blocks */
 const getBusyBlocks = (startTime: Date, endTime: Date): Block[] => {
-  let s = getBlockEnd(startTime);
-  const e = getBlockStart(endTime);
-
-  /* create blocks between s & e */
   const busyBlocks: Block[] = [];
-  while (s < e) {
+  while (startTime < endTime) {
     busyBlocks.push({
-      startTime: s,
+      startTime: startTime,
       availableUsers: []
     });
-    s = getNextBlock(s);
+    startTime = getNextBlock(startTime);
   }
   return busyBlocks;
 };
 
+/* creates 30-min blocks from a list of slots */
 const generateBusyBlocks = (slots: Slot[]): Block[] => {
   let busyBlocks: Block[] = [];
   for (const slot of slots) {
@@ -119,6 +54,8 @@ const generateBusyBlocks = (slots: Slot[]): Block[] => {
   return busyBlocks;
 };
 
+/* creates 30-min free blocks between timeMin & timeMax, given the busy blocks
+ between timeMin & timeMax */
 const generateFreeBlocks = (
   busyBlocks: Block[],
   timeMin: Date,
@@ -137,12 +74,14 @@ const generateFreeBlocks = (
   return freeBlocks;
 };
 
+/* makes a free-busy request to GCAL API using the current user's access token */
+/* returns a list of busy times of the user between timeMin & timeMax */
 const freeBusyRequest = async (
   timeMin: Date,
   timeMax: Date
 ): Promise<gapi.client.calendar.TimePeriod[]> => {
   return new Promise<gapi.client.calendar.TimePeriod[]>((resolve, reject) => {
-    gapi.load("client:auth2", async () => {
+    gapi.load("client", async () => {
       try {
         const accessToken = await userClient.getAccessToken();
         console.log("access token in calendar: " + accessToken);
@@ -172,6 +111,25 @@ const freeBusyRequest = async (
   });
 };
 
+/* converts GCAL time periods to slots */
+const retrieveSlots = (
+  timePeriod: gapi.client.calendar.TimePeriod[]
+): Slot[] => {
+  const slots: Slot[] = [];
+  for (const period of timePeriod) {
+    const startTime = period.start?.toString();
+    const endTime = period.end?.toString();
+    if (startTime !== undefined && endTime !== undefined) {
+      const slot: Slot = {
+        startTime: new Date(startTime),
+        endTime: new Date(endTime)
+      };
+      slots.push(slot);
+    }
+  }
+  return slots;
+};
+
 /* exported */
 export interface Block {
   startTime: Date;
@@ -188,9 +146,8 @@ export interface Time {
 }
 
 const client = {
+  /* pass in a 30-min slot start time for timeMin & timeMax */
   findBusyBlocks(timeMin: Date, timeMax: Date): Promise<Block[]> {
-    timeMin = getBlockStart(timeMin);
-    timeMax = getBlockStart(timeMax);
     return freeBusyRequest(timeMin, timeMax)
       .then(busyTimes => {
         return retrieveSlots(busyTimes);
@@ -202,6 +159,7 @@ const client = {
         return Promise.reject(err);
       });
   },
+  /* pass in a 30-min slot start time for timeMin & timeMax */
   findFreeBlocks(timeMin: Date, timeMax: Date): Promise<Block[]> {
     return this.findBusyBlocks(timeMin, timeMax)
       .then(busyBlocks => {
