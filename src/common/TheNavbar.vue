@@ -25,6 +25,20 @@
         class="router"
         >{{ link.name }}
       </router-link>
+      <div class="button">
+        <AppButton
+          v-if="isLoggedIn"
+          class="btn"
+          text="Log Out"
+          @update="logout()"
+        />
+        <AppButton
+          v-if="!isLoggedIn"
+          class="btn"
+          text="Log In"
+          @update="login()"
+        />
+      </div>
     </nav>
   </header>
 </template>
@@ -34,19 +48,34 @@ import { defineComponent } from "vue";
 
 import TheLogo from "@/common/TheLogo.vue";
 import AppIcon from "@/common/AppIcon.vue";
+import AppButton from "@/common/AppButton.vue";
 import { routes } from "../router";
+
+import userClient from "../user/client";
 
 export default defineComponent({
   name: "TheNavbar",
-  components: { AppIcon, TheLogo },
+  components: { AppIcon, TheLogo, AppButton },
   data() {
     return {
       isNavOpen: false
+      // isLoggedIn: true
     };
   },
   computed: {
     links() {
       return routes;
+    },
+    isLoggedIn() {
+      return userClient.currentUser() != null;
+    }
+  },
+  methods: {
+    logout() {
+      userClient.logout();
+    },
+    login() {
+      this.$router.push("/login");
     }
   }
 });

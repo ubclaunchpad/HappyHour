@@ -116,6 +116,9 @@ const client = {
       username: "placeholder",
       email: email
     });
+  },
+  currentUser() {
+    return Auth.currentUser;
   }
 };
 
