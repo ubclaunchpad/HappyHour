@@ -27,17 +27,12 @@
       </router-link>
       <div class="button">
         <AppButton
-          v-if="isLoggedIn"
-          class="btn"
-          text="Log Out"
-          @update="logout()"
-        />
-        <AppButton
-          v-if="!isLoggedIn"
+          v-if="displayLogInButton"
           class="btn"
           text="Log In"
           @update="login()"
         />
+        <AppButton v-else class="btn" text="Log Out" @update="logout()" />
       </div>
     </nav>
   </header>
@@ -56,23 +51,23 @@ import userClient from "../user/client";
 export default defineComponent({
   name: "TheNavbar",
   components: { AppIcon, TheLogo, AppButton },
+  props: ["isLoggedIn"],
   data() {
     return {
-      isNavOpen: false
-      // isLoggedIn: true
+      isNavOpen: false,
+      displayLogInButton: this.isLoggedIn == "false"
     };
   },
   computed: {
     links() {
       return routes;
-    },
-    isLoggedIn() {
-      return userClient.currentUser() != null;
     }
   },
   methods: {
     logout() {
+      this.displayLogInButton = true;
       userClient.logout();
+      this.$router.push("/login");
     },
     login() {
       this.$router.push("/login");

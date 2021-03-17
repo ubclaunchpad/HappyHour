@@ -1,6 +1,6 @@
 <template>
   <div class="root-container">
-    <TheNavbar />
+    <TheNavbar :is-logged-in="`${isLoggedIn}`" />
     <router-view />
   </div>
 </template>
@@ -8,11 +8,17 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import TheNavbar from "./common/TheNavbar.vue";
+import userClient from "./user/client";
 
 export default defineComponent({
   name: "App",
   components: {
     TheNavbar
+  },
+  data() {
+    return {
+      isLoggedIn: userClient.currentUser() == null
+    };
   }
 });
 </script>
