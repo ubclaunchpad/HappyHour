@@ -1,5 +1,5 @@
 import { app, db } from "@/db";
-import { Calendar } from "@/calendar/client";
+// import { Calendar } from "@/calendar/client";
 import firebase from "firebase/app";
 import "firebase/auth";
 
@@ -13,10 +13,12 @@ export interface User {
 }
 
 function saveUserToDb(user: User) {
-  db.ref("users/" + user.uid).set({
-    username: user.email,
-    email: user.email
-  });
+  db.collection("users")
+    .doc(user.uid)
+    .set({
+      username: user.email,
+      email: user.email
+    });
 }
 
 function createUserObject(user: firebase.User) {
@@ -76,12 +78,15 @@ const client = {
           console.log("OK - OAuth Token: " + token);
         }
         if (result.user != null) {
-          db.ref("users/" + result.user.uid).once("value", async snapshot => {
-            if (!snapshot.val() && result.user) {
-              const newUser = createUserObject(result.user);
-              saveUserToDb(newUser);
-            }
-          });
+          db.collection("users")
+            .doc(result.user.uid)
+            .get()
+            .then(snapshot => {
+              if (!snapshot.exists && result.user) {
+                const newUser = createUserObject(result.user);
+                saveUserToDb(newUser);
+              }
+            });
         }
       })
       .catch(function(err) {
@@ -112,10 +117,12 @@ const client = {
     }
   },
   updateUser(email: string) {
-    db.ref("users/" + Auth.currentUser?.uid).set({
-      username: "placeholder",
-      email: email
-    });
+    db.collection("users")
+      .doc(Auth.currentUser?.uid)
+      .set({
+        username: "placeholder",
+        email: email
+      });
   }
 };
 
