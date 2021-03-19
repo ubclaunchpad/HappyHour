@@ -1,5 +1,6 @@
 <template>
-  <div class="page-container">
+  <div v-if="!event">Loading</div>
+  <div v-else class="page-container">
     <header>
       <h5>{{ event.title }}</h5>
     </header>
@@ -64,6 +65,7 @@ import AppSnackbar from "@/common/AppSnackbar.vue";
 import Calendar from "@/calendar/components/Calendar.vue";
 import EventRespondents from "../components/EventRespondents.vue";
 import client from "../client";
+import { useEvent } from "../hooks";
 import { Calendar as CalendarType } from "@/calendar/client";
 
 export default defineComponent({
@@ -88,18 +90,21 @@ export default defineComponent({
     const calendar = ref<CalendarType>({ blocks: [] });
 
     // computed
-    const event = computed(() => client.getEventById(props.id));
+    const event = useEvent(props.id);
+
     const start = computed(() =>
-      event.value.scheduleWindow.startTime.toISOString()
+      event.value?.scheduleWindow.startTime.toISOString()
     );
     const end = computed(() =>
-      event.value.scheduleWindow.endTime.toISOString()
+      event.value?.scheduleWindow.endTime.toISOString()
     );
 
-    watch(
-      event,
-      newEvent => (calendar.value.blocks = newEvent.calendar.blocks)
-    );
+    watch(event, newEvent => {
+      const blocks = newEvent?.calendar.blocks;
+      if (blocks) {
+        calendar.value.blocks = blocks;
+      }
+    });
 
     return {
       event,

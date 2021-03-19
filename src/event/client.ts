@@ -15,22 +15,6 @@ export interface Event {
 
 // TODO: Fill this in with methods
 const client = {
-  getEventById(id: string): Event {
-    return {
-      users: [],
-      owners: [],
-      scheduleWindow: {
-        startTime: new Date("November 2, 2020 09:00:00"),
-        endTime: new Date("November  8, 2020 21:30:00")
-      },
-      id,
-      calendar: {
-        blocks: []
-      },
-      title: "Cool event",
-      timezone: "PST - Vancouver time"
-    };
-  },
   addUserAvailability(calendar: Calendar) {
     console.warn("NOT IMPLEMENTED - addUserAvailability");
     console.log(calendar);
