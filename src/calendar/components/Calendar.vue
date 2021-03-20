@@ -58,6 +58,7 @@ export default defineComponent({
       required: true
     }
   },
+  emits: ["update:calendar"],
   computed: {
     days(): Day[] {
       return eachDayOfInterval({

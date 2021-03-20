@@ -11,9 +11,9 @@
 
         <Calendar
           v-model:calendar="calendar"
+          class="calendar"
           :start-time="start"
           :end-time="end"
-          class="calendar"
         />
 
         <AppSnackbar
@@ -100,8 +100,10 @@ export default defineComponent({
       event.value?.scheduleWindow.endTime.toISOString()
     );
 
+    /* Keep the calendar blocks in sync with the event's blocks */
     watch(event, newEvent => {
       const blocks = newEvent?.calendar.blocks;
+      console.log(blocks);
       if (blocks) {
         calendar.value = { blocks };
       }
@@ -117,7 +119,7 @@ export default defineComponent({
         // save the calendar
         // alert("handleSave is called");
         // and show notification with "Availability saved!"
-        await client.addUserAvailability(calendar.value);
+        await client.updateEvent(props.id, { calendar: calendar.value });
         state.notificationVisible = true;
         state.notificationText = "Availability saved!";
         setTimeout(() => (state.notificationVisible = false), 5000);

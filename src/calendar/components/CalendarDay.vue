@@ -37,6 +37,7 @@ export default defineComponent({
       required: true
     }
   },
+  emits: ["update:blocks"],
   data() {
     return {
       dragging: false
