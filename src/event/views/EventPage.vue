@@ -103,7 +103,6 @@ export default defineComponent({
     /* Keep the calendar blocks in sync with the event's blocks */
     watch(event, newEvent => {
       const blocks = newEvent?.calendar.blocks;
-      console.log(blocks);
       if (blocks) {
         calendar.value = { blocks };
       }
