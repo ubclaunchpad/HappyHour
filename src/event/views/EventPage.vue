@@ -58,15 +58,15 @@
 //FIXME: AppSnackbar location
 //FIXME: Layout
 //FIXME: Multiple timers clashing in AppSnackbar notifications
-import { computed, defineComponent, watch, ref } from "vue";
+import { computed, defineComponent, watch, ref, reactive, toRefs } from "vue";
 import AppButton from "@/common/AppButton.vue";
 import AppToggleInternalText from "@/common/AppToggleInternalText.vue";
 import AppSnackbar from "@/common/AppSnackbar.vue";
 import Calendar from "@/calendar/components/Calendar.vue";
+import { Calendar as CalendarType } from "@/calendar/client";
 import EventRespondents from "../components/EventRespondents.vue";
 import client from "../client";
 import { useEvent } from "../hooks";
-import { Calendar as CalendarType } from "@/calendar/client";
 
 export default defineComponent({
   components: {
@@ -84,14 +84,15 @@ export default defineComponent({
   },
   setup(props) {
     // state
-    const displayGroupAvail = ref(false);
-    const notificationText = ref("Some Notification");
-    const notificationVisible = ref(false);
+    const state = reactive({
+      displayGroupAvail: false,
+      notificationText: "Some Notification",
+      notificationVisible: false
+    });
     const calendar = ref<CalendarType>({ blocks: [] });
 
     // computed
     const event = useEvent(props.id);
-
     const start = computed(() =>
       event.value?.scheduleWindow.startTime.toISOString()
     );
@@ -102,7 +103,7 @@ export default defineComponent({
     watch(event, newEvent => {
       const blocks = newEvent?.calendar.blocks;
       if (blocks) {
-        calendar.value.blocks = blocks;
+        calendar.value = { blocks };
       }
     });
 
@@ -111,25 +112,23 @@ export default defineComponent({
       start,
       end,
       calendar,
-      displayGroupAvail,
-      notificationText,
-      notificationVisible,
+      ...toRefs(state),
       async handleSave() {
         // save the calendar
         // alert("handleSave is called");
         // and show notification with "Availability saved!"
         await client.addUserAvailability(calendar.value);
-        notificationVisible.value = true;
-        notificationText.value = "Availability saved!";
-        setTimeout(() => (notificationVisible.value = false), 5000);
+        state.notificationVisible = true;
+        state.notificationText = "Availability saved!";
+        setTimeout(() => (state.notificationVisible = false), 5000);
       },
       copyLink() {
         // copy the link to the event
         // alert("copyLink is called");
         // and show notification with "Event link copied to clipboard!"
-        notificationVisible.value = true;
-        notificationText.value = "Event link copied to clipboard!";
-        setTimeout(() => (notificationVisible.value = false), 5000);
+        state.notificationVisible = true;
+        state.notificationText = "Event link copied to clipboard!";
+        setTimeout(() => (state.notificationVisible = false), 5000);
       },
       switchCalendar() {
         // method to switch between user's calendar and group calendar
