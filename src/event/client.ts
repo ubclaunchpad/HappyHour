@@ -1,4 +1,5 @@
 import { Calendar } from "@/calendar/client";
+import { db } from "@/db";
 
 export interface Event {
   users: string[];
@@ -12,6 +13,23 @@ export interface Event {
   title: string;
   timezone: string;
 }
+
+function saveEvent(event: Event) {
+  return db.ref("events/").push(event);
+  // return db.ref("events/" + "xyz").set(event);
+}
+
+// function createEventObject(title: string, startTime: Date, endTime: Date, timezone: string): Event {
+//   return {
+//     users: [],
+//     // calendar: null,
+//     id: "",
+//     owners: [],
+//     scheduleWindow: { endTime, startTime },
+//     timezone,
+//     title
+//   };
+// }
 
 // TODO: Fill this in with methods
 const client = {
@@ -35,8 +53,36 @@ const client = {
     console.warn("NOT IMPLEMENTED - addUserAvailability");
     console.log(calendar);
   },
-  addEvent() {
+  addEvent(
+    title: string,
+    startTime: Date,
+    endTime: Date,
+    timezone: string
+  ): Promise<Event> {
     // stub
+    return new Promise((resolve, reject) => {
+      const newEvent: Event = {
+        users: [],
+        calendar: {
+          blocks: []
+        },
+        id: "",
+        owners: [],
+        scheduleWindow: { endTime, startTime },
+        timezone,
+        title
+      };
+      saveEvent(newEvent)
+        .then(() => {
+          console.log("saved event");
+          return resolve(newEvent);
+        })
+        .catch(err => {
+          console.log("error saving event");
+          console.log(err);
+          return reject(err);
+        });
+    });
   },
   deleteEvent() {
     // stub

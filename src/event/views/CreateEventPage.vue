@@ -62,6 +62,11 @@
           placeholder="My Awesome Event"
           required
         />
+        <p>title: {{ eventTitle }}</p>
+
+        <!--        <input v-model="eventTitle" placeholder="edit me"/>-->
+        <!--&lt;!&ndash;        <TextInput v-model="eventTitle" />&ndash;&gt;-->
+        <!--        <p>Message is: {{ eventTitle }}</p>-->
 
         <button
           v-if="isHidden"
@@ -95,7 +100,12 @@
           </TextInput>
         </section>
       </section>
-      <AppButton class="btn-create" text="Create Event" type="submit" />
+      <AppButton
+        class="btn-create"
+        text="Create Event"
+        type="submit"
+        @click="createEvent"
+      />
     </section>
   </form>
 </template>
@@ -125,6 +135,7 @@ import AppIcon from "@/common/AppIcon.vue";
 import DatePicker from "../components/DatePicker.vue";
 import DayPicker from "../components/DayPicker.vue";
 import TimePicker from "../components/TimePicker.vue";
+import client from "../client";
 
 export default defineComponent({
   components: {
@@ -155,6 +166,23 @@ export default defineComponent({
   methods: {
     toggleEventType(toggleState: boolean) {
       this.isDatePickerEvent = toggleState;
+    },
+    async createEvent(e: any) {
+      e.preventDefault();
+      try {
+        console.log(this.eventTitle);
+        console.log(this.eventDescription);
+        const event = await client.addEvent(
+          this.eventTitle,
+          this.startTime,
+          this.endTime,
+          this.timezone
+        );
+        console.log("created event: ");
+        console.log(event);
+      } catch (err) {
+        console.log(err);
+      }
     }
   }
 });
