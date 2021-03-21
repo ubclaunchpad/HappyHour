@@ -63,3 +63,10 @@ Everything that can be reused across multiple features belong in the root direct
 - The `common/` folder contains generic components that can be reused across screens. This includes things like `AppButton`, `AppSnackbar`, etc.
 - The `assets/` folder contains miscellaneous media.
 - `db.ts` is the entry point to `firestore`. This should be reused across the various `client.ts` files.
+
+### Google Calendar
+
+In addition to the Firebase environment variables, the following environment variables need to be added to `.env.development.local` to use the [Google Calendar client library](https://www.npmjs.com/package/@types/gapi).
+1. VUE_APP_GOOGLE_SCOPE=https://www.googleapis.com/auth/calendar
+2. VUE_APP_GOOGLE_CLIENT_ID=<Google OAuth 2.0 client ID>
+The client ID can be obtained by navigating to the Google cloud console using team's Google account, choosing project with ID `happyhour-8606c`, navigating to APIs & Services, and then the client ID is found under `Credentials - OAuth 2.0 client ID`.
