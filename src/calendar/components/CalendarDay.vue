@@ -35,6 +35,10 @@ export default defineComponent({
     blocks: {
       type: Object as PropType<Array<Block>>,
       required: true
+    },
+    currentUser: {
+      type: String,
+      required: true
     }
   },
   emits: ["update:blocks"],
@@ -72,23 +76,49 @@ export default defineComponent({
       evt.preventDefault();
       this.dragging = false;
     },
-    isActive(time: Time) {
-      const index = this.blocks.findIndex(block =>
-        this.equalsBlock(time, block)
-      );
-      return index >= 0;
+    getBlock(time: Time) {
+      return this.blocks.find(block => this.equalsBlock(time, block));
     },
+    isActive(time: Time) {
+      return this.getBlock(time) !== undefined;
+    },
+    /**
+     * When a block is toggled, we first check if the block is currently active.
+     *
+     * If the block is NOT active, we create a new block using the current user's id
+     * and the given date/time.
+     *
+     * If the block IS active, we check if the block contains the current user's id.
+     * If the block contains the current user id, we remove that user from the list;
+     * otherwise, we add the user to the list of users.
+     *
+     * If, after removing the user, the block has no active users, we remove the
+     * block from the calendar.
+     */
     toggle(time: Time) {
+      const currentBlock = this.getBlock(time);
       let blocks: Block[] = [];
-      if (this.isActive(time)) {
-        blocks = this.blocks.filter(block => !this.equalsBlock(time, block));
+      if (currentBlock) {
+        if (currentBlock.availableUsers.includes(this.currentUser)) {
+          currentBlock.availableUsers = currentBlock.availableUsers.filter(
+            user => user !== this.currentUser
+          );
+        } else {
+          currentBlock.availableUsers.push(this.currentUser);
+        }
+        if (currentBlock.availableUsers.length === 0) {
+          blocks = this.blocks.filter(block => block !== currentBlock);
+        } else {
+          // Copy this.blocks to make sure Vue reacts to the update.
+          blocks = [...this.blocks];
+        }
       } else {
         const newBlock: Block = {
           startTime: setHours(
             setMinutes(new Date(this.date), time.minutes),
             time.hour
           ),
-          availableUsers: ["1"] // stub
+          availableUsers: [this.currentUser]
         };
         blocks = [...this.blocks, newBlock];
       }

@@ -1,5 +1,5 @@
 <template>
-  <div v-if="!event">Loading</div>
+  <div v-if="!event || isLoading">Loading</div>
   <div v-else class="page-container">
     <header>
       <h5>{{ event.title }}</h5>
@@ -14,6 +14,7 @@
           class="calendar"
           :start-time="start"
           :end-time="end"
+          :current-user="user.uid"
         />
 
         <AppSnackbar
@@ -64,9 +65,11 @@ import AppToggleInternalText from "@/common/AppToggleInternalText.vue";
 import AppSnackbar from "@/common/AppSnackbar.vue";
 import Calendar from "@/calendar/components/Calendar.vue";
 import { Calendar as CalendarType } from "@/calendar/client";
+import { useUser } from "@/user/hooks";
 import EventRespondents from "../components/EventRespondents.vue";
 import client from "../client";
 import { useEvent } from "../hooks";
+import { useRouter } from "vue-router";
 
 export default defineComponent({
   components: {
@@ -83,6 +86,28 @@ export default defineComponent({
     }
   },
   setup(props) {
+    const { user, isLoading } = useUser();
+    const router = useRouter();
+
+    /**
+     * The user is fetched asynchronously, so initially it's going to be null
+     * regardless if the user is logged in or not.
+     *
+     * We want to block users from accessing this page if they're not logged in, so
+     * we'll redirect them as soon as the user is fetched and we know they're not
+     * logged in.
+     */
+    watch(isLoading, loading => {
+      if (!loading && !user.value) {
+        router.replace({
+          path: "/login",
+          query: {
+            redirectTo: router.currentRoute.value.path
+          }
+        });
+      }
+    });
+
     // state
     const state = reactive({
       displayGroupAvail: false,
@@ -113,6 +138,8 @@ export default defineComponent({
       start,
       end,
       calendar,
+      user,
+      isLoading,
       ...toRefs(state),
       async handleSave() {
         // save the calendar

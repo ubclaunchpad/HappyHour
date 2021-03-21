@@ -13,6 +13,7 @@
         :date="date"
         :times="times"
         :blocks="blocks"
+        :current-user="currentUser"
         @update:blocks="updateCalendar"
       />
     </div>
@@ -54,6 +55,10 @@ export default defineComponent({
       required: true
     },
     endTime: {
+      type: String,
+      required: true
+    },
+    currentUser: {
       type: String,
       required: true
     }
