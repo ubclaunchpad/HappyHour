@@ -60,6 +60,7 @@
 //FIXME: Layout
 //FIXME: Multiple timers clashing in AppSnackbar notifications
 import { computed, defineComponent, watch, ref, reactive, toRefs } from "vue";
+import { useRouter } from "vue-router";
 import AppButton from "@/common/AppButton.vue";
 import AppToggleInternalText from "@/common/AppToggleInternalText.vue";
 import AppSnackbar from "@/common/AppSnackbar.vue";
@@ -69,7 +70,6 @@ import { useUser } from "@/user/hooks";
 import EventRespondents from "../components/EventRespondents.vue";
 import client from "../client";
 import { useEvent } from "../hooks";
-import { useRouter } from "vue-router";
 
 export default defineComponent({
   components: {
@@ -96,6 +96,9 @@ export default defineComponent({
      * We want to block users from accessing this page if they're not logged in, so
      * we'll redirect them as soon as the user is fetched and we know they're not
      * logged in.
+     *
+     * When redirecting, we add the link to the current event so the login page
+     * knows where to redirect once logged in.
      */
     watch(isLoading, loading => {
       if (!loading && !user.value) {
