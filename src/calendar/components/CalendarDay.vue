@@ -4,6 +4,7 @@
     <div
       v-for="time in times"
       :key="`${dateText}-${time}`"
+      :style="{ '--opacity': getOpacity(time) }"
       :class="['block', { selected: isActive(time) }]"
       @touchstart="handleMouseDown(time, $event)"
       @mousedown="handleMouseDown(time, $event)"
@@ -34,6 +35,10 @@ export default defineComponent({
     },
     blocks: {
       type: Object as PropType<Array<Block>>,
+      required: true
+    },
+    respondents: {
+      type: Number,
       required: true
     },
     currentUser: {
@@ -78,6 +83,13 @@ export default defineComponent({
     },
     getBlock(time: Time) {
       return this.blocks.find(block => this.equalsBlock(time, block));
+    },
+    getOpacity(time: Time) {
+      const block = this.getBlock(time);
+      if (block) {
+        return block.availableUsers.length / this.respondents;
+      }
+      return 1;
     },
     isActive(time: Time) {
       return this.getBlock(time) !== undefined;
@@ -145,5 +157,6 @@ export default defineComponent({
 
 .selected {
   background: rgba(143, 192, 198, 1);
+  opacity: var(--opacity);
 }
 </style>
