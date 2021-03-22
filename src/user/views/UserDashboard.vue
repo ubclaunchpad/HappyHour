@@ -1,75 +1,82 @@
 <template>
   <main class="dashboard">
-    <section class="events card">
-      <header class="card__heading">
-        <h5>My Events</h5>
-      </header>
-      <div class="event-status">
-        <header class="event-status__header">
-          <div class="subtitle1">Scheduled</div>
+    <!-- Left Events Card -->
+    <div class="card--events card">
+      <section class="events">
+        <header class="card--heading">
+          <h5>My Events</h5>
         </header>
-        <ul class="dashboard-events">
-          <li v-for="event in events" :key="event.id">
-            <template v-if="event.isScheduled">
-              <DashboardEvent :event="event" />
-            </template>
-          </li>
-        </ul>
-      </div>
 
-      <div class="event-status">
-        <header class="event-status__header">
-          <div class="subtitle1">Unscheduled</div>
-        </header>
-        <ul class="dashboard-events">
-          <li v-for="event in events" :key="event.id">
-            <template v-if="!event.isScheduled">
-              <DashboardEvent :event="event" />
-            </template>
-          </li>
-        </ul>
-      </div>
-    </section>
+        <!-- All Events -->
+        <div class="events--all">
+          <!-- Scheduled Events -->
+          <section class="event-status">
+            <header class="event-status--header">
+              <div class="subtitle1">Scheduled</div>
+            </header>
+            <ul class="dashboard-events">
+              <li v-for="event in events" :key="event.id">
+                <template v-if="event.isScheduled">
+                  <DashboardEvent :event="event" />
+                </template>
+              </li>
+            </ul>
+          </section>
 
-    <section class="schedule card">
-      <header class="card__heading">
-        <h5>My Set Schedule</h5>
-      </header>
-      <Calendar
-        v-model:calendar="calendar"
-        :start-time="startTime"
-        :end-time="endTime"
-        :edit-mode="editMode"
-        class="schedule__calendar"
-      />
-      <div class="schedule__subsection">
-        <div class="schedule__timezone caption">
-          (Time displayed in PST—Vancouver)
+          <!-- Unscheduled Events -->
+          <section class="event-status">
+            <header class="event-status--header">
+              <div class="subtitle1">Unscheduled</div>
+            </header>
+            <ul class="dashboard-events">
+              <li v-for="event in events" :key="event.id">
+                <template v-if="!event.isScheduled">
+                  <DashboardEvent :event="event" />
+                </template>
+              </li>
+            </ul>
+          </section>
         </div>
-        <button
-          class="schedule__edit button"
-          type="button"
-          @click="switchEditMode"
-        >
-          Edit Schedule
-        </button>
-      </div>
-    </section>
+      </section>
+    </div>
+
+    <!-- Right Calendar Card -->
+    <div class="card--schedule card">
+      <section class="schedule">
+        <header class="card--heading">
+          <h5>My Set Schedule</h5>
+        </header>
+        <Calendar
+          v-model:calendar="calendar"
+          :start-time="startTime"
+          :end-time="endTime"
+          :edit-mode="isEditable"
+          class="schedule--calendar"
+        />
+        <div class="schedule--subsection">
+          <div class="schedule--timezone caption">
+            (Time displayed in PST—Vancouver)
+          </div>
+          <button
+            class="schedule--edit button"
+            type="button"
+            @click="toggleEdit"
+          >
+            {{ isEditable ? "View Schedule" : "Edit Schedule" }}
+          </button>
+        </div>
+      </section>
+    </div>
   </main>
 </template>
 
 <script lang="ts">
-// TODO: Turn article into component
-// TODO: Handle overflow events scrollbar
-// TODO: Better page layout
-// TODO: Toggle Edit Schedule => View schedule
 // TODO: Fix Calendar select
-// TODO: Fix Calendar design
-// TODO: Prevent overflow of Calendar on zooming
-// TODO: Mobile support
+// TODO: Prevent potential overflow of calendar in zoom/mobile
+// TODO: Change card width (flex-grow) when wrapped for mobile/smaller screens
 // TODO: Figure out "Cannot find name 'Calendar'.Vetur(2304)""
 
-import { defineComponent, computed, ref, reactive } from "vue";
+import { defineComponent, computed, reactive, ref } from "vue";
 import DashboardEvent from "@/user/components/DashboardEvent.vue";
 import Calendar from "@/calendar/components/Calendar.vue";
 
@@ -86,11 +93,14 @@ export default defineComponent({
   setup() {
     const startTime = computed(() => start.toISOString());
     const endTime = computed(() => end.toISOString());
-    const isEditable = ref(false);
 
     const calendar = reactive({
       blocks: []
     });
+
+    const isEditable = ref(false);
+
+    // Example  Events
     const events = [
       {
         id: 0,
@@ -123,39 +133,35 @@ export default defineComponent({
         responses: 1
       }
     ];
-    return { startTime, endTime, events, calendar, isEditable };
-  },
 
-  data() {
-    return {
-      editMode: false
-    };
-  },
-  methods: {
-    switchEditMode: function() {
-      this.editMode = true;
-      console.log("Switched to Edit Mode");
+    // To see scrollbar
+    for (let i = 0; i < 20; i++) {
+      events.push({
+        id: Math.random(),
+        name: "Demo Scrollbar",
+        isScheduled: false,
+        responses: 0
+      });
     }
+
+    const toggleEdit = () => {
+      isEditable.value = !isEditable.value;
+      console.log("isEditable? ", isEditable.value);
+    };
+
+    return { startTime, endTime, events, calendar, isEditable, toggleEdit };
   }
 });
 </script>
 
 <style scoped>
 /*------------------------------------*\
-  # GLOBAL
-\*------------------------------------*/
-.card {
-  background: var(--color-card);
-  height: 36rem;
-  border-radius: 5px;
-  margin: 0.5rem;
-}
-/*------------------------------------*\
   # MAIN COMPONENTS
 \*------------------------------------*/
 
 .dashboard {
   display: flex;
+  flex-wrap: wrap;
   justify-content: center;
   align-items: center;
   height: 100%;
@@ -163,59 +169,81 @@ export default defineComponent({
 }
 
 .card {
+  margin: 0.5rem;
+  border-radius: 5px;
   padding: 2rem;
+  background: var(--color-card);
+  /* height: 36rem; */
   height: 75%;
 }
 
-.card__heading {
+.card--heading {
   margin-bottom: 2rem;
 }
 
 /*------------------------------------*\
   # LEFT COMPONENTS
 \*------------------------------------*/
-.events {
+.card--events {
   flex-grow: 2;
+}
+
+.events {
+  height: 100%;
+  /* border: 1px solid red; */
 }
 
 .events li {
   margin: 1rem 0;
 }
 
+.events--all {
+  overflow: hidden;
+  overflow-y: auto;
+  height: 90%;
+}
+
 .event-status {
   margin: 2.5rem 0;
 }
 
-.event-status__header {
+.event-status_--header {
   margin: 1rem 0;
+}
+
+.dashboard-events {
+  overflow: hidden;
+  overflow-y: auto;
 }
 
 /*------------------------------------*\
   # RIGHT COMPONENTS
 \*------------------------------------*/
-.schedule {
+.card--schedule {
   flex-grow: 5;
 }
 
-.schedule__calendar {
+.schedule {
+  /* border: 1px solid red; */
+}
+
+.schedule--calendar {
   margin: 0;
   padding: 0;
   border-radius: 10px;
 }
 
-.schedule__subsection {
+.schedule--subsection {
   display: flex;
   justify-content: space-between;
-  margin-top: 1rem;
 }
 
-.schedule__timezone {
-  /* Colour is not in App.vue */
-  color: #7d7d7d;
+.schedule--timezone {
+  color: #7d7d7d; /* Colour not in App.vue theme*/
   margin: auto;
 }
 
-.schedule__edit {
+.schedule--edit {
   color: var(--color-primary);
   text-decoration: underline;
   font-weight: 600;
