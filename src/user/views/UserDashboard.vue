@@ -74,7 +74,7 @@
 // TODO: Fix Calendar select
 // TODO: Prevent potential overflow of calendar in zoom/mobile
 // TODO: Change card width (flex-grow) when wrapped for mobile/smaller screens
-// TODO: Figure out "Cannot find name 'Calendar'.Vetur(2304)""
+// TODO: Figure out "Cannot find name 'Calendar'.Vetur(2304)"
 
 import { defineComponent, computed, reactive, ref } from "vue";
 import DashboardEvent from "@/user/components/DashboardEvent.vue";
@@ -165,7 +165,7 @@ export default defineComponent({
   justify-content: center;
   align-items: center;
   height: 100%;
-  margin: 5rem;
+  margin: 0 5rem;
 }
 
 .card {
