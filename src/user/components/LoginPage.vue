@@ -3,9 +3,9 @@
     <div class="heading">Log In</div>
     <div class="p1">
       <p>Username/Email:</p>
-      <input v-model="username" class="input" />
+      <TextInput v-model="username" />
       <p>Password:</p>
-      <input v-model="password" class="input" />
+      <TextInput v-model="password" />
     </div>
     <AppButton variant="primary" type="submit" class="button" @update="logIn()"
       >Login</AppButton
@@ -28,11 +28,14 @@ import { defineComponent } from "vue";
 import client from "../client";
 import AppButton from "@/common/AppButton.vue";
 import GoogleLogo from "@/common/app-icon/GoogleLogo.vue";
+import router from "@/router";
+import TextInput from "@/common/TextInput.vue";
 
 export default defineComponent({
   components: {
     AppButton,
-    GoogleLogo
+    GoogleLogo,
+    TextInput
   },
   data() {
     return {
