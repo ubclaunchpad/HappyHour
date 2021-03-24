@@ -3,7 +3,7 @@ import { app, db } from "@/db";
 import firebase from "firebase/app";
 import "firebase/auth";
 
-const Auth = app.auth();
+export const Auth = app.auth();
 
 export interface User {
   username: string;
@@ -21,7 +21,7 @@ function saveUserToDb(user: User) {
     });
 }
 
-function createUserObject(user: firebase.User) {
+export function createUserObject(user: firebase.User) {
   const { uid, email } = user;
   const newUser = {
     uid: uid,
