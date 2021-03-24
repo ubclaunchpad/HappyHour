@@ -6,30 +6,21 @@
       <h5 class="heading">Pick the date</h5>
       <!-- EventDateSelectors component -->
       <DatePicker
-        v-if="isDatePickerEvent"
+        v-if="!isChecked"
         v-model:startTime="startTime"
         v-model:endTime="endTime"
         class="date-picker"
       />
       <DayPicker
-        v-if="!isDatePickerEvent"
+        v-if="isChecked"
         v-model:startTime="startTime"
         v-model:endTime="endTime"
         class="day-picker"
       />
-      <AppToggleExternalText
-        class="date-toggle"
-        toggle-left-text="Single"
-        toggle-right-text="Recurring"
-        :default-state="false"
-        @toggled="toggleEventType"
-      />
-      <AppToggleInternalText
-        style="display: none"
-        left-text="My Availability"
-        right-text="Group Availability"
-        :checked="false"
-        @update="toggleEventType()"
+      <AppToggle
+        v-model="isChecked"
+        left-text="Single Event"
+        right-text="Recurring"
       />
     </section>
 
@@ -65,10 +56,10 @@
       <section class="event-form">
         <h5>Event Name</h5>
 
-        <input
+        <TextInput
           v-model="eventTitle"
+          class="textinput"
           placeholder="My Awesome Event"
-          type="text"
           required
         />
 
@@ -84,20 +75,27 @@
         <!-- EventDescription Component -->
         <section v-if="!isHidden" class="event-description">
           <h5>Description</h5>
-
-          <div class="description-textarea-container">
-            <button
-              class="btn-close button"
-              type="button"
-              @click="isHidden = true"
-            >
-              <AppIcon width="25" icon="times"></AppIcon>
-            </button>
-            <textarea v-model="eventDescription" autofocus />
-          </div>
+          <TextInput
+            v-model="eventDescription"
+            class="textarea"
+            type="textarea"
+            placeholder="Enter Description"
+            autofocus
+            resize="vertical"
+          >
+            <template #suffix>
+              <button
+                class="btn-close-new button"
+                type="button"
+                @click="isHidden = true"
+              >
+                <AppIcon width="25" icon="times"></AppIcon>
+              </button>
+            </template>
+          </TextInput>
         </section>
       </section>
-      <AppButton class="btn-create" text="Create Event" type="submit" />
+      <AppButton variant="primary" type="submit">Create Event</AppButton>
     </section>
   </form>
 </template>
@@ -108,7 +106,6 @@
 //TODO: Validate legal time 0-24hr
 //TODO: Validate empty space Event Name " "
 //TODO: Support 24HR via auto-changing AM/PM
-//TODO: Move svg to a separate files
 //TODO: Move Event components to separate files
 //TODO: Add responsive support
 //TODO: POST to backend
@@ -117,29 +114,25 @@
 //FIXME: Align toggle margin with .btn-create
 //FIXME: Focus on textarea multiple times
 //FIXME: Width size of btn-add-desc
-
 import { defineComponent } from "vue";
 import { set } from "date-fns";
-
+import TextInput from "@/common/TextInput.vue";
 import AppButton from "@/common/AppButton.vue";
-import AppToggleExternalText from "@/common/AppToggleExternalText.vue";
-import AppToggleInternalText from "@/common/AppToggleInternalText.vue";
+import AppToggle from "@/common/AppToggle.vue";
 import AppIcon from "@/common/AppIcon.vue";
 import DatePicker from "../components/DatePicker.vue";
 import DayPicker from "../components/DayPicker.vue";
 import TimePicker from "../components/TimePicker.vue";
-
 export default defineComponent({
   components: {
     AppButton,
     AppIcon,
-    AppToggleExternalText,
-    AppToggleInternalText,
+    AppToggle,
     DatePicker,
     DayPicker,
-    TimePicker
+    TimePicker,
+    TextInput
   },
-
   data() {
     return {
       isHidden: true,
@@ -148,12 +141,11 @@ export default defineComponent({
       endTime: set(new Date(), { hours: 21, minutes: 0 }),
       timezone: "America/Vancouver",
       eventTitle: "",
-      eventDescription: ""
+      eventDescription: "",
+      isChecked: true
     };
   },
-
   computed: {},
-
   methods: {
     toggleEventType(toggleState: boolean) {
       this.isDatePickerEvent = toggleState;
@@ -166,18 +158,15 @@ export default defineComponent({
 /*------------------------------------*\
   # GLOBAL
 \*------------------------------------*/
-
 /* Override Global Heading */
 h5 {
   text-align: left;
   align-self: flex-start;
 }
-
 /* Hides drop-down arrow */
 select {
   -webkit-appearance: none;
 }
-
 /* Card styling */
 .card {
   width: 100%;
@@ -190,7 +179,6 @@ select {
   flex-direction: column;
   justify-content: space-between;
 }
-
 /* Input boxes */
 .time-picker input,
 .time-picker select,
@@ -203,23 +191,19 @@ select {
   border-radius: 5px;
   background: rgb(255, 255, 255);
 }
-
 .event-form {
   display: flex;
   flex-direction: column;
 }
-
 @media screen and (min-width: 1150px) {
   .card {
     margin: 0;
     padding: 3rem;
   }
 }
-
 /*------------------------------------*\
   # MAIN COMPONENTS
 \*------------------------------------*/
-
 .form {
   padding-left: 1rem;
   padding-right: 1rem;
@@ -229,7 +213,6 @@ select {
   margin-right: auto;
   width: 100%;
 }
-
 @media screen and (min-width: 1150px) {
   .form {
     display: grid;
@@ -245,38 +228,30 @@ select {
     grid-template-columns: 3fr 2fr;
   }
 }
-
 /*------------------------------------*\
   # LEFT COMPONENTS
 \*------------------------------------*/
-
 /* ========= Date ========= */
 .date {
   grid-area: date;
   align-items: center;
 }
-
 .date-picker {
   margin: 0 -1.25rem;
   margin-bottom: 2rem;
   max-width: 32rem;
   padding: 0 1rem;
 }
-
 .heading {
   margin-bottom: 1.5rem;
 }
-
 /*------------------------------------*\
   # RIGHT COMPONENTS
 \*------------------------------------*/
-
 /* ========= Time ========= */
-
 .time {
   grid-area: time;
 }
-
 .time-picker {
   column-gap: 1rem;
   row-gap: 0.5rem;
@@ -286,16 +261,13 @@ select {
   grid-template-columns: 1fr 2fr;
   margin-bottom: 1rem;
 }
-
 .timezone-picker {
   margin-bottom: 0.25rem;
 }
-
 .timezone-picker select {
   width: 100%;
   padding-left: 1.75rem;
 }
-
 /* Icon containers & icons*/
 .timezone-picker {
   position: relative;
@@ -303,28 +275,22 @@ select {
   justify-content: space-between;
   align-items: center;
 }
-
 .icon-select-arrow,
 .timezone-picker .icon-select-arrow {
   position: absolute;
   right: 1rem;
 }
-
 .timezone-picker .icon-location {
   position: absolute;
   left: 0.75rem;
 }
-
 /* ========= Event ========= */
-
 .event {
   grid-area: event;
 }
-
-.event input {
+.textinput {
   margin: 1rem 0;
 }
-
 .btn-add-desc {
   margin-bottom: 4.875rem;
   color: rgb(114, 122, 137);
@@ -332,44 +298,26 @@ select {
   text-align: left;
   text-decoration-line: underline;
 }
-
 .btn-add-desc:hover {
   cursor: pointer;
   opacity: 0.8;
 }
-
-.event-description textarea {
-  width: 100%;
-  min-height: 3.5rem;
-  resize: none;
-}
-
 .btn-create {
   width: 100%;
   background: rgb(55, 87, 134);
   color: rgb(255, 255, 255);
 }
-
 .btn-create:hover {
   color: rgb(55, 87, 134);
   background: rgba(255, 255, 255, 0);
 }
-
-/* Icon containers & icons*/
-.description-textarea-container {
-  position: relative;
+.textarea {
   margin: 1rem 0;
 }
-
-.btn-close {
-  position: absolute;
-  top: 50%;
-  right: 0.5rem;
+.button {
   cursor: pointer;
-  transform: translateY(-50%);
 }
-
-.btn-close:hover {
+.button:hover {
   opacity: 0.3;
 }
 </style>

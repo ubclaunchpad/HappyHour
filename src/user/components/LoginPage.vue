@@ -3,16 +3,22 @@
     <div class="heading">Log In</div>
     <div class="p1">
       <p>Username/Email:</p>
-      <input v-model="username" class="input" />
+      <TextInput v-model="username" />
       <p>Password:</p>
-      <input v-model="password" class="input" />
+      <TextInput v-model="password" />
     </div>
-    <div class="button">
-      <AppButton text="Log in" @update="logIn()" />
-    </div>
-    <div class="button">
-      <AppButton text="Log in with Google Account" @update="logInViaGoogle()" />
-    </div>
+    <AppButton variant="primary" type="submit" class="button" @update="logIn()"
+      >Login</AppButton
+    >
+    <AppButton
+      variant="primary"
+      type="button"
+      class="button"
+      @update="logInViaGoogle()"
+    >
+      <GoogleLogo variant="secondary" class="btn-logo" />
+      Login with Google
+    </AppButton>
   </div>
 </template>
 
@@ -21,10 +27,15 @@ import firebase from "firebase/app";
 import { defineComponent } from "vue";
 import client from "../client";
 import AppButton from "@/common/AppButton.vue";
+import GoogleLogo from "@/common/app-icon/GoogleLogo.vue";
+import router from "@/router";
+import TextInput from "@/common/TextInput.vue";
 
 export default defineComponent({
   components: {
-    AppButton
+    AppButton,
+    GoogleLogo,
+    TextInput
   },
   data() {
     return {
@@ -35,26 +46,13 @@ export default defineComponent({
   methods: {
     async logIn() {
       client.login(this.username, this.password).then(() => {
-        window.location.href = "/";
+        this.$router.push("/");
       });
     },
     logInViaGoogle() {
-      const provider = new firebase.auth.GoogleAuthProvider();
-      provider.addScope("profile");
-      provider.addScope("email");
-      firebase
-        .auth()
-        .signInWithPopup(provider)
-        .then(function(result) {
-          if (result.credential) {
-            const credential = result.credential as firebase.auth.OAuthCredential;
-            const token = credential.accessToken;
-            console.log("OK - OAuth Token: " + token);
-          }
-        })
-        .catch(function(err) {
-          console.error("ERR: " + err);
-        });
+      client.googleLogin().then(() => {
+        this.$router.push("/");
+      });
     }
   }
 });
@@ -74,14 +72,16 @@ export default defineComponent({
   border-radius: 5px;
   margin-bottom: 20px;
 }
+
 .p1 {
   text-align: left;
 }
+
 .button {
   width: 422px;
-  padding-top: 10px;
-  margin-bottom: 10px;
+  margin-bottom: 1.25rem;
 }
+
 .login {
   position: absolute;
   width: 556px;
@@ -91,5 +91,9 @@ export default defineComponent({
   background: #ffffff;
   border-radius: 8px;
   padding: 55px;
+}
+
+.btn-logo {
+  margin-right: 0.5rem;
 }
 </style>

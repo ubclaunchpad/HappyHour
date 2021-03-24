@@ -1,30 +1,77 @@
+const googleCalendarClient = {
+  clientId: process.env.VUE_APP_GOOGLE_CLIENT_ID,
+  scope: process.env.VUE_APP_GOOGLE_SCOPE
+};
+
 import { app, db } from "@/db";
-import { Calendar } from "@/calendar/client";
+import firebase from "firebase/app";
+import "firebase/auth";
 
 const Auth = app.auth();
 
 export interface User {
   username: string;
   email: string;
+  uid: string;
   // calendar: Calendar;
 }
 
-// TODO: Fill this in with methods
+function saveUserToDb(user: User) {
+  db.ref("users/" + user.uid).set({
+    username: user.email,
+    email: user.email
+  });
+}
+
+function createUserObject(user: firebase.User): User {
+  const { uid, email } = user;
+  const newUser = {
+    uid: uid,
+    email: email || "",
+    username: email || ""
+  };
+  return newUser;
+}
+
+function loadGoogleAuth(): Promise<gapi.auth2.GoogleAuth> {
+  return new Promise((resolve, reject) => {
+    gapi.load("auth2", async () => {
+      const googleAuth = gapi.auth2.init({
+        // eslint-disable-next-line @typescript-eslint/camelcase
+        client_id: googleCalendarClient.clientId,
+        scope: googleCalendarClient.scope
+      });
+      console.log("loaded google auth: ");
+      console.log(googleAuth);
+      return resolve(googleAuth);
+    });
+  });
+}
+
 const client = {
   createUser(email: string, password: string) {
-    try {
-      const user = Auth.createUserWithEmailAndPassword(email, password).then(
-        user => {
-          db.ref("users/" + user.user?.uid).set({
-            username: "placeholder",
-            email: email
-          });
+    Auth.createUserWithEmailAndPassword(email, password)
+      .then(user => {
+        if (user.user) {
+          const newUser = createUserObject(user.user);
+          saveUserToDb(newUser);
+        } else {
+          throw new Error("No User returned from firebase");
         }
-      );
-      console.log("OK - Token: " + user);
-    } catch (err) {
-      console.error("ERR: " + err);
-    }
+        console.log("OK - Token: " + user);
+      })
+      .catch(err => {
+        const errorCode = err.code;
+        const errorMessage = err.message;
+        if (errorCode == "auth/weak-password") {
+          alert("The password is too weak.");
+        } else if (errorCode == "auth/email-already-in-use") {
+          alert("An account associated with this email already exists");
+        } else {
+          alert(errorMessage);
+        }
+        console.log("ERR", err);
+      });
   },
   login(email: string, password: string) {
     return Auth.signInWithEmailAndPassword(email, password)
@@ -35,6 +82,65 @@ const client = {
       .catch(err => {
         console.log(err);
       });
+  },
+  googleLogin() {
+    return new Promise((resolve, reject) => {
+      loadGoogleAuth()
+        .then(googleAuth => {
+          return googleAuth.signIn();
+        })
+        .then(googleUser => {
+          console.log(googleUser);
+          const accessToken = googleUser.getAuthResponse().access_token;
+          console.log(`access token: ${accessToken}`);
+          const credential = firebase.auth.GoogleAuthProvider.credential(
+            null,
+            accessToken
+          );
+          return firebase.auth().signInWithCredential(credential);
+        })
+        .then(result => {
+          if (result.credential) {
+            const credential = result.credential as firebase.auth.OAuthCredential;
+          }
+          if (result.user != null) {
+            db.ref("users/" + result.user.uid).once("value", async snapshot => {
+              if (!snapshot.val() && result.user) {
+                const newUser = createUserObject(result.user);
+                saveUserToDb(newUser);
+                return resolve(newUser);
+              }
+              return resolve(result.user);
+            });
+          }
+        })
+        .catch(err => {
+          console.error("error in googleLogin: " + err);
+          return reject(err);
+        });
+    });
+  },
+  getAccessToken(): Promise<string> {
+    return new Promise((resolve, reject) => {
+      loadGoogleAuth()
+        .then(googleAuth => {
+          const currentUser = gapi.auth2.getAuthInstance().currentUser;
+          console.log("current user: ");
+          console.log(currentUser);
+          if (currentUser) {
+            const accessToken = currentUser.get().getAuthResponse()
+              .access_token;
+            console.log(`getting access token from gapi: ${accessToken}`);
+            return resolve(accessToken);
+          } else {
+            return resolve("");
+          }
+        })
+        .catch((err: any) => {
+          console.error("error in getAccessToken: " + err);
+          return reject(err);
+        });
+    });
   },
   logout() {
     if (Auth.currentUser) {

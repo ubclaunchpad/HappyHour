@@ -16,6 +16,12 @@
         @update:blocks="updateCalendar"
       />
     </div>
+    <div class="button">
+      <AppButton text="busy blocks" @update="getBusyBlocks()" />
+    </div>
+    <div class="button">
+      <AppButton text="free blocks" @update="getFreeBlocks()" />
+    </div>
   </div>
 </template>
 
@@ -24,8 +30,9 @@ import { eachDayOfInterval, getHours, isSameDay } from "date-fns";
 import { defineComponent, PropType } from "vue";
 
 import CalendarDay from "./CalendarDay.vue";
-import { Block, Calendar } from "../client";
+import client, { Block, Calendar } from "../client";
 import { formatHour } from "../utils";
+import AppButton from "@/common/AppButton.vue";
 
 interface Day {
   date: string;
@@ -42,7 +49,8 @@ const MinsInHour = 60;
 
 export default defineComponent({
   components: {
-    CalendarDay
+    CalendarDay,
+    AppButton
   },
   props: {
     calendar: {
@@ -59,9 +67,6 @@ export default defineComponent({
     }
   },
   computed: {
-    blocks(): Block[] {
-      return this.calendar.blocks;
-    },
     days(): Day[] {
       return eachDayOfInterval({
         start: this.start,
@@ -69,7 +74,9 @@ export default defineComponent({
       }).map(date => {
         return {
           date: date.toISOString(),
-          blocks: this.blocks.filter(block => isSameDay(block.startTime, date))
+          blocks: this.calendar.blocks.filter(block =>
+            isSameDay(block.startTime, date)
+          )
         };
       });
     },
@@ -102,10 +109,64 @@ export default defineComponent({
     updateCalendar({ blocks, date }: { blocks: Block[]; date: string }) {
       const originalBlocks = this.days.find(day => day.date === date)?.blocks;
       if (originalBlocks) {
-        const otherBlocks = this.blocks.filter(
+        const otherBlocks = this.calendar.blocks.filter(
           block => !originalBlocks.includes(block)
         );
         this.$emit("update:calendar", { blocks: [...otherBlocks, ...blocks] });
+      }
+    },
+    async getBusyBlocks(): Promise<any> {
+      const currentTime: Date = new Date();
+      const timeMin: Date = new Date(
+        currentTime.getFullYear(),
+        currentTime.getMonth(),
+        currentTime.getDate(),
+        currentTime.getHours() - 5,
+        30
+      );
+      const timeMax: Date = new Date(
+        timeMin.getFullYear(),
+        timeMin.getMonth(),
+        timeMin.getDate(),
+        timeMin.getHours() + 4,
+        0
+      );
+      console.log(`min: ${timeMin}, max: ${timeMax}`);
+      try {
+        const busyBlocks = await client.findBusyBlocks(timeMin, timeMax);
+        console.log("printing busy blocks from calendar component: ");
+        console.log(busyBlocks);
+        return busyBlocks;
+      } catch (err) {
+        console.log("error: " + err);
+        return err;
+      }
+    },
+    async getFreeBlocks(): Promise<any> {
+      const currentTime: Date = new Date();
+      const timeMin: Date = new Date(
+        currentTime.getFullYear(),
+        currentTime.getMonth(),
+        currentTime.getDate(),
+        currentTime.getHours() - 5,
+        30
+      );
+      const timeMax: Date = new Date(
+        timeMin.getFullYear(),
+        timeMin.getMonth(),
+        timeMin.getDate(),
+        timeMin.getHours() + 4,
+        0
+      );
+      console.log(`min: ${timeMin}, max: ${timeMax}`);
+      try {
+        const freeBlocks = await client.findFreeBlocks(timeMin, timeMax);
+        console.log("printing free blocks from calendar component: ");
+        console.log(freeBlocks);
+        return freeBlocks;
+      } catch (err) {
+        console.log("error: " + err);
+        return err;
       }
     }
   }
