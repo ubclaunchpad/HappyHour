@@ -24,7 +24,7 @@ type FirebaseEvent = Omit<Event, "scheduleWindow" | "calendar"> & {
  * Given an event ID, returns the associated Event object that is synchronized to
  * the firebase model.
  *
- * @param id id of the event
+ * @param id is id of the event
  * @returns a reactive event object
  */
 export function useEvent(id: string) {
