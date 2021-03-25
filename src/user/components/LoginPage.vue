@@ -14,7 +14,7 @@
       variant="primary"
       type="button"
       class="button"
-      @update="logInViaGoogle()"
+      @click="logInViaGoogle()"
     >
       <GoogleLogo variant="secondary" class="btn-logo" />
       Login with Google
@@ -48,7 +48,7 @@ export default defineComponent({
     }
   },
   methods: {
-    async logIn() {
+    logIn() {
       client.login(this.username, this.password).then(() => {
         this.$router.push(this.redirectTo);
       });

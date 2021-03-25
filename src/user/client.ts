@@ -37,14 +37,14 @@ export function createUserObject(user: firebase.User) {
 
 function loadGoogleAuth(): Promise<gapi.auth2.GoogleAuth> {
   return new Promise(resolve => {
-    const googleAuth = gapi.auth2.init({
-      // eslint-disable-next-line @typescript-eslint/camelcase
-      client_id: googleCalendarClient.clientId,
-      scope: googleCalendarClient.scope
+    gapi.load("client:auth2", () => {
+      gapi.client.init({
+        clientId: googleCalendarClient.clientId,
+        scope: googleCalendarClient.scope
+      });
+      console.log("loaded google auth");
+      return resolve(gapi.auth2.getAuthInstance());
     });
-    console.log("loaded google auth: ");
-    console.log(googleAuth);
-    return resolve(googleAuth);
   });
 }
 
@@ -84,63 +84,50 @@ const client = {
       });
   },
   googleLogin() {
-    return new Promise((resolve, reject) => {
-      loadGoogleAuth()
-        .then(googleAuth => {
-          return googleAuth.signIn();
-        })
-        .then(googleUser => {
-          console.log(googleUser);
-          const accessToken = googleUser.getAuthResponse().access_token;
-          console.log(`access token: ${accessToken}`);
-          const credential = firebase.auth.GoogleAuthProvider.credential(
-            null,
-            accessToken
-          );
-          return firebase.auth().signInWithCredential(credential);
-        })
-        .then(result => {
-          if (result.credential) {
-            const credential = result.credential as firebase.auth.OAuthCredential;
-          }
-          if (result.user != null) {
-            db.collection("users")
-              .doc(result.user.uid)
-              .get()
-              .then(snapshot => {
-                if (!snapshot.exists && result.user) {
-                  const newUser = createUserObject(result.user);
-                  saveUserToDb(newUser);
-                }
-              });
-          }
-        })
-        .catch(err => {
-          console.error("error in googleLogin: " + err);
-          return reject(err);
-        });
-    });
+    return loadGoogleAuth()
+      .then(googleAuth => {
+        return googleAuth.signIn();
+      })
+      .then(googleUser => {
+        console.log(googleUser);
+        const accessToken = googleUser.getAuthResponse().access_token;
+        console.log(`access token: ${accessToken}`);
+        const credential = firebase.auth.GoogleAuthProvider.credential(
+          null,
+          accessToken
+        );
+        return firebase.auth().signInWithCredential(credential);
+      })
+      .then(result => {
+        console.log(`signed in via firebase`);
+        if (result.user != null) {
+          db.collection("users")
+            .doc(result.user.uid)
+            .get()
+            .then(snapshot => {
+              if (!snapshot.exists && result.user) {
+                const newUser = createUserObject(result.user);
+                saveUserToDb(newUser);
+              }
+            });
+        }
+      })
+      .catch(err => {
+        console.error("error in googleLogin: " + err);
+      });
   },
   getAccessToken(): Promise<string> {
-    return new Promise((resolve, reject) => {
-      loadGoogleAuth()
-        .then(gapi => {
-          const currentUser = gapi.auth2.getAuthInstance().currentUser;
-          console.log("current user: ");
-          console.log(currentUser);
-          if (currentUser) {
-            const accessToken = currentUser.get().getAuthResponse()
-              .access_token;
-            console.log(`getting access token from gapi: ${accessToken}`);
-            return resolve(accessToken);
-          } else {
-            return resolve("");
-          }
-        })
-        .catch((err: any) => {
-          console.error("error in getAccessToken: " + err);
-          return reject(err);
-        });
+    return loadGoogleAuth().then(gapi => {
+      const currentUser = gapi.currentUser;
+      console.log("current user: ");
+      console.log(currentUser);
+      if (currentUser) {
+        const accessToken = currentUser.get().getAuthResponse().access_token;
+        console.log(`getting access token from gapi: ${accessToken}`);
+        return accessToken;
+      } else {
+        return "";
+      }
     });
   },
   logout() {
