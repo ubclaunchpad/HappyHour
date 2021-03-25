@@ -8,7 +8,8 @@ import LoginPage from "./user/views/Login.vue";
 export const routes: Array<RouteRecordRaw> = [
   {
     path: "/",
-    component: CreateEventPage
+    component: CreateEventPage,
+    name: "Create"
   },
   {
     path: "/event/:id",
@@ -17,7 +18,8 @@ export const routes: Array<RouteRecordRaw> = [
   },
   {
     path: "/register",
-    component: RegistrationPage
+    component: RegistrationPage,
+    name: "Sign Up"
   },
   {
     path: "/login",
