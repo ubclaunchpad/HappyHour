@@ -36,15 +36,19 @@
           />
           <div class="buttons">
             <AppButton
+              variant="secondary"
+              type="button"
               class="btn"
-              text="Save Response"
               @update="handleSave()"
-            />
+              >Save Response</AppButton
+            >
             <AppButton
+              variant="secondary"
+              type="button"
               class="btn"
-              text="Copy Event Link"
               @update="copyLink()"
-            />
+              >Copy Event Link</AppButton
+            >
           </div>
         </section>
       </div>
