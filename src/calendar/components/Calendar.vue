@@ -13,6 +13,8 @@
         :date="date"
         :times="times"
         :blocks="blocks"
+        :respondents="respondents"
+        :current-user="currentUser"
         @update:blocks="updateCalendar"
       />
     </div>
@@ -64,9 +66,21 @@ export default defineComponent({
     endTime: {
       type: String,
       required: true
+    },
+    currentUser: {
+      type: String,
+      required: true
     }
   },
+  emits: ["update:calendar"],
   computed: {
+    respondents() {
+      const respondents = new Set();
+      for (const block of this.calendar.blocks) {
+        block.availableUsers.forEach(user => respondents.add(user));
+      }
+      return respondents.size;
+    },
     days(): Day[] {
       return eachDayOfInterval({
         start: this.start,

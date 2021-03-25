@@ -14,7 +14,7 @@
       variant="primary"
       type="button"
       class="button"
-      @update="logInViaGoogle()"
+      @click="logInViaGoogle()"
     >
       <GoogleLogo variant="secondary" class="btn-logo" />
       Login with Google
@@ -23,12 +23,10 @@
 </template>
 
 <script lang="ts">
-import firebase from "firebase/app";
 import { defineComponent } from "vue";
 import client from "../client";
 import AppButton from "@/common/AppButton.vue";
 import GoogleLogo from "@/common/app-icon/GoogleLogo.vue";
-import router from "@/router";
 import TextInput from "@/common/TextInput.vue";
 
 export default defineComponent({
@@ -43,15 +41,21 @@ export default defineComponent({
       password: ""
     };
   },
+  computed: {
+    redirectTo() {
+      const redirectTo = this.$route.query.redirectTo as string;
+      return redirectTo || "/";
+    }
+  },
   methods: {
-    async logIn() {
+    logIn() {
       client.login(this.username, this.password).then(() => {
-        this.$router.push("/");
+        this.$router.push(this.redirectTo);
       });
     },
     logInViaGoogle() {
       client.googleLogin().then(() => {
-        this.$router.push("/");
+        this.$router.push(this.redirectTo);
       });
     }
   }
