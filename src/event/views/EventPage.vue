@@ -63,14 +63,28 @@
 //FIXME: AppSnackbar location
 //FIXME: Layout
 //FIXME: Multiple timers clashing in AppSnackbar notifications
-import { computed, defineComponent, watch, ref, reactive, toRefs } from "vue";
+import {
+  computed,
+  defineComponent,
+  ref,
+  reactive,
+  toRefs,
+  watchEffect,
+  watch,
+  nextTick
+} from "vue";
 import { useRouter } from "vue-router";
+
 import AppButton from "@/common/AppButton.vue";
-import AppToggleInternalText from "@/common/AppToggleInternalText.vue";
 import AppSnackbar from "@/common/AppSnackbar.vue";
+import AppToggleInternalText from "@/common/AppToggleInternalText.vue";
+
 import Calendar from "@/calendar/components/Calendar.vue";
-import { Calendar as CalendarType } from "@/calendar/client";
+import calendarClient, { Calendar as CalendarType } from "@/calendar/client";
+import { merge } from "@/calendar/utils";
+import userClient from "@/user/client";
 import { useUser } from "@/user/hooks";
+
 import EventRespondents from "../components/EventRespondents.vue";
 import client from "../client";
 import { useEvent } from "../hooks";
@@ -92,28 +106,6 @@ export default defineComponent({
   setup(props) {
     const { user, isLoading } = useUser();
     const router = useRouter();
-
-    /**
-     * The user is fetched asynchronously, so initially it's going to be null
-     * regardless if the user is logged in or not.
-     *
-     * We want to block users from accessing this page if they're not logged in, so
-     * we'll redirect them as soon as the user is fetched and we know they're not
-     * logged in.
-     *
-     * When redirecting, we add the link to the current event so the login page
-     * knows where to redirect once logged in.
-     */
-    watch(isLoading, loading => {
-      if (!loading && !user.value) {
-        router.replace({
-          path: "/login",
-          query: {
-            redirectTo: router.currentRoute.value.path
-          }
-        });
-      }
-    });
 
     // state
     const state = reactive({
@@ -137,6 +129,66 @@ export default defineComponent({
       const blocks = newEvent?.calendar.blocks;
       if (blocks) {
         calendar.value = { blocks };
+      }
+    });
+
+    /**
+     * The user is fetched asynchronously, so initially it's going to be null
+     * regardless if the user is logged in or not.
+     *
+     * This means we can only do stuff with the user _after_ we've fetched that
+     * information.
+     */
+    watchEffect(async () => {
+      if (!isLoading.value) {
+        /**
+         * We want to block users from accessing this page if they're not logged in,
+         * so we'll redirect them as soon as the user is fetched and we know they're
+         * not logged in.
+         *
+         * When redirecting, we add the link to the current event so the login page
+         * knows where to redirect once logged in.
+         */
+        if (!user.value) {
+          router.replace({
+            path: "/login",
+            query: {
+              redirectTo: router.currentRoute.value.path
+            }
+          });
+        } else {
+          if (event.value) {
+            /**
+             * Otherwise, we want to populate the calendar's blocks with our free
+             * blocks.
+             */
+            if (await userClient.isGoogleUser()) {
+              const { startTime, endTime } = event.value.scheduleWindow;
+              const blocks = await calendarClient.findFreeBlocks(
+                startTime,
+                endTime,
+                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                user.value!.uid
+              );
+
+              /**
+               * We can just merge the current calendar here because at this point,
+               * events has been loaded.
+               */
+              calendar.value = merge(calendar.value, { blocks });
+
+              /**
+               * Using `nextTick`, we tell vue to call this function once the DOM
+               * has been updated.
+               */
+              nextTick(() => {
+                alert(
+                  `We've pre-populated the event with your Google Calendar availability.`
+                );
+              });
+            }
+          }
+        }
       }
     });
 
