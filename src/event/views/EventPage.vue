@@ -32,21 +32,21 @@
             v-model:checked="displayGroupAvail"
             left-text="My Availability"
             right-text="Group Availability"
-            @update="switchCalendar()"
+            @click="switchCalendar()"
           />
           <div class="buttons">
             <AppButton
               variant="secondary"
               type="button"
               class="btn"
-              @update="handleSave()"
+              @click="handleSave()"
               >Save Response</AppButton
             >
             <AppButton
               variant="secondary"
               type="button"
               class="btn"
-              @update="copyLink()"
+              @click="copyLink()"
               >Copy Event Link</AppButton
             >
           </div>
@@ -157,36 +157,41 @@ export default defineComponent({
             }
           });
         } else {
-          if (event.value) {
+          /**
+           * Otherwise, we want to populate the calendar's blocks with our free
+           * blocks.
+           *
+           * Only populate the calendar with the user's google calendar if it's
+           * their first time visiting the event.
+           */
+          if (
+            event.value &&
+            !event.value.users.includes(user.value.uid) &&
+            (await userClient.isGoogleUser())
+          ) {
+            const { startTime, endTime } = event.value.scheduleWindow;
+            const blocks = await calendarClient.findFreeBlocks(
+              startTime,
+              endTime,
+              // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+              user.value!.uid
+            );
+
             /**
-             * Otherwise, we want to populate the calendar's blocks with our free
-             * blocks.
+             * We can just merge the current calendar here because at this point,
+             * events has been loaded.
              */
-            if (await userClient.isGoogleUser()) {
-              const { startTime, endTime } = event.value.scheduleWindow;
-              const blocks = await calendarClient.findFreeBlocks(
-                startTime,
-                endTime,
-                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-                user.value!.uid
+            calendar.value = merge(calendar.value, { blocks });
+
+            /**
+             * Using `nextTick`, we tell vue to call this function once the DOM
+             * has been updated.
+             */
+            nextTick(() => {
+              alert(
+                `We've pre-populated the event with your Google Calendar availability.`
               );
-
-              /**
-               * We can just merge the current calendar here because at this point,
-               * events has been loaded.
-               */
-              calendar.value = merge(calendar.value, { blocks });
-
-              /**
-               * Using `nextTick`, we tell vue to call this function once the DOM
-               * has been updated.
-               */
-              nextTick(() => {
-                alert(
-                  `We've pre-populated the event with your Google Calendar availability.`
-                );
-              });
-            }
+            });
           }
         }
       }
@@ -204,7 +209,12 @@ export default defineComponent({
         // save the calendar
         // alert("handleSave is called");
         // and show notification with "Availability saved!"
-        await client.updateEvent(props.id, { calendar: calendar.value });
+        await client.saveResponse({
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+          userId: user.value!.uid,
+          eventId: props.id,
+          availability: calendar.value.blocks
+        });
         state.notificationVisible = true;
         state.notificationText = "Availability saved!";
         setTimeout(() => (state.notificationVisible = false), 5000);
