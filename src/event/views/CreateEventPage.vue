@@ -100,12 +100,7 @@
           </TextInput>
         </section>
       </section>
-      <AppButton
-        class="btn-create"
-        text="Create Event"
-        type="submit"
-        @click="createEvent"
-      />
+      <AppButton variant="primary" type="submit">Create Event</AppButton>
     </section>
   </form>
 </template>
@@ -124,10 +119,8 @@
 //FIXME: Align toggle margin with .btn-create
 //FIXME: Focus on textarea multiple times
 //FIXME: Width size of btn-add-desc
-
 import { defineComponent } from "vue";
 import { set } from "date-fns";
-
 import TextInput from "@/common/TextInput.vue";
 import AppButton from "@/common/AppButton.vue";
 import AppToggle from "@/common/AppToggle.vue";
@@ -147,7 +140,6 @@ export default defineComponent({
     TimePicker,
     TextInput
   },
-
   data() {
     return {
       isHidden: true,
@@ -160,9 +152,7 @@ export default defineComponent({
       isChecked: true
     };
   },
-
   computed: {},
-
   methods: {
     toggleEventType(toggleState: boolean) {
       this.isDatePickerEvent = toggleState;
@@ -192,18 +182,15 @@ export default defineComponent({
 /*------------------------------------*\
   # GLOBAL
 \*------------------------------------*/
-
 /* Override Global Heading */
 h5 {
   text-align: left;
   align-self: flex-start;
 }
-
 /* Hides drop-down arrow */
 select {
   -webkit-appearance: none;
 }
-
 /* Card styling */
 .card {
   width: 100%;
@@ -216,7 +203,6 @@ select {
   flex-direction: column;
   justify-content: space-between;
 }
-
 /* Input boxes */
 .time-picker input,
 .time-picker select,
@@ -229,23 +215,19 @@ select {
   border-radius: 5px;
   background: rgb(255, 255, 255);
 }
-
 .event-form {
   display: flex;
   flex-direction: column;
 }
-
 @media screen and (min-width: 1150px) {
   .card {
     margin: 0;
     padding: 3rem;
   }
 }
-
 /*------------------------------------*\
   # MAIN COMPONENTS
 \*------------------------------------*/
-
 .form {
   padding-left: 1rem;
   padding-right: 1rem;
@@ -255,7 +237,6 @@ select {
   margin-right: auto;
   width: 100%;
 }
-
 @media screen and (min-width: 1150px) {
   .form {
     display: grid;
@@ -271,38 +252,30 @@ select {
     grid-template-columns: 3fr 2fr;
   }
 }
-
 /*------------------------------------*\
   # LEFT COMPONENTS
 \*------------------------------------*/
-
 /* ========= Date ========= */
 .date {
   grid-area: date;
   align-items: center;
 }
-
 .date-picker {
   margin: 0 -1.25rem;
   margin-bottom: 2rem;
   max-width: 32rem;
   padding: 0 1rem;
 }
-
 .heading {
   margin-bottom: 1.5rem;
 }
-
 /*------------------------------------*\
   # RIGHT COMPONENTS
 \*------------------------------------*/
-
 /* ========= Time ========= */
-
 .time {
   grid-area: time;
 }
-
 .time-picker {
   column-gap: 1rem;
   row-gap: 0.5rem;
@@ -312,16 +285,13 @@ select {
   grid-template-columns: 1fr 2fr;
   margin-bottom: 1rem;
 }
-
 .timezone-picker {
   margin-bottom: 0.25rem;
 }
-
 .timezone-picker select {
   width: 100%;
   padding-left: 1.75rem;
 }
-
 /* Icon containers & icons*/
 .timezone-picker {
   position: relative;
@@ -329,28 +299,22 @@ select {
   justify-content: space-between;
   align-items: center;
 }
-
 .icon-select-arrow,
 .timezone-picker .icon-select-arrow {
   position: absolute;
   right: 1rem;
 }
-
 .timezone-picker .icon-location {
   position: absolute;
   left: 0.75rem;
 }
-
 /* ========= Event ========= */
-
 .event {
   grid-area: event;
 }
-
 .textinput {
   margin: 1rem 0;
 }
-
 .btn-add-desc {
   margin-bottom: 4.875rem;
   color: rgb(114, 122, 137);
@@ -358,31 +322,25 @@ select {
   text-align: left;
   text-decoration-line: underline;
 }
-
 .btn-add-desc:hover {
   cursor: pointer;
   opacity: 0.8;
 }
-
 .btn-create {
   width: 100%;
   background: rgb(55, 87, 134);
   color: rgb(255, 255, 255);
 }
-
 .btn-create:hover {
   color: rgb(55, 87, 134);
   background: rgba(255, 255, 255, 0);
 }
-
 .textarea {
   margin: 1rem 0;
 }
-
 .button {
   cursor: pointer;
 }
-
 .button:hover {
   opacity: 0.3;
 }

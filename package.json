@@ -8,6 +8,10 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "@types/gapi": "^0.0.39",
+    "@types/gapi.auth2": "^0.0.53",
+    "@types/gapi.client": "^1.0.4",
+    "@types/gapi.client.calendar": "^3.0.10",
     "axios": "^0.21.0",
     "core-js": "^3.6.5",
     "date-fns": "^2.16.1",

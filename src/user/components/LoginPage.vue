@@ -7,26 +7,32 @@
       <p>Password:</p>
       <TextInput v-model="password" />
     </div>
-    <div class="button">
-      <AppButton text="Log in" @update="logIn()" />
-    </div>
-    <div class="button">
-      <AppButton text="Log in with Google Account" @update="logInViaGoogle()" />
-    </div>
+    <AppButton variant="primary" type="submit" class="button" @update="logIn()"
+      >Login</AppButton
+    >
+    <AppButton
+      variant="primary"
+      type="button"
+      class="button"
+      @click="logInViaGoogle()"
+    >
+      <GoogleLogo variant="secondary" class="btn-logo" />
+      Login with Google
+    </AppButton>
   </div>
 </template>
 
 <script lang="ts">
-import firebase from "firebase/app";
 import { defineComponent } from "vue";
 import client from "../client";
 import AppButton from "@/common/AppButton.vue";
-import router from "@/router";
+import GoogleLogo from "@/common/app-icon/GoogleLogo.vue";
 import TextInput from "@/common/TextInput.vue";
 
 export default defineComponent({
   components: {
     AppButton,
+    GoogleLogo,
     TextInput
   },
   data() {
@@ -35,15 +41,21 @@ export default defineComponent({
       password: ""
     };
   },
+  computed: {
+    redirectTo() {
+      const redirectTo = this.$route.query.redirectTo as string;
+      return redirectTo || "/";
+    }
+  },
   methods: {
-    async logIn() {
+    logIn() {
       client.login(this.username, this.password).then(() => {
-        this.$router.push("/");
+        this.$router.push(this.redirectTo);
       });
     },
     logInViaGoogle() {
       client.googleLogin().then(() => {
-        this.$router.push("/");
+        this.$router.push(this.redirectTo);
       });
     }
   }
@@ -64,14 +76,16 @@ export default defineComponent({
   border-radius: 5px;
   margin-bottom: 20px;
 }
+
 .p1 {
   text-align: left;
 }
+
 .button {
   width: 422px;
-  padding-top: 10px;
-  margin-bottom: 10px;
+  margin-bottom: 1.25rem;
 }
+
 .login {
   position: absolute;
   width: 556px;
@@ -81,5 +95,9 @@ export default defineComponent({
   background: #ffffff;
   border-radius: 8px;
   padding: 55px;
+}
+
+.btn-logo {
+  margin-right: 0.5rem;
 }
 </style>
