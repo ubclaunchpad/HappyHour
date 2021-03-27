@@ -42,7 +42,6 @@ function loadGoogleAuth(): Promise<gapi.auth2.GoogleAuth> {
         clientId: googleCalendarClient.clientId,
         scope: googleCalendarClient.scope
       });
-      console.log("loaded google auth");
       return resolve(gapi.auth2.getAuthInstance());
     });
   });
@@ -58,7 +57,6 @@ const client = {
         } else {
           throw new Error("No User returned from firebase");
         }
-        console.log("OK - Token: " + user);
       })
       .catch(err => {
         const errorCode = err.code;
@@ -89,9 +87,7 @@ const client = {
         return googleAuth.signIn();
       })
       .then(googleUser => {
-        console.log(googleUser);
         const accessToken = googleUser.getAuthResponse().access_token;
-        console.log(`access token: ${accessToken}`);
         const credential = firebase.auth.GoogleAuthProvider.credential(
           null,
           accessToken
@@ -99,7 +95,6 @@ const client = {
         return firebase.auth().signInWithCredential(credential);
       })
       .then(result => {
-        console.log(`signed in via firebase`);
         if (result.user != null) {
           db.collection("users")
             .doc(result.user.uid)
@@ -119,16 +114,16 @@ const client = {
   getAccessToken(): Promise<string> {
     return loadGoogleAuth().then(gapi => {
       const currentUser = gapi.currentUser;
-      console.log("current user: ");
-      console.log(currentUser);
       if (currentUser) {
         const accessToken = currentUser.get().getAuthResponse().access_token;
-        console.log(`getting access token from gapi: ${accessToken}`);
         return accessToken;
       } else {
         return "";
       }
     });
+  },
+  isGoogleUser() {
+    return client.getAccessToken().then(token => token.length > 0);
   },
   logout() {
     if (Auth.currentUser) {

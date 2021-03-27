@@ -10,7 +10,7 @@ export default defineComponent({
   name: "AppButton",
 
   props: {
-    variant: { type: String, required: true }
+    variant: { type: String, required: false, default: "primary" }
   },
 
   setup(props) {
