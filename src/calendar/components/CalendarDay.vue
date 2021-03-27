@@ -17,11 +17,11 @@
 </template>
 
 <script lang="ts">
-import { format, setHours, setMinutes } from "date-fns";
+import { format, set } from "date-fns";
 import { defineComponent, PropType } from "vue";
 
 import { Block, Time } from "../client";
-import { toTime } from "../utils";
+import { createBlock, toTime } from "../utils";
 
 export default defineComponent({
   props: {
@@ -125,13 +125,10 @@ export default defineComponent({
           blocks = [...this.blocks];
         }
       } else {
-        const newBlock: Block = {
-          startTime: setHours(
-            setMinutes(new Date(this.date), time.minutes),
-            time.hour
-          ),
-          availableUsers: [this.currentUser]
-        };
+        const newBlock = createBlock(
+          set(new Date(this.date), { hours: time.hour, minutes: time.minutes }),
+          this.currentUser
+        );
         blocks = [...this.blocks, newBlock];
       }
       this.$emit("update:blocks", { blocks, date: this.date });

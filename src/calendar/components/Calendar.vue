@@ -32,7 +32,7 @@ import { eachDayOfInterval, getHours, isSameDay } from "date-fns";
 import { defineComponent, PropType } from "vue";
 
 import CalendarDay from "./CalendarDay.vue";
-import client, { Block, Calendar } from "../client";
+import { Block, Calendar } from "../client";
 import { formatHour } from "../utils";
 import AppButton from "@/common/AppButton.vue";
 
@@ -127,60 +127,6 @@ export default defineComponent({
           block => !originalBlocks.includes(block)
         );
         this.$emit("update:calendar", { blocks: [...otherBlocks, ...blocks] });
-      }
-    },
-    async getBusyBlocks(): Promise<any> {
-      const currentTime: Date = new Date();
-      const timeMin: Date = new Date(
-        currentTime.getFullYear(),
-        currentTime.getMonth(),
-        currentTime.getDate(),
-        currentTime.getHours() - 5,
-        30
-      );
-      const timeMax: Date = new Date(
-        timeMin.getFullYear(),
-        timeMin.getMonth(),
-        timeMin.getDate(),
-        timeMin.getHours() + 4,
-        0
-      );
-      console.log(`min: ${timeMin}, max: ${timeMax}`);
-      try {
-        const busyBlocks = await client.findBusyBlocks(timeMin, timeMax);
-        console.log("printing busy blocks from calendar component: ");
-        console.log(busyBlocks);
-        return busyBlocks;
-      } catch (err) {
-        console.log("error: " + err);
-        return err;
-      }
-    },
-    async getFreeBlocks(): Promise<any> {
-      const currentTime: Date = new Date();
-      const timeMin: Date = new Date(
-        currentTime.getFullYear(),
-        currentTime.getMonth(),
-        currentTime.getDate(),
-        currentTime.getHours() - 5,
-        30
-      );
-      const timeMax: Date = new Date(
-        timeMin.getFullYear(),
-        timeMin.getMonth(),
-        timeMin.getDate(),
-        timeMin.getHours() + 4,
-        0
-      );
-      console.log(`min: ${timeMin}, max: ${timeMax}`);
-      try {
-        const freeBlocks = await client.findFreeBlocks(timeMin, timeMax);
-        console.log("printing free blocks from calendar component: ");
-        console.log(freeBlocks);
-        return freeBlocks;
-      } catch (err) {
-        console.log("error: " + err);
-        return err;
       }
     }
   }
