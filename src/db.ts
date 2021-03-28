@@ -1,6 +1,6 @@
 import firebase from "firebase/app";
 import "firebase/auth";
-import "firebase/database";
+import "firebase/firestore";
 
 const firebaseConfig = {
   apiKey: process.env.VUE_APP_FIREBASE_API_KEY,
@@ -13,4 +13,4 @@ const firebaseConfig = {
 
 export const app = firebase.initializeApp(firebaseConfig);
 
-export const db = firebase.database();
+export const db = firebase.firestore();

@@ -1,5 +1,6 @@
-import { Calendar } from "@/calendar/client";
-
+import firebase from "firebase";
+import { Block, Calendar } from "@/calendar/client";
+import { db } from "@/db";
 export interface Event {
   users: string[];
   owners: string[];
@@ -13,33 +14,30 @@ export interface Event {
   timezone: string;
 }
 
-// TODO: Fill this in with methods
+const BasePath = "events";
+
+export const dbRef = db.collection(BasePath);
+
 const client = {
-  getEventById(id: string): Event {
-    return {
-      users: [],
-      owners: [],
-      scheduleWindow: {
-        startTime: new Date("November 2, 2020 09:00:00"),
-        endTime: new Date("November  8, 2020 21:30:00")
-      },
-      id,
-      calendar: {
-        blocks: []
-      },
-      title: "Cool event",
-      timezone: "PST - Vancouver time"
-    };
+  updateEvent(id: string, event: Partial<Event>) {
+    return dbRef.doc(id).update(event);
   },
-  addUserAvailability(calendar: Calendar) {
-    console.warn("NOT IMPLEMENTED - addUserAvailability");
-    console.log(calendar);
+  addEvent(event: Event) {
+    return dbRef.add(event).then(doc => doc.id);
   },
-  addEvent() {
-    // stub
-  },
-  deleteEvent() {
-    // stub
+  saveResponse({
+    userId,
+    eventId,
+    availability
+  }: {
+    userId: string;
+    eventId: string;
+    availability: Block[];
+  }) {
+    return dbRef.doc(eventId).update({
+      users: firebase.firestore.FieldValue.arrayUnion(userId),
+      calendar: { blocks: availability }
+    });
   }
 };
 
