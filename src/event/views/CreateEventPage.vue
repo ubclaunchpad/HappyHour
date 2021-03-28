@@ -1,6 +1,5 @@
 <template>
   <form class="form">
-    <button type="button" @click="logout">logout</button>
     <!-- Left Components -->
     <!-- Date Card -->
     <section class="date card">
@@ -129,7 +128,7 @@ import DatePicker from "../components/DatePicker.vue";
 import DayPicker from "../components/DayPicker.vue";
 import TimePicker from "../components/TimePicker.vue";
 import LoginPage from "../../user/components/LoginPage.vue";
-import userClient, { Auth } from "../../user/client";
+import { Auth } from "../../user/client";
 import { Event } from "../client";
 import client from "../client";
 
@@ -207,9 +206,6 @@ export default defineComponent({
           });
         this.reset();
       }
-    },
-    logout() {
-      userClient.logout();
     }
   }
 });
