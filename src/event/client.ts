@@ -1,4 +1,4 @@
-import firebase from "firebase";
+import firebase from "firebase/app";
 import { Block, Calendar } from "@/calendar/client";
 import { db } from "@/db";
 export interface Event {

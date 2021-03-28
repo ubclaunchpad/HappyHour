@@ -3,6 +3,8 @@ const googleCalendarClient = {
   scope: process.env.VUE_APP_GOOGLE_SCOPE
 };
 
+import { Calendar } from "@/calendar/client";
+import { toHappyHourCalendar } from "@/calendar/utils";
 import { app, db } from "@/db";
 import firebase from "firebase/app";
 import "firebase/auth";
@@ -13,7 +15,7 @@ export interface User {
   username: string;
   email: string;
   uid: string;
-  // calendar: Calendar;
+  calendar: Calendar;
 }
 
 function saveUserToDb(user: User) {
@@ -25,12 +27,15 @@ function saveUserToDb(user: User) {
     });
 }
 
-export function createUserObject(user: firebase.User) {
+export function createUserObject(user: firebase.User): User {
   const { uid, email } = user;
   const newUser = {
     uid: uid,
     email: email || "",
-    username: email || ""
+    username: email || "",
+    calendar: {
+      blocks: []
+    }
   };
   return newUser;
 }
@@ -148,12 +153,26 @@ const client = {
       console.log("No user signed in");
     }
   },
-  updateUser(email: string) {
-    db.collection("users")
+  updateUser(user: Partial<User>) {
+    return db
+      .collection("users")
       .doc(Auth.currentUser?.uid)
-      .set({
-        username: "placeholder",
-        email: email
+      .update(user);
+  },
+  subscribe(listener: (user: User) => void) {
+    return db
+      .collection("users")
+      .doc(Auth.currentUser?.uid)
+      .onSnapshot(snapshot => {
+        const user = snapshot.data();
+        if (user) {
+          const happyHourUser = {
+            ...user,
+            uid: Auth.currentUser?.uid as string,
+            calendar: toHappyHourCalendar(user.calendar)
+          } as User;
+          listener(happyHourUser);
+        }
       });
   }
 };

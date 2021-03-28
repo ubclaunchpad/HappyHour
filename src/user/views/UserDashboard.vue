@@ -46,35 +46,45 @@
         <header class="card--heading">
           <h5>My Set Schedule</h5>
         </header>
-        <Calendar
-          v-model:calendar="calendar"
-          :start-time="startTime"
-          :end-time="endTime"
-          :edit-mode="isEditable"
-          class="schedule--calendar"
-        />
-        <div class="schedule--subsection">
-          <div class="schedule--timezone caption">
-            (Time displayed in PST—Vancouver)
+        <div v-if="loadingCalendar">Loading...</div>
+        <template v-else>
+          <Calendar
+            v-model:calendar="calendar"
+            :start-time="startTime"
+            :end-time="endTime"
+            :read-only="!isEditable"
+            :current-user="user.uid"
+            class="schedule--calendar"
+          />
+          <div class="schedule--subsection">
+            <div class="schedule--timezone caption">
+              (Time displayed in PST—Vancouver)
+            </div>
+            <button
+              class="schedule--edit button"
+              type="button"
+              @click="toggleEdit"
+            >
+              {{ isEditable ? "View Schedule" : "Edit Schedule" }}
+            </button>
           </div>
-          <button
-            class="schedule--edit button"
-            type="button"
-            @click="toggleEdit"
-          >
-            {{ isEditable ? "View Schedule" : "Edit Schedule" }}
-          </button>
-        </div>
+        </template>
       </section>
     </div>
   </main>
 </template>
 
 <script lang="ts">
-import { defineComponent, computed, ref } from "vue";
-import { startOfWeek, endOfWeek } from "date-fns";
+import { defineComponent, ref, watchEffect } from "vue";
+import { startOfWeek, endOfWeek, set } from "date-fns";
+import { useRouter } from "vue-router";
+
 import DashboardEvent from "@/user/components/DashboardEvent.vue";
 import Calendar from "@/calendar/components/Calendar.vue";
+import calendarClient, { Calendar as CalendarType } from "@/calendar/client";
+import { merge } from "@/calendar/utils";
+import userClient from "../client";
+import { useUser } from "../hooks";
 
 export default defineComponent({
   name: "UserDashboard",
@@ -84,11 +94,47 @@ export default defineComponent({
   props: {},
 
   setup() {
-    const startTime = computed(() => startOfWeek(new Date()).toISOString());
-    const endTime = computed(() => endOfWeek(new Date()).toISOString());
+    const { user, isLoading } = useUser();
+    const router = useRouter();
 
-    const calendar = ref({
+    const calendar = ref<CalendarType>({
       blocks: []
+    });
+    const loadingCalendar = ref(true);
+    const startTime = set(startOfWeek(new Date()), { hours: 9 });
+    const endTime = set(endOfWeek(new Date()), { hours: 21 });
+
+    /**
+     * Fetch the user's google calendar, if they're a google account.
+     * TODO: Abstract this so it's reusable across this component and the Event page.
+     */
+    watchEffect(async () => {
+      if (!isLoading.value) {
+        if (!user.value) {
+          router.replace({
+            path: "/login",
+            query: {
+              redirectTo: router.currentRoute.value.path
+            }
+          });
+        } else {
+          if (user.value.calendar) {
+            calendar.value = user.value.calendar;
+          }
+
+          if (await userClient.isGoogleUser()) {
+            const blocks = await calendarClient.findBusyBlocks(
+              startTime,
+              endTime,
+              // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+              user.value!.uid
+            );
+            const merged = merge(calendar.value, { blocks });
+            calendar.value = merged;
+          }
+          loadingCalendar.value = false;
+        }
+      }
     });
 
     const isEditable = ref(false);
@@ -137,11 +183,25 @@ export default defineComponent({
       });
     }
 
-    const toggleEdit = () => {
+    const toggleEdit = async () => {
+      // If the user goes from editing -> not editing, save the calendar to the db
+      if (isEditable.value) {
+        loadingCalendar.value = true;
+        await userClient.updateUser({ calendar: calendar.value });
+      }
       isEditable.value = !isEditable.value;
     };
 
-    return { startTime, endTime, events, calendar, isEditable, toggleEdit };
+    return {
+      startTime: startTime.toISOString(),
+      endTime: endTime.toISOString(),
+      events,
+      calendar,
+      isEditable,
+      toggleEdit,
+      loadingCalendar,
+      user
+    };
   }
 });
 </script>
@@ -152,11 +212,11 @@ export default defineComponent({
 \*------------------------------------*/
 
 .dashboard {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
+  display: grid;
+  grid-template-columns: 2fr 3fr;
+  grid-template-rows: 100%;
   align-items: center;
-  height: 100%;
+  height: calc(100% - 4.5rem);
   margin: 0 5rem;
 }
 
@@ -165,24 +225,22 @@ export default defineComponent({
   border-radius: 5px;
   padding: 2rem;
   background: var(--color-card);
-  /* height: 36rem; */
-  height: 75%;
+  height: 80%;
 }
 
 .card--heading {
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
 }
 
 /*------------------------------------*\
   # LEFT COMPONENTS
 \*------------------------------------*/
 .card--events {
-  flex-grow: 2;
+  grid-column: 1;
 }
 
 .events {
   height: 100%;
-  /* border: 1px solid red; */
 }
 
 .events li {
@@ -212,11 +270,7 @@ export default defineComponent({
   # RIGHT COMPONENTS
 \*------------------------------------*/
 .card--schedule {
-  flex-grow: 5;
-}
-
-.schedule {
-  /* border: 1px solid red; */
+  grid-column: 2;
 }
 
 .schedule--calendar {

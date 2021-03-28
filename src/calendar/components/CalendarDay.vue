@@ -44,6 +44,11 @@ export default defineComponent({
     currentUser: {
       type: String,
       required: true
+    },
+    readOnly: {
+      type: Boolean,
+      required: false,
+      default: false
     }
   },
   emits: ["update:blocks"],
@@ -73,9 +78,11 @@ export default defineComponent({
       }
     },
     handleMouseDown(time: Time, evt: TouchEvent) {
-      evt.preventDefault();
-      this.dragging = true;
-      this.toggle(time);
+      if (!this.readOnly) {
+        evt.preventDefault();
+        this.dragging = true;
+        this.toggle(time);
+      }
     },
     handleMouseUp(evt: TouchEvent | MouseEvent) {
       evt.preventDefault();
