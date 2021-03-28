@@ -71,17 +71,10 @@
 </template>
 
 <script lang="ts">
-// TODO: Fix Calendar select
-// TODO: Prevent potential overflow of calendar in zoom/mobile
-// TODO: Change card width (flex-grow) when wrapped for mobile/smaller screens
-// TODO: Figure out "Cannot find name 'Calendar'.Vetur(2304)"
-
-import { defineComponent, computed, reactive, ref } from "vue";
+import { defineComponent, computed, ref } from "vue";
+import { startOfWeek, endOfWeek } from "date-fns";
 import DashboardEvent from "@/user/components/DashboardEvent.vue";
 import Calendar from "@/calendar/components/Calendar.vue";
-
-const start = new Date("April 1, 2021 09:00:00");
-const end = new Date("April  7, 2021 21:30:00");
 
 export default defineComponent({
   name: "UserDashboard",
@@ -91,10 +84,10 @@ export default defineComponent({
   props: {},
 
   setup() {
-    const startTime = computed(() => start.toISOString());
-    const endTime = computed(() => end.toISOString());
+    const startTime = computed(() => startOfWeek(new Date()).toISOString());
+    const endTime = computed(() => endOfWeek(new Date()).toISOString());
 
-    const calendar = reactive({
+    const calendar = ref({
       blocks: []
     });
 
@@ -146,7 +139,6 @@ export default defineComponent({
 
     const toggleEdit = () => {
       isEditable.value = !isEditable.value;
-      console.log("isEditable? ", isEditable.value);
     };
 
     return { startTime, endTime, events, calendar, isEditable, toggleEdit };
