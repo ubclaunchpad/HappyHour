@@ -25,28 +25,67 @@
         class="router"
         >{{ link.name }}
       </router-link>
+      <div class="button">
+        <AppButton v-if="isUserLoggedIn" class="btn" @click="logout()">
+          Log Out</AppButton
+        >
+        <AppButton v-else class="btn" text="Log In" @click="login()">
+          Log In
+        </AppButton>
+      </div>
     </nav>
   </header>
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineComponent, watchEffect } from "vue";
+import { useRouter } from "vue-router";
 
 import TheLogo from "@/common/TheLogo.vue";
 import AppIcon from "@/common/AppIcon.vue";
+import AppButton from "@/common/AppButton.vue";
+import userClient from "../user/client";
 import { routes } from "../router";
+import { app } from "../db";
+import { useUser } from "@/user/hooks";
 
 export default defineComponent({
   name: "TheNavbar",
-  components: { AppIcon, TheLogo },
+  components: { AppIcon, TheLogo, AppButton },
   data() {
     return {
-      isNavOpen: false
+      isNavOpen: false,
+      isUserLoggedIn: false
     };
   },
   computed: {
     links() {
       return routes;
+    }
+  },
+  mounted() {
+    const { user, isLoading } = useUser();
+    const router = useRouter();
+    watchEffect(async () => {
+      if (!isLoading.value) {
+        if (!user.value) {
+          console.log("top");
+          this.isUserLoggedIn = false;
+        } else {
+          console.log("bottom");
+          this.isUserLoggedIn = true;
+        }
+      }
+    });
+  },
+  methods: {
+    logout() {
+      this.isUserLoggedIn = false;
+      userClient.logout();
+      this.$router.push("/login");
+    },
+    login() {
+      this.$router.push("/login");
     }
   }
 });
