@@ -1,5 +1,6 @@
 <template>
   <form class="form">
+    <button type="button" @click="logout">logout</button>
     <!-- Left Components -->
     <!-- Date Card -->
     <section class="date card">
@@ -62,11 +63,8 @@
           placeholder="My Awesome Event"
           required
         />
-        <p>title: {{ eventTitle }}</p>
 
-        <!--        <input v-model="eventTitle" placeholder="edit me"/>-->
-        <!--&lt;!&ndash;        <TextInput v-model="eventTitle" />&ndash;&gt;-->
-        <!--        <p>Message is: {{ eventTitle }}</p>-->
+        <LoginPage v-if="isModalVisible" @close="closeModal" />
 
         <button
           v-if="isHidden"
@@ -100,7 +98,9 @@
           </TextInput>
         </section>
       </section>
-      <AppButton variant="primary" type="submit">Create Event</AppButton>
+      <AppButton variant="primary" type="submit" @click="createEvent"
+        >Create Event</AppButton
+      >
     </section>
   </form>
 </template>
@@ -128,7 +128,24 @@ import AppIcon from "@/common/AppIcon.vue";
 import DatePicker from "../components/DatePicker.vue";
 import DayPicker from "../components/DayPicker.vue";
 import TimePicker from "../components/TimePicker.vue";
+import LoginPage from "../../user/components/LoginPage.vue";
+import userClient, { Auth } from "../../user/client";
+import { Event } from "../client";
 import client from "../client";
+
+function initialState() {
+  return {
+    isHidden: true,
+    isDatePickerEvent: true,
+    startTime: set(new Date(), { hours: 9, minutes: 0 }),
+    endTime: set(new Date(), { hours: 21, minutes: 0 }),
+    timezone: "America/Vancouver",
+    eventTitle: "",
+    eventDescription: "",
+    isChecked: true,
+    isModalVisible: false
+  };
+}
 
 export default defineComponent({
   components: {
@@ -138,41 +155,60 @@ export default defineComponent({
     DatePicker,
     DayPicker,
     TimePicker,
-    TextInput
+    TextInput,
+    LoginPage
   },
-  data() {
-    return {
-      isHidden: true,
-      isDatePickerEvent: true,
-      startTime: set(new Date(), { hours: 9, minutes: 0 }),
-      endTime: set(new Date(), { hours: 21, minutes: 0 }),
-      timezone: "America/Vancouver",
-      eventTitle: "",
-      eventDescription: "",
-      isChecked: true
-    };
+  data: function() {
+    return initialState();
   },
-  computed: {},
   methods: {
     toggleEventType(toggleState: boolean) {
       this.isDatePickerEvent = toggleState;
     },
+    showModal() {
+      this.isModalVisible = true;
+    },
+    closeModal() {
+      this.isModalVisible = false;
+    },
+    reset() {
+      Object.assign(this.$data, initialState());
+    },
     async createEvent(e: any) {
       e.preventDefault();
-      try {
-        console.log(this.eventTitle);
-        console.log(this.eventDescription);
-        const event = await client.addEvent(
-          this.eventTitle,
-          this.startTime,
-          this.endTime,
-          this.timezone
-        );
-        console.log("created event: ");
-        console.log(event);
-      } catch (err) {
-        console.log(err);
+      if (!Auth.currentUser) {
+        console.log("not logged in!");
+        this.showModal();
+        return;
+      } else {
+        console.log("logged in!");
+        const event: Event = {
+          users: [],
+          owners: [Auth.currentUser.uid],
+          scheduleWindow: {
+            startTime: this.startTime,
+            endTime: this.endTime
+          },
+          calendar: {
+            blocks: []
+          },
+          title: this.eventTitle,
+          timezone: this.timezone,
+          description: this.eventDescription
+        };
+        client
+          .addEvent(event)
+          .then(id => {
+            console.log("created new event with id: " + id);
+          })
+          .catch(err => {
+            console.log("could not create event: " + err);
+          });
+        this.reset();
       }
+    },
+    logout() {
+      userClient.logout();
     }
   }
 });

@@ -8,10 +8,11 @@ export interface Event {
     startTime: Date;
     endTime: Date;
   };
-  id: string;
+  // id: string;
   calendar: Calendar;
   title: string;
   timezone: string;
+  description?: string;
 }
 
 const BasePath = "events";
