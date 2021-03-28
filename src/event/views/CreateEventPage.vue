@@ -198,8 +198,9 @@ export default defineComponent({
         };
         client
           .addEvent(event)
-          .then(id => {
-            console.log("created new event with id: " + id);
+          .then(eventId => {
+            console.log("created new event with id: " + eventId);
+            this.$router.push(`/event/${eventId}`);
           })
           .catch(err => {
             console.log("could not create event: " + err);
