@@ -85,6 +85,7 @@ import calendarClient, { Calendar as CalendarType } from "@/calendar/client";
 import { merge } from "@/calendar/utils";
 import userClient from "../client";
 import { useUser } from "../hooks";
+import eventClient from "@/event/client";
 
 export default defineComponent({
   name: "UserDashboard",
@@ -93,7 +94,7 @@ export default defineComponent({
 
   props: {},
 
-  setup() {
+  async setup() {
     const { user, isLoading } = useUser();
     const router = useRouter();
 
@@ -182,6 +183,9 @@ export default defineComponent({
         responses: 0
       });
     }
+
+    const ownerEvents = await eventClient.getEventsOfOwner(user.value!.uid);
+    console.log(ownerEvents);
 
     const toggleEdit = async () => {
       // If the user goes from editing -> not editing, save the calendar to the db
