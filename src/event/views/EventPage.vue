@@ -267,7 +267,6 @@ h5 {
 .main-right {
   justify-content: center;
   align-items: flex-start;
-  /*margin: auto;*/
 }
 
 .main-left {
@@ -282,6 +281,7 @@ h5 {
   margin: 0;
   padding: 0;
   border-radius: 10px;
+  padding: 2rem;
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
   background: rgb(255, 255, 255);
 }
