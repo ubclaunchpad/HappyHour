@@ -1,54 +1,113 @@
 <template>
-  <header class="container">
+  <nav class="navbar">
     <router-link class="logo" to="/">
-      <TheLogo />
-    </router-link>
-    <button
-      aria-label="open navigation"
-      class="nav-toggle open-nav"
-      @click="isNavOpen = true"
-    >
-      <AppIcon icon="bars" />
-    </button>
-    <nav :class="['nav', { 'nav-open': isNavOpen }]">
-      <button
-        aria-label="close navigation"
-        class="nav-toggle close-nav"
-        @click="isNavOpen = false"
-      >
-        <AppIcon icon="times" width="32" />
+      <button>
+        <TheLogo />
       </button>
+    </router-link>
+
+    <span>
       <router-link
-        v-for="link in links"
+        v-for="link in authLinks"
         :key="link.path"
         :to="link.path"
         class="router"
         >{{ link.name }}
       </router-link>
-    </nav>
-  </header>
+
+      <button
+        aria-label="open navigation"
+        class="nav-toggle open-nav"
+        @click="isNavOpen = true"
+      >
+        <AppIcon icon="bars" />
+      </button>
+    </span>
+  </nav>
+
+  <!-- <nav :class="['nav', { 'nav-open': isNavOpen }]">
+    <button
+      aria-label="close navigation"
+      class="nav-toggle close-nav"
+      @click="isNavOpen = false"
+    >
+      <AppIcon icon="times" width="32" />
+    </button>
+    <router-link
+      v-for="link in authLinks"
+      :key="link.path"
+      :to="link.path"
+      class="router"
+      >{{ link.name }}
+    </router-link>
+  </nav> -->
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineComponent, computed, ref, onBeforeMount } from "vue";
+
+import firebase from "firebase/app";
 
 import TheLogo from "@/common/TheLogo.vue";
 import AppIcon from "@/common/AppIcon.vue";
-import { routes } from "../router";
+import { routes } from "@/router";
 
 export default defineComponent({
   name: "TheNavbar",
   components: { AppIcon, TheLogo },
-  data() {
-    return {
-      isNavOpen: false
+
+  props: { routes: { type: Array, default: routes } },
+
+  setup(props) {
+    const isNavOpen = ref(false);
+
+    const authState = async () => {
+      firebase.auth().onAuthStateChanged(user => user);
     };
-  },
-  computed: {
-    links() {
+
+    onBeforeMount(() => {
+      authState();
+    });
+
+    const authLinks = computed(() => {
+      // if (authState()) {
+      //   return routes.filter(
+      //     link => link.meta != undefined && link.meta.requiresAuth == true
+      //   );
+      // } else {
+      //   return routes.filter(
+      //     link => link.meta != undefined && link.meta.requiresAuth == false
       return routes;
-    }
+    });
+
+    return { isNavOpen, authLinks };
   }
+
+  // computed: {
+  //   authLinks() {
+  // if (this.authState()) {
+  //   return routes.filter(
+  //     link => link.meta != undefined && link.meta.requiresAuth == true
+  //   );
+  // } else {
+  //   return routes.filter(
+  //     link => link.meta != undefined && link.meta.requiresAuth == false
+  //   );
+  // }
+  //   }
+  // },
+
+  // beforeMount() {
+  //   this.authState();
+  // },
+
+  // methods: {
+  // async authState() {
+  //   firebase.auth().onAuthStateChanged(user => {
+  //     return user;
+  //   });
+  //   }
+  // }
 });
 </script>
 
@@ -122,27 +181,17 @@ button {
   }
 }
 
-.container {
+.navbar {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
   padding: 1.25rem;
-  background-color: rgb(255, 255, 255);
-}
-
-/* Logo Button */
-.logo {
-  background: none;
-  cursor: pointer;
-}
-
-.logo:hover {
-  color: rgba(55, 87, 134, 0.8);
+  background: var(--color-card);
 }
 
 /* Highlight on active router page */
 .router.router-link-exact-active {
-  color: rgb(55, 87, 134);
+  color: var(--color-primary);
 }
 </style>
