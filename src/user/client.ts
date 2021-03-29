@@ -18,12 +18,21 @@ export interface User {
   calendar: Calendar;
 }
 
+// function saveUserToDb(user: User) {
+//   db.collection("users")
+//     .doc(user.uid)
+//     .set({
+//       username: user.email,
+//       email: user.email
+//     });
+// }
 function saveUserToDb(user: User) {
   db.collection("users")
     .doc(user.uid)
     .set({
       username: user.email,
-      email: user.email
+      email: user.email,
+      calendar: user.calendar
     });
 }
 
@@ -107,6 +116,7 @@ const client = {
             .then(snapshot => {
               if (!snapshot.exists && result.user) {
                 const newUser = createUserObject(result.user);
+                console.log(newUser);
                 saveUserToDb(newUser);
               }
             });
@@ -166,6 +176,10 @@ const client = {
       .onSnapshot(snapshot => {
         const user = snapshot.data();
         if (user) {
+          console.log("user: ");
+          console.log(user);
+          console.log("calendar: ");
+          console.log(user.calendar);
           const happyHourUser = {
             ...user,
             uid: Auth.currentUser?.uid as string,

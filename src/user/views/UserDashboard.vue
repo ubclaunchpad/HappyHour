@@ -184,8 +184,8 @@ export default defineComponent({
       });
     }
 
-    const ownerEvents = await eventClient.getEventsOfOwner(user.value!.uid);
-    console.log(ownerEvents);
+    // const ownerEvents = await eventClient.getEventsOfOwner(user.value!.uid);
+    // console.log(ownerEvents);
 
     const toggleEdit = async () => {
       // If the user goes from editing -> not editing, save the calendar to the db
