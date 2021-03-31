@@ -145,7 +145,7 @@ body {
 .subtitle2,
 .sub2 {
   font-size: 0.875rem; /*14px*/
-  /* letter-spacing: 0.1px;
+  /* letter-spacing: 0.1px; */
 }
 
 /* Button */
