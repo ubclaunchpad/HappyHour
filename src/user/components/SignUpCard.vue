@@ -26,6 +26,7 @@ import AppButton from "@/common/AppButton.vue";
 import client from "../client";
 
 export default defineComponent({
+  name: "SignUpCard",
   components: {
     AppButton
   },
