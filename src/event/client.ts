@@ -44,26 +44,17 @@ const client = {
     const ownerEvents = await dbRef
       .where("owners", "array-contains", userId)
       .get();
-    console.log("getting owner events: ");
-    // const ids = ownerEvents.docs.map(doc => doc.id);
-    // console.log(ids);
-    const res = ownerEvents.docs.map(doc => {
+    return ownerEvents.docs.map(doc => {
       return { eventData: doc.data(), eventId: doc.id };
     });
-    console.log(res);
-    return res;
-    // return ownerEvents.docs.map(doc => doc.data());
   },
   async getEventsOfParticipant(userId: string) {
     const participantEvents = await dbRef
       .where("users", "array-contains", userId)
       .get();
-    // return participantEvents.docs.map(doc => doc.data());
-    const res = participantEvents.docs.map(doc => {
+    return participantEvents.docs.map(doc => {
       return { eventData: doc.data(), eventId: doc.id };
     });
-    console.log(res);
-    return res;
   }
 };
 

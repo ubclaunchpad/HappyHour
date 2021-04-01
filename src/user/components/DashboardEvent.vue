@@ -22,13 +22,9 @@
       <div class="event-text">
         <div class="event-left">{{ event.eventData.title }}</div>
         <div class="event-right">
-          {{ eventLink }}
-          <!--          <router-link to="`${eventLink}`">View Event</router-link>-->
-          <!--          <a v-link="{ path: eventLink }">View Event</a>-->
+          <router-link :to="`${eventLink}`">View Event</router-link>
         </div>
       </div>
-
-      <!--      <div class="separator"></div>-->
     </div>
   </div>
 </template>
@@ -44,17 +40,16 @@ export default defineComponent({
   },
 
   setup(props) {
-    const eventResponses = computed(
-      () =>
-        `${props.event.responses} ${
-          props.event.responses === 0 || props.event.responses === 1
-            ? "response"
-            : "responses"
-        }`
-    );
+    // const eventResponses = computed(
+    //   () =>
+    //     `${props.event.responses} ${
+    //       props.event.responses === 0 || props.event.responses === 1
+    //         ? "response"
+    //         : "responses"
+    //     }`
+    // );
     const eventLink = `/event/${props.event.eventId}`;
-    console.log(eventLink);
-    return { eventResponses, eventLink };
+    return { eventLink };
   }
 });
 </script>

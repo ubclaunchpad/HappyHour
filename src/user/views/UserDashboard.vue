@@ -98,7 +98,6 @@ import eventClient from "@/event/client";
 export default defineComponent({
   name: "UserDashboard",
 
-  // eslint-disable-next-line vue/no-unused-components
   components: { DashboardEvent, Calendar },
 
   props: {},
