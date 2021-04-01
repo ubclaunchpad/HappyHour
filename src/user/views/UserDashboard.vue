@@ -7,8 +7,6 @@
           <h5>My Events</h5>
         </header>
 
-        <h6>hello!</h6>
-
         <!-- All Events -->
         <div class="events--all">
           <!-- Scheduled Events -->
@@ -23,7 +21,7 @@
               <!--                  <DashboardEvent :event="event" />-->
               <!--                </template>-->
               <!--              </li>-->
-              <li v-for="event in ownerEvents" :key="event.id">
+              <li v-for="event in ownerEvents" :key="event.eventId">
                 <DashboardEvent :event="event" />
               </li>
             </ul>
@@ -41,7 +39,7 @@
               <!--                  <DashboardEvent :event="event" />-->
               <!--                </template>-->
               <!--              </li>-->
-              <li v-for="event in participantEvents" :key="event.id">
+              <li v-for="event in participantEvents" :key="event.eventId">
                 <DashboardEvent :event="event" />
               </li>
             </ul>

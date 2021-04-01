@@ -20,13 +20,15 @@
     <div class="event-info">
       <div><!-- spacer for vertical flex--></div>
       <div class="event-text">
-        <div class="event-left">{{ event.title }}</div>
+        <div class="event-left">{{ event.eventData.title }}</div>
         <div class="event-right">
-          {{ event.title }}
+          {{ eventLink }}
+          <!--          <router-link to="`${eventLink}`">View Event</router-link>-->
+          <!--          <a v-link="{ path: eventLink }">View Event</a>-->
         </div>
       </div>
 
-      <div class="separator"></div>
+      <!--      <div class="separator"></div>-->
     </div>
   </div>
 </template>
@@ -39,8 +41,6 @@ export default defineComponent({
 
   props: {
     event: { type: Object, required: true }
-    // ownerEvent: {type: Object, required: true},
-    // participantEvent: {type: Object, required: true}
   },
 
   setup(props) {
@@ -52,7 +52,9 @@ export default defineComponent({
             : "responses"
         }`
     );
-    return { eventResponses };
+    const eventLink = `/event/${props.event.eventId}`;
+    console.log(eventLink);
+    return { eventResponses, eventLink };
   }
 });
 </script>
