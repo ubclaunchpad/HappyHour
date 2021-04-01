@@ -7,36 +7,48 @@
           <h5>My Events</h5>
         </header>
 
-        <!-- All Events -->
-        <div class="events--all">
-          <!-- Scheduled Events -->
-          <section class="event-status">
-            <header class="event-status--header">
-              <div class="subtitle1">Scheduled</div>
-            </header>
-            <ul class="dashboard-events">
-              <li v-for="event in events" :key="event.id">
-                <template v-if="event.isScheduled">
-                  <DashboardEvent :event="event" />
-                </template>
-              </li>
-            </ul>
-          </section>
+        <h6>hello!</h6>
 
-          <!-- Unscheduled Events -->
-          <section class="event-status">
-            <header class="event-status--header">
-              <div class="subtitle1">Unscheduled</div>
-            </header>
-            <ul class="dashboard-events">
-              <li v-for="event in events" :key="event.id">
-                <template v-if="!event.isScheduled">
-                  <DashboardEvent :event="event" />
-                </template>
-              </li>
-            </ul>
-          </section>
-        </div>
+        <!--        &lt;!&ndash; All Events &ndash;&gt;-->
+        <!--        <div class="events&#45;&#45;all">-->
+        <!--          &lt;!&ndash; Scheduled Events &ndash;&gt;-->
+        <!--          <section class="event-status">-->
+        <!--            <header class="event-status&#45;&#45;header">-->
+        <!--              <div class="subtitle1">Scheduled</div>-->
+        <!--            </header>-->
+        <!--            <ul class="dashboard-events">-->
+        <!--&lt;!&ndash;              <li v-for="event in events" :key="event.id">&ndash;&gt;-->
+        <!--&lt;!&ndash;                <template v-if="event.isScheduled">&ndash;&gt;-->
+        <!--&lt;!&ndash;                  <DashboardEvent :event="event" />&ndash;&gt;-->
+        <!--&lt;!&ndash;                </template>&ndash;&gt;-->
+        <!--&lt;!&ndash;              </li>&ndash;&gt;-->
+        <!--              <li v-for="event in ownerEvents" :key="event.id">-->
+        <!--&lt;!&ndash;                <template v-if="event.isScheduled">&ndash;&gt;-->
+        <!--                  <DashboardEvent :event="event" />-->
+        <!--&lt;!&ndash;                </template>&ndash;&gt;-->
+        <!--              </li>-->
+        <!--            </ul>-->
+        <!--          </section>-->
+
+        <!--          &lt;!&ndash; Unscheduled Events &ndash;&gt;-->
+        <!--          <section class="event-status">-->
+        <!--            <header class="event-status&#45;&#45;header">-->
+        <!--              <div class="subtitle1">Unscheduled</div>-->
+        <!--            </header>-->
+        <!--            <ul class="dashboard-events">-->
+        <!--&lt;!&ndash;              <li v-for="event in events" :key="event.id">&ndash;&gt;-->
+        <!--&lt;!&ndash;                <template v-if="!event.isScheduled">&ndash;&gt;-->
+        <!--&lt;!&ndash;                  <DashboardEvent :event="event" />&ndash;&gt;-->
+        <!--&lt;!&ndash;                </template>&ndash;&gt;-->
+        <!--&lt;!&ndash;              </li>&ndash;&gt;-->
+        <!--              <li v-for="event in participantEvents" :key="event.id">-->
+        <!--&lt;!&ndash;                <template v-if="!event.isScheduled">&ndash;&gt;-->
+        <!--                  <DashboardEvent :event="event" />-->
+        <!--&lt;!&ndash;                </template>&ndash;&gt;-->
+        <!--              </li>-->
+        <!--            </ul>-->
+        <!--          </section>-->
+        <!--        </div>-->
       </section>
     </div>
 
@@ -90,6 +102,7 @@ import eventClient from "@/event/client";
 export default defineComponent({
   name: "UserDashboard",
 
+  // eslint-disable-next-line vue/no-unused-components
   components: { DashboardEvent, Calendar },
 
   props: {},
@@ -104,6 +117,8 @@ export default defineComponent({
     const loadingCalendar = ref(true);
     const startTime = set(startOfWeek(new Date()), { hours: 9 });
     const endTime = set(endOfWeek(new Date()), { hours: 21 });
+    let ownerEvents;
+    let participantEvents;
 
     /**
      * Fetch the user's google calendar, if they're a google account.
@@ -134,6 +149,14 @@ export default defineComponent({
             calendar.value = merged;
           }
           loadingCalendar.value = false;
+
+          ownerEvents = await eventClient.getEventsOfOwner(user.value!.uid);
+          console.log(ownerEvents);
+
+          participantEvents = await eventClient.getEventsOfParticipant(
+            user.value!.uid
+          );
+          console.log(participantEvents);
         }
       }
     });
@@ -184,9 +207,6 @@ export default defineComponent({
       });
     }
 
-    // const ownerEvents = await eventClient.getEventsOfOwner(user.value!.uid);
-    // console.log(ownerEvents);
-
     const toggleEdit = async () => {
       // If the user goes from editing -> not editing, save the calendar to the db
       if (isEditable.value) {
@@ -204,7 +224,9 @@ export default defineComponent({
       isEditable,
       toggleEdit,
       loadingCalendar,
-      user
+      user,
+      ownerEvents,
+      participantEvents
     };
   }
 });

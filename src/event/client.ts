@@ -40,11 +40,17 @@ const client = {
       calendar: { blocks: availability }
     });
   },
-  getEventsOfOwner(userId: string) {
-    return dbRef.where("owners", "array-contains", userId).get();
+  async getEventsOfOwner(userId: string) {
+    const ownerEvents = await dbRef
+      .where("owners", "array-contains", userId)
+      .get();
+    return ownerEvents.docs.map(doc => doc.data());
   },
-  getEventsOfParticipant(userId: string) {
-    return dbRef.where("owners", "array-contains", userId).get();
+  async getEventsOfParticipant(userId: string) {
+    const participantEvents = await dbRef
+      .where("users", "array-contains", userId)
+      .get();
+    return participantEvents.docs.map(doc => doc.data());
   }
 };
 
