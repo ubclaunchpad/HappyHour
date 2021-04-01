@@ -202,9 +202,10 @@ export default defineComponent({
             this.$router.push(`/event/${eventId}`);
           })
           .catch(err => {
+            // TODO: display error modal
             console.log("could not create event: " + err);
+            this.reset();
           });
-        this.reset();
       }
     }
   }

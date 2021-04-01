@@ -8,7 +8,6 @@ export interface Event {
     startTime: Date;
     endTime: Date;
   };
-  // id: string;
   calendar: Calendar;
   title: string;
   timezone: string;
@@ -24,7 +23,8 @@ const client = {
     return dbRef.doc(id).update(event);
   },
   addEvent(event: Event) {
-    return dbRef.add(event).then(doc => doc.id);
+    // return dbRef.add(event).then(doc => doc.id);
+    return Promise.reject("rejected!");
   },
   saveResponse({
     userId,

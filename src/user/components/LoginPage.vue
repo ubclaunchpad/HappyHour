@@ -65,7 +65,6 @@ export default defineComponent({
     },
     close() {
       this.$emit("close");
-      this.$router.push(this.redirectTo);
     }
   }
 });
