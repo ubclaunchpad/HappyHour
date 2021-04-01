@@ -23,8 +23,7 @@ const client = {
     return dbRef.doc(id).update(event);
   },
   addEvent(event: Event) {
-    // return dbRef.add(event).then(doc => doc.id);
-    return Promise.reject("rejected!");
+    return dbRef.add(event).then(doc => doc.id);
   },
   saveResponse({
     userId,
