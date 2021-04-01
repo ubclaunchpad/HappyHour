@@ -18,11 +18,11 @@
     <!--    </div>-->
 
     <div class="event-info">
-      <div><!-- spacer  for vertical flex--></div>
+      <div><!-- spacer for vertical flex--></div>
       <div class="event-text">
         <div class="event-left">{{ event.title }}</div>
         <div class="event-right">
-          {{ event.description }}
+          {{ event.title }}
         </div>
       </div>
 

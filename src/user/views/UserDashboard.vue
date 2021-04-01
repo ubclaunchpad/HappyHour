@@ -9,46 +9,44 @@
 
         <h6>hello!</h6>
 
-        <!--        &lt;!&ndash; All Events &ndash;&gt;-->
-        <!--        <div class="events&#45;&#45;all">-->
-        <!--          &lt;!&ndash; Scheduled Events &ndash;&gt;-->
-        <!--          <section class="event-status">-->
-        <!--            <header class="event-status&#45;&#45;header">-->
-        <!--              <div class="subtitle1">Scheduled</div>-->
-        <!--            </header>-->
-        <!--            <ul class="dashboard-events">-->
-        <!--&lt;!&ndash;              <li v-for="event in events" :key="event.id">&ndash;&gt;-->
-        <!--&lt;!&ndash;                <template v-if="event.isScheduled">&ndash;&gt;-->
-        <!--&lt;!&ndash;                  <DashboardEvent :event="event" />&ndash;&gt;-->
-        <!--&lt;!&ndash;                </template>&ndash;&gt;-->
-        <!--&lt;!&ndash;              </li>&ndash;&gt;-->
-        <!--              <li v-for="event in ownerEvents" :key="event.id">-->
-        <!--&lt;!&ndash;                <template v-if="event.isScheduled">&ndash;&gt;-->
-        <!--                  <DashboardEvent :event="event" />-->
-        <!--&lt;!&ndash;                </template>&ndash;&gt;-->
-        <!--              </li>-->
-        <!--            </ul>-->
-        <!--          </section>-->
+        <!-- All Events -->
+        <div class="events--all">
+          <!-- Scheduled Events -->
+          <section class="event-status">
+            <header class="event-status--header">
+              <div class="subtitle1">Owner</div>
+            </header>
+            <div v-if="loadingEvents">Loading your events...</div>
+            <ul v-else class="dashboard-events">
+              <!--              <li v-for="event in events" :key="event.id">-->
+              <!--                <template v-if="event.isScheduled">-->
+              <!--                  <DashboardEvent :event="event" />-->
+              <!--                </template>-->
+              <!--              </li>-->
+              <li v-for="event in ownerEvents" :key="event.id">
+                <DashboardEvent :event="event" />
+              </li>
+            </ul>
+          </section>
 
-        <!--          &lt;!&ndash; Unscheduled Events &ndash;&gt;-->
-        <!--          <section class="event-status">-->
-        <!--            <header class="event-status&#45;&#45;header">-->
-        <!--              <div class="subtitle1">Unscheduled</div>-->
-        <!--            </header>-->
-        <!--            <ul class="dashboard-events">-->
-        <!--&lt;!&ndash;              <li v-for="event in events" :key="event.id">&ndash;&gt;-->
-        <!--&lt;!&ndash;                <template v-if="!event.isScheduled">&ndash;&gt;-->
-        <!--&lt;!&ndash;                  <DashboardEvent :event="event" />&ndash;&gt;-->
-        <!--&lt;!&ndash;                </template>&ndash;&gt;-->
-        <!--&lt;!&ndash;              </li>&ndash;&gt;-->
-        <!--              <li v-for="event in participantEvents" :key="event.id">-->
-        <!--&lt;!&ndash;                <template v-if="!event.isScheduled">&ndash;&gt;-->
-        <!--                  <DashboardEvent :event="event" />-->
-        <!--&lt;!&ndash;                </template>&ndash;&gt;-->
-        <!--              </li>-->
-        <!--            </ul>-->
-        <!--          </section>-->
-        <!--        </div>-->
+          <!-- Unscheduled Events -->
+          <section class="event-status">
+            <header class="event-status--header">
+              <div class="subtitle1">Participant</div>
+            </header>
+            <div v-if="loadingEvents">Loading your events...</div>
+            <ul v-else class="dashboard-events">
+              <!--              <li v-for="event in events" :key="event.id">-->
+              <!--                <template v-if="!event.isScheduled">-->
+              <!--                  <DashboardEvent :event="event" />-->
+              <!--                </template>-->
+              <!--              </li>-->
+              <li v-for="event in participantEvents" :key="event.id">
+                <DashboardEvent :event="event" />
+              </li>
+            </ul>
+          </section>
+        </div>
       </section>
     </div>
 
@@ -90,7 +88,7 @@
 import { defineComponent, ref, watchEffect } from "vue";
 import { startOfWeek, endOfWeek, set } from "date-fns";
 import { useRouter } from "vue-router";
-
+import firebase from "firebase";
 import DashboardEvent from "@/user/components/DashboardEvent.vue";
 import Calendar from "@/calendar/components/Calendar.vue";
 import calendarClient, { Calendar as CalendarType } from "@/calendar/client";
@@ -117,8 +115,9 @@ export default defineComponent({
     const loadingCalendar = ref(true);
     const startTime = set(startOfWeek(new Date()), { hours: 9 });
     const endTime = set(endOfWeek(new Date()), { hours: 21 });
-    let ownerEvents;
-    let participantEvents;
+    const ownerEvents = ref<firebase.firestore.DocumentData[]>([]);
+    const participantEvents = ref<firebase.firestore.DocumentData[]>([]);
+    const loadingEvents = ref(true);
 
     /**
      * Fetch the user's google calendar, if they're a google account.
@@ -150,13 +149,16 @@ export default defineComponent({
           }
           loadingCalendar.value = false;
 
-          ownerEvents = await eventClient.getEventsOfOwner(user.value!.uid);
+          ownerEvents.value = await eventClient.getEventsOfOwner(
+            user.value!.uid
+          );
           console.log(ownerEvents);
 
-          participantEvents = await eventClient.getEventsOfParticipant(
+          participantEvents.value = await eventClient.getEventsOfParticipant(
             user.value!.uid
           );
           console.log(participantEvents);
+          loadingEvents.value = false;
         }
       }
     });
@@ -226,7 +228,8 @@ export default defineComponent({
       loadingCalendar,
       user,
       ownerEvents,
-      participantEvents
+      participantEvents,
+      loadingEvents
     };
   }
 });
