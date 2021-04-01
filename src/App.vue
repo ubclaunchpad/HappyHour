@@ -93,7 +93,6 @@ h1 {
 /* Headline 2 */
 h2 {
   font-size: 3.6875rem; /*59px*/
-  /* letter-spacing: -0.5px; */
 }
 
 /* Headline 3 */
@@ -104,7 +103,6 @@ h3 {
 /* Headline 4 */
 h4 {
   font-size: 2.125rem; /*34px*/
-  /* letter-spacing: 0.25px; */
 }
 
 /* Headline 5 */
@@ -115,7 +113,6 @@ h5 {
 /* Headline 6 */
 h6 {
   font-size: 1.25rem; /*20px*/
-  /* letter-spacing: 0.15px; */
 }
 
 /* Body 1 */
@@ -125,27 +122,23 @@ body {
 
 .body1 {
   font-size: 1rem; /*16px*/
-  /* letter-spacing: 0.5px; */
 }
 
 /* Body 2 */
 .body2 {
   font-size: 0.875rem; /*14px*/
-  /* letter-spacing: 0.0025rem; /*0.4px*/
 }
 
 /* Subtitle 1 */
 .subtitle1,
 .sub1 {
   font-size: 1rem; /*16px*/
-  /* letter-spacing: 0.15px; */
 }
 
 /* Subtitle 2 */
 .subtitle2,
 .sub2 {
   font-size: 0.875rem; /*14px*/
-  /* letter-spacing: 0.1px; */
 }
 
 /* Button */
@@ -173,6 +166,5 @@ button:hover,
 /* Caption */
 .caption {
   font-size: 0.75rem; /*12px*/
-  /* letter-spacing: 0.0025rem; /*0.4px*/
 }
 </style>
