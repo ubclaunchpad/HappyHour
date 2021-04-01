@@ -107,7 +107,7 @@ export default defineComponent({
 
   props: {},
 
-  async setup() {
+  setup() {
     const { user, isLoading } = useUser();
     const router = useRouter();
 
