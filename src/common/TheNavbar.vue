@@ -65,23 +65,20 @@ export default defineComponent({
   },
   mounted() {
     const { user, isLoading } = useUser();
-    const router = useRouter();
     watchEffect(async () => {
       if (!isLoading.value) {
         if (!user.value) {
-          console.log("top");
           this.isUserLoggedIn = false;
         } else {
-          console.log("bottom");
           this.isUserLoggedIn = true;
         }
       }
     });
   },
   methods: {
-    logout() {
+    async logout() {
       this.isUserLoggedIn = false;
-      userClient.logout();
+      await userClient.logout();
       this.$router.push("/login");
     },
     login() {
