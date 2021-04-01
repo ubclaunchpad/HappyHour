@@ -95,7 +95,9 @@
           </TextInput>
         </section>
       </section>
-      <AppButton variant="primary" type="submit">Create Event</AppButton>
+      <AppButton variant="primary" type="submit" @click="validateTime"
+        >Create Event</AppButton
+      >
     </section>
   </form>
 </template>
@@ -116,6 +118,7 @@
 //FIXME: Width size of btn-add-desc
 import { defineComponent } from "vue";
 import { set } from "date-fns";
+import moment from "moment";
 import TextInput from "@/common/TextInput.vue";
 import AppButton from "@/common/AppButton.vue";
 import AppToggle from "@/common/AppToggle.vue";
@@ -147,8 +150,10 @@ export default defineComponent({
   },
   computed: {},
   methods: {
-    toggleEventType(toggleState: boolean) {
-      this.isDatePickerEvent = toggleState;
+    validateTime() {
+      if (moment(this.startTime).format() > moment(this.endTime).format()) {
+        console.log("Start time must be before End time");
+      }
     }
   }
 });
