@@ -1,8 +1,6 @@
 <template>
   <div class="login">
-    <button type="button" class="btn-close" @click="close">
-      x
-    </button>
+    <AppButton class="btn-close" @click="close()">x</AppButton>
     <div class="heading">Log In</div>
     <div class="p1">
       <p>Username/Email:</p>
@@ -64,6 +62,7 @@ export default defineComponent({
       });
     },
     close() {
+      console.log("closing");
       this.$emit("close");
     }
   }
@@ -113,7 +112,7 @@ export default defineComponent({
   position: absolute;
   top: 15px;
   right: 15px;
-  background: #ffffff;
-  font-size: x-large;
+  width: 20px;
+  height: 20px;
 }
 </style>

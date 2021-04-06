@@ -1,5 +1,6 @@
 <template>
   <form class="form">
+    <button type="button" @click="logout">logout</button>
     <!-- Left Components -->
     <!-- Date Card -->
     <section class="date card">
@@ -128,7 +129,7 @@ import DatePicker from "../components/DatePicker.vue";
 import DayPicker from "../components/DayPicker.vue";
 import TimePicker from "../components/TimePicker.vue";
 import LoginPage from "../../user/components/LoginPage.vue";
-import { Auth } from "../../user/client";
+import userClient, { Auth } from "../../user/client";
 import { Event } from "../client";
 import client from "../client";
 
@@ -173,6 +174,9 @@ export default defineComponent({
     reset() {
       Object.assign(this.$data, initialState());
     },
+    logout() {
+      userClient.logout();
+    },
     async createEvent(e: any) {
       e.preventDefault();
       if (!Auth.currentUser) {
@@ -181,6 +185,7 @@ export default defineComponent({
         return;
       } else {
         console.log("logged in!");
+        console.log(Auth.currentUser);
         const event: Event = {
           users: [],
           owners: [Auth.currentUser.uid],
