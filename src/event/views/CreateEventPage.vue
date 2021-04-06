@@ -1,6 +1,5 @@
 <template>
   <form class="form">
-    <button type="button" @click="logout">logout</button>
     <!-- Left Components -->
     <!-- Date Card -->
     <section class="date card">
@@ -64,7 +63,7 @@
           required
         />
 
-        <LoginPage v-if="isModalVisible" @close="closeModal" />
+        <LoginPage v-if="isModalVisible" :closable="true" @close="closeModal" />
 
         <button
           v-if="isHidden"

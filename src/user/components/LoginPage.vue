@@ -1,6 +1,6 @@
 <template>
   <div class="login">
-    <AppButton class="btn-close" @click="close()">x</AppButton>
+    <AppButton v-if="closable" class="btn-close" @click="close()">x</AppButton>
     <div class="heading">Log In</div>
     <div class="p1">
       <p>Username/Email:</p>
@@ -35,6 +35,12 @@ export default defineComponent({
     AppButton,
     GoogleLogo,
     TextInput
+  },
+  props: {
+    closable: {
+      default: false,
+      type: Boolean
+    }
   },
   data() {
     return {
