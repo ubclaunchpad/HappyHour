@@ -23,6 +23,7 @@ export default defineComponent({
   emits: ["update:modelValue"],
 
   setup() {
+    // To access <input/> for HTML validation
     const input = ref();
 
     return { input };
