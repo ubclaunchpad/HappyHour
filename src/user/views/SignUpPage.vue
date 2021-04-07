@@ -228,8 +228,9 @@ export default defineComponent({
     display: grid;
     grid-template-columns: none;
     grid-template-rows: auto auto;
+    align-content: center;
     padding: 2rem 0;
-    height: auto;
+    height: 200%;
     background: linear-gradient(
       291.34deg,
       var(--color-primary) 0%,
