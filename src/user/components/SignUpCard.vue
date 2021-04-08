@@ -196,7 +196,7 @@ export default defineComponent({
   }
 
   .form {
-    row-gap: 0.6rem;
+    row-gap: 0.3rem;
   }
 }
 </style>
