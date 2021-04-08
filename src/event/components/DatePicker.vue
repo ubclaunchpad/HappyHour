@@ -32,7 +32,9 @@
           :key="date"
           class="overflow dates"
           style="width:calc(100%/7)"
+          :class="{ 'curr-date': isCurrDate(date), active: isInInterval(date) }"
           type="button"
+          @click="handleDateClick(date)"
         >
           {{ date }}
         </button>
@@ -43,8 +45,9 @@
           :key="date"
           class="dates subtitle2"
           style="width:calc(100%/7)"
-          :class="isCurrDate(date) ? 'curr-date' : ''"
+          :class="{ 'curr-date': isCurrDate(date), active: isInInterval(date) }"
           type="button"
+          @click="handleDateClick(date)"
         >
           {{ date }}
         </button>
@@ -55,7 +58,9 @@
           :key="date"
           class="overflow dates"
           style="width:calc(100%/7)"
+          :class="{ 'curr-date': isCurrDate(date), active: isInInterval(date) }"
           type="button"
+          @click="handleDateClick(date)"
         >
           {{ date }}
         </button>
@@ -70,10 +75,21 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import AppIcon from "@/common/AppIcon.vue";
+import { isAfter, isSameDay, isWithinInterval } from "date-fns";
+import { defineComponent, PropType } from "@vue/runtime-core";
 
-export default {
+enum DatePickerState {
+  Empty,
+  StartDate,
+  Complete
+}
+
+const StartDate = "startTime";
+const EndDate = "endTime";
+
+export default defineComponent({
   // TODO: Style per design,  remove borders
   // TODO: Support drag & drop & multi-select -> ref CalendarDay.vue
   // TODO: Support drag drop multi-select cross months
@@ -86,16 +102,38 @@ export default {
   components: {
     AppIcon
   },
+  props: {
+    startTime: {
+      type: Date as PropType<Date>,
+      required: true
+    },
+    endTime: {
+      type: Date as PropType<Date>,
+      required: true
+    }
+  },
+  emits: ["update:startTime", "update:endTime"],
   data() {
     return {
       currDate: new Date().getDate(),
       currMonthIndex: new Date().getMonth(),
-      currYear: new Date().getFullYear()
+      currYear: new Date().getFullYear(),
+      changing: ""
     };
   },
   computed: {
+    state(): DatePickerState {
+      if (this.startTime === null && this.endTime === null) {
+        return DatePickerState.Empty;
+      }
+      if (this.startTime !== null && this.endTime === null) {
+        return DatePickerState.StartDate;
+      }
+      return DatePickerState.Complete;
+    },
+
     // Returns the full name of the viewing month
-    currMonthName() {
+    currMonthName(): string {
       return new Date(this.currYear, this.currMonthIndex).toLocaleString(
         "default",
         {
@@ -109,7 +147,7 @@ export default {
     },
 
     // Returns array of overflowing dates in first week from the previous month
-    daysInPrevMonthOverflow() {
+    daysInPrevMonthOverflow(): number[] {
       const lastDateOfPrevMonth = this.daysInMonth(); // 31
 
       return [...Array(lastDateOfPrevMonth + 1).keys()].slice(
@@ -118,7 +156,7 @@ export default {
     },
 
     // Returns number of days overflowing into next month in the last week
-    daysInNextMonthOverflow() {
+    daysInNextMonthOverflow(): number {
       const lastDayNameIndex = new Date(
         this.currYear,
         this.currMonthIndex + 1,
@@ -130,6 +168,48 @@ export default {
   },
 
   methods: {
+    handleDateClick(dateNum: number) {
+      const date = this.toDate(dateNum);
+      switch (this.state) {
+        case DatePickerState.Empty:
+          this.$emit("update:startTime", date);
+          break;
+        case DatePickerState.StartDate:
+          this.$emit(
+            isAfter(date, this.startTime)
+              ? "update:endTime"
+              : "update:startTime",
+            date
+          );
+          break;
+        case DatePickerState.Complete:
+          if (
+            [this.startTime, this.endTime].some(propDate =>
+              isSameDay(propDate, date)
+            )
+          ) {
+            if (this.changing) {
+              this.$emit(
+                `update:${this.changing}` as
+                  | "update:startTime"
+                  | "update:endTime",
+                date
+              );
+              this.changing = "";
+            } else {
+              this.changing = isSameDay(this.startTime, date)
+                ? StartDate
+                : EndDate;
+            }
+          }
+          break;
+      }
+    },
+
+    toDate(dateNum: number): Date {
+      return new Date(this.currYear, this.currMonthIndex, dateNum);
+    },
+
     // Return the number of days for the viewing month
     daysInMonth() {
       return new Date(this.currYear, this.currMonthIndex + 1, 0).getDate();
@@ -161,19 +241,23 @@ export default {
       }
     },
 
-    // Return true if param is today's date
-    isCurrDate(paramDayNum) {
-      const paramDate = new Date(
-        this.currYear,
-        this.currMonthIndex,
-        paramDayNum
-      ).toDateString();
-      const currDate = new Date().toDateString();
+    isCurrDate(paramDayNum: number): boolean {
+      return [this.startTime, this.endTime].some(propDate =>
+        isSameDay(propDate, this.toDate(paramDayNum))
+      );
+    },
 
-      return paramDate === currDate;
+    isInInterval(paramDayNum: number): boolean {
+      if (this.state !== DatePickerState.Complete) {
+        return false;
+      }
+      return isWithinInterval(this.toDate(paramDayNum), {
+        start: this.startTime,
+        end: this.endTime
+      });
     }
   }
-};
+});
 </script>
 
 <style scoped>
@@ -233,7 +317,8 @@ export default {
   border-radius: 50%;
 }
 
-.dates:hover {
+.dates:hover,
+.dates.active {
   cursor: pointer;
   background: rgba(55, 87, 134, 0.25);
 }
@@ -246,7 +331,7 @@ export default {
   color: rgba(213, 213, 213, 1);
 }
 
-.curr-date {
+.dates.curr-date {
   font-weight: bold;
   background: rgba(55, 87, 134, 0.5);
 }

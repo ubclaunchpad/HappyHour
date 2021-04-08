@@ -125,7 +125,6 @@ body {
 
 .body1 {
   font-size: 1rem; /*16px*/
-  letter-spacing: 0.5px;
 }
 
 /* Body 2 */

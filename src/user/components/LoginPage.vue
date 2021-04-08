@@ -1,5 +1,6 @@
 <template>
   <div class="login">
+    <AppButton v-if="closable" class="btn-close" @click="close()">x</AppButton>
     <div class="heading">Log In</div>
     <div class="p1">
       <p>Username/Email:</p>
@@ -35,6 +36,12 @@ export default defineComponent({
     GoogleLogo,
     TextInput
   },
+  props: {
+    closable: {
+      default: false,
+      type: Boolean
+    }
+  },
   data() {
     return {
       username: "",
@@ -50,13 +57,18 @@ export default defineComponent({
   methods: {
     logIn() {
       client.login(this.username, this.password).then(() => {
+        this.$emit("close");
         this.$router.push(this.redirectTo);
       });
     },
     logInViaGoogle() {
       client.googleLogin().then(() => {
+        this.$emit("close");
         this.$router.push(this.redirectTo);
       });
+    },
+    close() {
+      this.$emit("close");
     }
   }
 });
@@ -99,5 +111,13 @@ export default defineComponent({
 
 .btn-logo {
   margin-right: 0.5rem;
+}
+
+.btn-close {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  width: 20px;
+  height: 20px;
 }
 </style>
