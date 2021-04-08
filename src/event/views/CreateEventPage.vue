@@ -136,8 +136,8 @@ function initialState() {
   return {
     isHidden: true,
     isDatePickerEvent: true,
-    startTime: set(new Date(), { hours: 9, minutes: 0 }),
-    endTime: set(new Date(), { hours: 21, minutes: 0 }),
+    startTime: (null as unknown) as Date,
+    endTime: (null as unknown) as Date,
     timezone: "America/Vancouver",
     eventTitle: "",
     eventDescription: "",
