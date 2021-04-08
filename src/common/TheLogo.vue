@@ -1,5 +1,5 @@
 <template>
-  <h4 class="logo">logo</h4>
+  <h4 class="logo">HappyHour</h4>
 </template>
 
 <style scoped>
