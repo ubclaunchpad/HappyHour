@@ -49,7 +49,7 @@ function loadGoogleAuth(): Promise<gapi.auth2.GoogleAuth> {
 
 const client = {
   createUser(email: string, password: string) {
-    Auth.createUserWithEmailAndPassword(email, password)
+    return Auth.createUserWithEmailAndPassword(email, password)
       .then(user => {
         if (user.user) {
           const newUser = createUserObject(user.user);

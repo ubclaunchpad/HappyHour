@@ -2,6 +2,7 @@
   <div class="input-container">
     <component
       :is="currInputComponent"
+      ref="textinput"
       v-bind="$attrs"
       :style="resizeAttribute"
     />
@@ -12,7 +13,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, computed } from "vue";
+import { defineComponent, computed, ref } from "vue";
 import TextInputInput from "@/common/TextInputInput.vue";
 import TextInputTextarea from "@/common/TextInputTextarea.vue";
 
@@ -25,18 +26,20 @@ export default defineComponent({
   },
 
   props: {
-    type: { type: String, default: "input" },
+    variant: { type: String, default: "input" },
     resize: { type: String, default: "" }
   },
 
   setup(props) {
+    const textinput = ref();
+
     const currInputComponent = computed(() =>
-      props.type === "textarea" ? TextInputTextarea : TextInputInput
+      props.variant === "textarea" ? TextInputTextarea : TextInputInput
     );
 
     const resizeAttribute = computed(() => `resize: ${props.resize}`);
 
-    return { currInputComponent, resizeAttribute };
+    return { currInputComponent, resizeAttribute, textinput };
   }
 });
 </script>
