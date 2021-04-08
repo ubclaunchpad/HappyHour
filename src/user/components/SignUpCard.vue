@@ -126,10 +126,9 @@ export default defineComponent({
     const createAccount = () => {
       validatePassword();
       passwordRef.value.textinput.input.reportValidity();
-      client.createUser(
-        newAccount.value.email,
-        newAccount.value.password.password
-      );
+      client
+        .createUser(newAccount.value.email, newAccount.value.password.password)
+        .then(() => router.push(redirectTo.value));
     };
 
     const logInViaGoogle = () =>
