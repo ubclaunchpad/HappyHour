@@ -1,5 +1,5 @@
 import { ref } from "vue";
-import { Auth, User, createUserObject } from "./client";
+import userClient, { Auth, User } from "./client";
 
 /**
  * Returns a reactive user instance that changes when the user logs in and out.
@@ -16,9 +16,16 @@ export function useUser() {
   const isLoading = ref(true);
 
   Auth.onAuthStateChanged(firebaseUser => {
-    isLoading.value = false;
     if (firebaseUser) {
-      user.value = createUserObject(firebaseUser);
+      userClient.subscribe(userResult => {
+        user.value = userResult;
+        if (isLoading.value) {
+          isLoading.value = false;
+        }
+      });
+    } else {
+      user.value = null;
+      isLoading.value = false;
     }
   });
 

@@ -1,6 +1,7 @@
 import { ref, UnwrapRef } from "vue";
 import firebase from "firebase/app";
 
+import { FirebaseCalendar, toHappyHourCalendar } from "@/calendar/utils";
 import { Event, dbRef } from "./client";
 
 /**
@@ -12,12 +13,7 @@ type FirebaseEvent = Omit<Event, "scheduleWindow" | "calendar"> & {
     startTime: firebase.firestore.Timestamp;
     endTime: firebase.firestore.Timestamp;
   };
-  calendar: {
-    blocks: Array<{
-      startTime: firebase.firestore.Timestamp;
-      availableUsers: string[];
-    }>;
-  };
+  calendar: FirebaseCalendar;
 };
 
 /**
@@ -35,7 +31,7 @@ export function useEvent(id: string) {
       const newEvent = snapshot.data() as UnwrapRef<FirebaseEvent>;
       const {
         scheduleWindow: { startTime, endTime },
-        calendar: { blocks }
+        calendar
       } = newEvent;
 
       /**
@@ -44,12 +40,7 @@ export function useEvent(id: string) {
        */
       event.value = {
         ...newEvent,
-        calendar: {
-          blocks: blocks.map(block => ({
-            ...block,
-            startTime: block.startTime.toDate()
-          }))
-        },
+        calendar: toHappyHourCalendar(calendar),
         scheduleWindow: {
           startTime: startTime.toDate(),
           endTime: endTime.toDate()

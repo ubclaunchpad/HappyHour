@@ -1,5 +1,13 @@
+import firebase from "firebase/app";
 import { getHours, getMinutes, isEqual } from "date-fns";
 import { Block, Calendar } from "./client";
+
+export type FirebaseCalendar = {
+  blocks: Array<{
+    startTime: firebase.firestore.Timestamp;
+    availableUsers: string[];
+  }>;
+};
 
 export const formatHour = (hour: number, minutes: number) => {
   let formattedMinutes = String(minutes);
@@ -55,4 +63,13 @@ export const merge = (source: Calendar, other: Calendar) => {
   notAddedYet.forEach(block => intersection.push(block));
 
   return { blocks: intersection };
+};
+
+export const toHappyHourCalendar = ({ blocks }: FirebaseCalendar): Calendar => {
+  return {
+    blocks: blocks.map(block => ({
+      ...block,
+      startTime: block.startTime.toDate()
+    }))
+  };
 };

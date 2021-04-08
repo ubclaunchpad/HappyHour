@@ -1,6 +1,7 @@
-import firebase from "firebase";
+import firebase from "firebase/app";
 import { Block, Calendar } from "@/calendar/client";
 import { db } from "@/db";
+
 export interface Event {
   users: string[];
   owners: string[];
@@ -37,6 +38,22 @@ const client = {
     return dbRef.doc(eventId).update({
       users: firebase.firestore.FieldValue.arrayUnion(userId),
       calendar: { blocks: availability }
+    });
+  },
+  async getEventsOfOwner(userId: string) {
+    const ownerEvents = await dbRef
+      .where("owners", "array-contains", userId)
+      .get();
+    return ownerEvents.docs.map(doc => {
+      return { eventData: doc.data(), eventId: doc.id };
+    });
+  },
+  async getEventsOfParticipant(userId: string) {
+    const participantEvents = await dbRef
+      .where("users", "array-contains", userId)
+      .get();
+    return participantEvents.docs.map(doc => {
+      return { eventData: doc.data(), eventId: doc.id };
     });
   }
 };

@@ -15,6 +15,7 @@
         :blocks="blocks"
         :respondents="respondents"
         :current-user="currentUser"
+        :read-only="readOnly"
         @update:blocks="updateCalendar"
       />
     </div>
@@ -66,6 +67,10 @@ export default defineComponent({
     endTime: {
       type: String,
       required: true
+    },
+    readOnly: {
+      type: Boolean,
+      required: false
     },
     currentUser: {
       type: String,
@@ -145,8 +150,6 @@ export default defineComponent({
 .times {
   flex: 1;
   text-align: center;
-  margin-top: 2rem;
-  margin-left: 2rem;
 }
 
 .time {
@@ -158,8 +161,5 @@ export default defineComponent({
   display: flex;
   flex: 12;
   justify-content: space-between;
-  margin-top: 2rem;
-  margin-right: 2rem;
-  margin-bottom: 2rem;
 }
 </style>
