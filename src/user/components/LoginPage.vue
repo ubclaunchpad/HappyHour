@@ -8,7 +8,7 @@
       <p>Password:</p>
       <TextInput v-model="password" />
     </div>
-    <AppButton variant="primary" type="submit" class="button" @update="logIn()"
+    <AppButton variant="primary" type="submit" class="button" @click="logIn()"
       >Login</AppButton
     >
     <AppButton
