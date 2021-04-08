@@ -176,12 +176,9 @@ export default defineComponent({
     async createEvent(e: any) {
       e.preventDefault();
       if (!Auth.currentUser) {
-        console.log("not logged in!");
         this.showModal();
         return;
       } else {
-        console.log("logged in!");
-        console.log(Auth.currentUser);
         const event: Event = {
           users: [],
           owners: [Auth.currentUser.uid],
@@ -199,11 +196,10 @@ export default defineComponent({
         client
           .addEvent(event)
           .then(eventId => {
-            console.log("created new event with id: " + eventId);
             this.$router.push(`/event/${eventId}`);
           })
           .catch(err => {
-            console.log("could not create event: " + err);
+            console.error("could not create event: " + err);
             this.reset();
           });
       }

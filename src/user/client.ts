@@ -72,14 +72,9 @@ const client = {
       });
   },
   login(email: string, password: string) {
-    return Auth.signInWithEmailAndPassword(email, password)
-      .then(userCredentials => {
-        const user = userCredentials.user;
-        console.log("login success! user ID: ", user?.uid);
-      })
-      .catch(err => {
-        console.log(err);
-      });
+    return Auth.signInWithEmailAndPassword(email, password).catch(err => {
+      console.log(err);
+    });
   },
   googleLogin() {
     return loadGoogleAuth()
@@ -127,25 +122,16 @@ const client = {
   },
   logout() {
     if (Auth.currentUser) {
-      return Auth.signOut()
-        .then(() => {
-          console.log("Succesfully signed out");
-        })
-        .catch(err => {
-          console.log(err);
-        });
-    } else {
-      console.log("No user signed in");
+      return Auth.signOut().catch(err => {
+        console.log(err);
+      });
     }
   },
   deleteUser() {
     if (Auth.currentUser) {
       return Auth.currentUser
         .delete()
-        .then(() => console.log("User succesfully deleted"))
         .catch(() => console.log("There was a problem deleting the user"));
-    } else {
-      console.log("No user signed in");
     }
   },
   updateUser(email: string) {

@@ -86,6 +86,16 @@ export default {
   components: {
     AppIcon
   },
+  props: {
+    startTime: {
+      type: Date,
+      required: true
+    },
+    endTime: {
+      type: Date,
+      required: true
+    }
+  },
   data() {
     return {
       currDate: new Date().getDate(),

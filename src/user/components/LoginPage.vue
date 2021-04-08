@@ -68,7 +68,6 @@ export default defineComponent({
       });
     },
     close() {
-      console.log("closing");
       this.$emit("close");
     }
   }
