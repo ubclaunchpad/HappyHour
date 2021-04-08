@@ -119,7 +119,6 @@
 //FIXME: Focus on textarea multiple times
 //FIXME: Width size of btn-add-desc
 import { defineComponent } from "vue";
-import { set } from "date-fns";
 import TextInput from "@/common/TextInput.vue";
 import AppButton from "@/common/AppButton.vue";
 import AppToggle from "@/common/AppToggle.vue";
@@ -136,8 +135,8 @@ function initialState() {
   return {
     isHidden: true,
     isDatePickerEvent: true,
-    startTime: set(new Date(), { hours: 9, minutes: 0 }),
-    endTime: set(new Date(), { hours: 21, minutes: 0 }),
+    startTime: (null as unknown) as Date,
+    endTime: (null as unknown) as Date,
     timezone: "America/Vancouver",
     eventTitle: "",
     eventDescription: "",
