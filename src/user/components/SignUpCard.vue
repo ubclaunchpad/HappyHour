@@ -32,8 +32,8 @@
           <label for="password" class="label">Password:</label>
           <TextInput
             id="password"
-            ref="pwRef"
-            v-model="newAccount.pw.password"
+            ref="passwordRef"
+            v-model="newAccount.password.password"
             name="password"
             type="password"
             minlength="8"
@@ -47,7 +47,7 @@
           <label for="passwordConfirm" class="label">Confirm Password:</label>
           <TextInput
             id="passwordConfirm"
-            v-model="newAccount.pw.confirm"
+            v-model="newAccount.password.confirm"
             name="passwordConfirm"
             type="password"
             minlength="8"
@@ -94,17 +94,18 @@ export default defineComponent({
     const newAccount = ref({
       name: "",
       email: "",
-      pw: {
+      password: {
         password: "",
         confirm: ""
       }
     });
 
-    // const pwRef = ref<InstanceType<typeof TextInput>>();
-    const pwRef = ref();
+    // const passwordRef = ref<InstanceType<typeof TextInput>>();
+    const passwordRef = ref();
 
     const isPasswordMatch = computed(
-      () => newAccount.value.pw.password === newAccount.value.pw.confirm
+      () =>
+        newAccount.value.password.password === newAccount.value.password.confirm
     );
 
     const redirectTo = computed(() => {
@@ -114,17 +115,21 @@ export default defineComponent({
 
     const validatePassword = () => {
       if (isPasswordMatch.value) {
-        pwRef.value.textinput.input.setCustomValidity(""); // Reset HTML validation
+        passwordRef.value.textinput.input.setCustomValidity(""); // Reset HTML validation
       } else {
-        pwRef.value.textinput.input.setCustomValidity("Passwords don't match");
+        passwordRef.value.textinput.input.setCustomValidity(
+          "Passwords don't match"
+        );
       }
     };
 
     const createAccount = () => {
       validatePassword();
-      pwRef.value.textinput.input.reportValidity();
-      client.createUser(newAccount.value.email, newAccount.value.pw.password);
-      // .then(() => router.push(redirectTo.value));
+      passwordRef.value.textinput.input.reportValidity();
+      client.createUser(
+        newAccount.value.email,
+        newAccount.value.password.password
+      );
     };
 
     const logInViaGoogle = () =>
@@ -132,7 +137,7 @@ export default defineComponent({
 
     return {
       newAccount,
-      pwRef,
+      passwordRef,
       validatePassword,
       createAccount,
       logInViaGoogle
@@ -150,7 +155,6 @@ export default defineComponent({
   display: grid;
   grid-template-rows: 0.2fr auto;
   height: 100%;
-  background: 1px solid red;
 }
 
 .form {
