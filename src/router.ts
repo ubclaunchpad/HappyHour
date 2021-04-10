@@ -3,7 +3,7 @@ import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
 import CreateEventPage from "./event/views/CreateEventPage.vue";
 import EventPage from "./event/views/EventPage.vue";
 import SignUpPage from "./user/views/SignUpPage.vue";
-import LoginPage from "./user/views/Login.vue";
+import LoginPage from "./user/views/LoginPage.vue";
 import UserDashboard from "./user/views/UserDashboard.vue";
 
 export const routes: Array<RouteRecordRaw> = [
