@@ -7,7 +7,10 @@
         <div class="sub2">{{ event.title }}</div>
       </header>
 
-      <section class="event--availability">
+      <section
+        class="event--availability"
+        :class="{ 'event__full-width': isGroupAvailability }"
+      >
         <Calendar
           v-model:calendar="calendar"
           class="calendar"
@@ -54,7 +57,10 @@
         >
       </section>
 
-      <section class="event--respondents">
+      <section
+        class="event--respondents"
+        :class="{ disabled: isGroupAvailability }"
+      >
         <EventRespondents class="respondents" />
       </section>
     </div>
@@ -62,7 +68,6 @@
 </template>
 
 <script lang="ts">
-//FIXME: Multiple timers clashing in AppSnackbar notifications
 import {
   computed,
   defineComponent,
@@ -119,7 +124,8 @@ export default defineComponent({
     const state = reactive({
       displayGroupAvail: false,
       notificationText: "Some Notification",
-      notificationVisible: false
+      notificationVisible: false,
+      isGroupAvailability: false
     });
     const calendar = ref<CalendarType>({ blocks: [] });
 
@@ -224,7 +230,7 @@ export default defineComponent({
 
       switchCalendar() {
         // method to switch between user's calendar and group calendar
-        console.log("calendar switched");
+        state.isGroupAvailability = !state.isGroupAvailability;
       },
 
       copyLink() {
@@ -341,5 +347,13 @@ export default defineComponent({
   position: absolute;
   width: 30rem;
   bottom: 3rem;
+}
+
+.disabled {
+  display: none;
+}
+
+.event__full-width {
+  grid-column: span 2;
 }
 </style>
