@@ -60,13 +60,7 @@ export default {
 
 /* Visually hide the checkbox input */
 .input {
-  width: 0;
-  height: 0;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  white-space: nowrap;
-  border-width: 0;
+  display: none;
 }
 
 .switch {
