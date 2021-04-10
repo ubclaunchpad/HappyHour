@@ -13,14 +13,14 @@
     </ul>
 
     <!-- Selectable day blocks -->
-    <ul class="days button">
+    <ul class="days">
       <li v-for="day in days" :key="day">
         <button
           type="button"
           class="day-block day button"
           :class="{ selected: day.isSelected }"
           @click="day.isSelected = !day.isSelected"
-        ></button>
+        />
       </li>
     </ul>
   </div>
