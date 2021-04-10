@@ -1,5 +1,5 @@
 <template>
-  <header class="container">
+  <nav class="navbar">
     <router-link class="logo" to="/">
       <TheLogo />
     </router-link>
@@ -10,7 +10,8 @@
     >
       <AppIcon icon="bars" />
     </button>
-    <nav :class="['nav', { 'nav-open': isNavOpen }]">
+
+    <div :class="['nav', { 'nav-open': isNavOpen }]">
       <button
         aria-label="close navigation"
         class="nav-toggle close-nav"
@@ -18,23 +19,25 @@
       >
         <AppIcon icon="times" width="32" />
       </button>
+
       <router-link
         v-for="link in links"
         :key="link.path"
         :to="link.path"
         class="router"
-        >{{ link.name }}
+        ><h6>{{ link.name }}</h6>
       </router-link>
-      <div class="button">
+
+      <!-- <div class="button">
         <AppButton v-if="isUserLoggedIn" class="btn" @click="logout()">
           Log Out</AppButton
         >
         <AppButton v-else class="btn" text="Log In" @click="login()">
           Log In
         </AppButton>
-      </div>
-    </nav>
-  </header>
+      </div> -->
+    </div>
+  </nav>
 </template>
 
 <script lang="ts">
@@ -51,18 +54,25 @@ import { useUser } from "@/user/hooks";
 
 export default defineComponent({
   name: "TheNavbar",
-  components: { AppIcon, TheLogo, AppButton },
+  components: {
+    AppIcon,
+    TheLogo
+    // AppButton
+  },
+
   data() {
     return {
       isNavOpen: false,
       isUserLoggedIn: false
     };
   },
+
   computed: {
     links() {
       return routes;
     }
   },
+
   mounted() {
     const { user, isLoading } = useUser();
     watchEffect(async () => {
@@ -75,6 +85,7 @@ export default defineComponent({
       }
     });
   },
+
   methods: {
     async logout() {
       this.isUserLoggedIn = false;
@@ -89,16 +100,6 @@ export default defineComponent({
 </script>
 
 <style scoped>
-a {
-  text-decoration: none;
-  display: block;
-  color: inherit;
-}
-
-button {
-  background: none;
-}
-
 .open-nav {
   display: flex;
   align-items: center;
@@ -113,17 +114,15 @@ button {
 
 .nav {
   position: fixed;
-  height: 100vh;
-  background: white;
   top: 0;
   right: 0;
   width: 60vw;
-  padding: 2rem;
-  padding-top: 4rem;
-  color: rgb(2, 15, 34);
+  height: 100vh;
+  padding: 4rem 2rem 2rem 2rem;
+  background: var(--color-card);
+  box-shadow: var(--shadow-base);
   transition: all 0.2s ease-out;
   transform: translateX(100%);
-  box-shadow: var(--shadow-base);
   z-index: 10;
 }
 
@@ -158,27 +157,17 @@ button {
   }
 }
 
-.container {
+.navbar {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
   padding: 1.25rem;
-  background-color: rgb(255, 255, 255);
-}
-
-/* Logo Button */
-.logo {
-  background: none;
-  cursor: pointer;
-}
-
-.logo:hover {
-  color: rgba(55, 87, 134, 0.8);
+  background: var(--color-card);
 }
 
 /* Highlight on active router page */
 .router.router-link-exact-active {
-  color: rgb(55, 87, 134);
+  color: var(--color-primary);
 }
 </style>
