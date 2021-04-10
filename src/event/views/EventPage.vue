@@ -1,14 +1,13 @@
 <template>
-  <div v-if="!event || isLoading">Loading</div>
-  <div v-else class="page-container">
-    <header>
-      <h5>{{ event.title }}</h5>
-    </header>
-
-    <div class="main">
-      <div class="main-left">
+  <AppLoading v-if="!event || isLoading" class="event--container" />
+  <main v-else class="event--container">
+    <div class="event card">
+      <header>
         <h5>Fill out your availability</h5>
+        <div class="sub2">{{ event.title }}</div>
+      </header>
 
+      <section class="event--availability">
         <Calendar
           v-model:calendar="calendar"
           class="calendar"
@@ -23,45 +22,42 @@
           @update="notificationVisible = false"
         />
 
-        <div class="timezone caption">
+        <div class="event--timezone caption">
           (Time displayed in {{ event.timezone }})
         </div>
+      </section>
+      <section class="event--triggers">
+        <AppToggle
+          v-model="displayGroupAvail"
+          left-text="My Availability"
+          right-text="Group Availability"
+          class="toggle"
+          @click="switchCalendar()"
+        />
+        <AppButton
+          variant="secondary"
+          type="button"
+          class="btn"
+          @click="copyLink()"
+          >Copy Event Link</AppButton
+        >
+        <AppButton
+          variant="secondary"
+          type="button"
+          class="btn"
+          @click="handleSave()"
+          >Save Response</AppButton
+        >
+      </section>
 
-        <section class="toggle-buttons">
-          <AppToggleInternalText
-            v-model:checked="displayGroupAvail"
-            left-text="My Availability"
-            right-text="Group Availability"
-            @click="switchCalendar()"
-          />
-          <div class="buttons">
-            <AppButton
-              variant="secondary"
-              type="button"
-              class="btn"
-              @click="handleSave()"
-              >Save Response</AppButton
-            >
-            <AppButton
-              variant="secondary"
-              type="button"
-              class="btn"
-              @click="copyLink()"
-              >Copy Event Link</AppButton
-            >
-          </div>
-        </section>
-      </div>
-      <div class="main-right">
-        <EventRespondents />
-      </div>
+      <section class="event--respondents">
+        <EventRespondents class="respondents" />
+      </section>
     </div>
-  </div>
+  </main>
 </template>
 
 <script lang="ts">
-//FIXME: AppSnackbar location
-//FIXME: Layout
 //FIXME: Multiple timers clashing in AppSnackbar notifications
 import {
   computed,
@@ -73,36 +69,44 @@ import {
   watch,
   nextTick
 } from "vue";
+
 import { useRouter } from "vue-router";
 
 import AppButton from "@/common/AppButton.vue";
 import AppSnackbar from "@/common/AppSnackbar.vue";
-import AppToggleInternalText from "@/common/AppToggleInternalText.vue";
-
+import AppToggle from "@/common/AppToggle.vue";
+import AppLoading from "@/common/AppLoading.vue";
 import Calendar from "@/calendar/components/Calendar.vue";
-import calendarClient, { Calendar as CalendarType } from "@/calendar/client";
-import { merge } from "@/calendar/utils";
-import userClient from "@/user/client";
-import { useUser } from "@/user/hooks";
+import EventRespondents from "@/event/components/EventRespondents.vue";
 
-import EventRespondents from "../components/EventRespondents.vue";
 import client from "../client";
 import { useEvent } from "../hooks";
 
+import calendarClient, { Calendar as CalendarType } from "@/calendar/client";
+import { merge } from "@/calendar/utils";
+
+import userClient from "@/user/client";
+import { useUser } from "@/user/hooks";
+
 export default defineComponent({
+  name: "EventPage",
+
   components: {
     AppButton,
+    AppLoading,
     AppSnackbar,
-    AppToggleInternalText,
+    AppToggle,
     Calendar,
     EventRespondents
   },
+
   props: {
     id: {
       type: String,
       required: true
     }
   },
+
   setup(props) {
     const { user, isLoading } = useUser();
     const router = useRouter();
@@ -205,6 +209,7 @@ export default defineComponent({
       user,
       isLoading,
       ...toRefs(state),
+
       async handleSave() {
         // save the calendar
         // alert("handleSave is called");
@@ -219,6 +224,7 @@ export default defineComponent({
         state.notificationText = "Availability saved!";
         setTimeout(() => (state.notificationVisible = false), 5000);
       },
+
       copyLink() {
         // copy the link to the event
         // alert("copyLink is called");
@@ -227,6 +233,7 @@ export default defineComponent({
         state.notificationText = "Event link copied to clipboard!";
         setTimeout(() => (state.notificationVisible = false), 5000);
       },
+
       switchCalendar() {
         // method to switch between user's calendar and group calendar
         console.log("calendar switched");
@@ -241,73 +248,69 @@ export default defineComponent({
   # GLOBAL
 \*------------------------------------*/
 
-/* Override Global Heading */
-header h5 {
-  text-align: center;
-  font-weight: 600;
+.card {
+  padding: 3rem;
 }
 
-h5 {
-  font-weight: 500;
-}
-
-.page-container {
-  margin-top: 0.5625rem;
-}
-/*------------------------------------*\
-  # MAIN COMPONENTS
-\*------------------------------------*/
-
-.main {
-  display: flex;
-  justify-content: center;
-}
-
-.main-left,
-.main-right {
-  justify-content: center;
-  align-items: flex-start;
-  /*margin: auto;*/
-}
-
-.main-left {
-  flex-grow: 4;
-}
-
-/*------------------------------------*\
-  # LEFT COMPONENTS
-\*------------------------------------*/
-
-.calendar {
-  margin: 0;
-  padding: 0;
-  border-radius: 10px;
-  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-  background: rgb(255, 255, 255);
-}
-
-.timezone {
-  padding: 0 0 1rem 0;
-  margin: 0.5rem;
-  text-align: center;
-  letter-spacing: 0.4px;
-  color: rgb(125, 125, 125);
-}
-
-.toggle-buttons {
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  margin: 0 1rem;
-}
-
-.buttons {
-  display: flex;
-  flex-shrink: 0;
+.sub2 {
+  color: var(--color-text-secondary);
 }
 
 .btn {
   width: 17rem;
   margin: 0 1rem;
+}
+/*------------------------------------*\
+  # MAIN COMPONENTS
+\*------------------------------------*/
+
+.event--container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+.event {
+  display: grid;
+  /* grid-template-rows: auto minmax(0, 1fr) auto; */
+  grid-template-rows: auto auto auto;
+  grid-template-columns: 7fr 2fr;
+  grid-gap: 2.5rem;
+}
+
+.event--availability {
+  grid-area: 2 / 1 / 3 / 2;
+}
+
+.calendar {
+  margin: 0;
+  padding: 0;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+}
+
+.event--timezone {
+  margin: 0.5rem;
+  text-align: center;
+  color: #7d7d7d;
+}
+
+.event--triggers {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.event--triggers {
+  grid-area: 3 / 1 / 4 / 2;
+}
+
+.event--respondents {
+  grid-area: 2 / 2 / 3 / 3;
+  height: 30rem;
+}
+
+.respondents {
+  height: 100%;
 }
 </style>
