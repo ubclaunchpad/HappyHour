@@ -16,16 +16,20 @@
           :current-user="user.uid"
         />
 
-        <AppSnackbar
-          v-show="notificationVisible"
-          :text="notificationText"
-          @update="notificationVisible = false"
-        />
+        <div class="notification--container">
+          <AppSnackbar
+            v-show="notificationVisible"
+            :text="notificationText"
+            class="notification"
+            @update="notificationVisible = false"
+          />
+        </div>
 
         <div class="event--timezone caption">
           (Time displayed in {{ event.timezone }})
         </div>
       </section>
+
       <section class="event--triggers">
         <AppToggle
           v-model="displayGroupAvail"
@@ -272,7 +276,6 @@ export default defineComponent({
 }
 .event {
   display: grid;
-  /* grid-template-rows: auto minmax(0, 1fr) auto; */
   grid-template-rows: auto auto auto;
   grid-template-columns: 7fr 2fr;
   grid-gap: 2.5rem;
@@ -280,19 +283,20 @@ export default defineComponent({
 
 .event--availability {
   grid-area: 2 / 1 / 3 / 2;
+  position: relative;
 }
 
 .calendar {
   margin: 0;
   padding: 0;
-  border: 1px solid var(--color-border);
   border-radius: 10px;
+  border: 1px solid var(--color-border);
 }
 
 .event--timezone {
   margin: 0.5rem;
   text-align: center;
-  color: #7d7d7d;
+  color: #7d7d7d; /* Missing from global colours */
 }
 
 .event--triggers {
@@ -312,5 +316,16 @@ export default defineComponent({
 
 .respondents {
   height: 100%;
+}
+
+.notification--container {
+  display: flex;
+  justify-content: center;
+}
+
+.notification {
+  position: absolute;
+  width: 30rem;
+  bottom: 3rem;
 }
 </style>
