@@ -123,6 +123,8 @@ export default defineComponent({
     });
     const calendar = ref<CalendarType>({ blocks: [] });
 
+    const timeoutIds: Array<number> = [];
+
     // computed
     const event = useEvent(props.id);
     const start = computed(() =>
@@ -131,6 +133,12 @@ export default defineComponent({
     const end = computed(() =>
       event.value?.scheduleWindow.endTime.toISOString()
     );
+
+    const clearAllTimeouts = () => {
+      for (const id of timeoutIds) {
+        clearTimeout(id);
+      }
+    };
 
     /* Keep the calendar blocks in sync with the event's blocks */
     watch(event, newEvent => {
@@ -214,6 +222,23 @@ export default defineComponent({
       isLoading,
       ...toRefs(state),
 
+      switchCalendar() {
+        // method to switch between user's calendar and group calendar
+        console.log("calendar switched");
+      },
+
+      copyLink() {
+        // copy the link to the event
+        // alert("copyLink is called");
+        // and show notification with "Event link copied to clipboard!"
+        clearAllTimeouts();
+        state.notificationVisible = true;
+        state.notificationText = "Event link copied to clipboard!";
+        timeoutIds.push(
+          setTimeout(() => (state.notificationVisible = false), 2000)
+        );
+      },
+
       async handleSave() {
         // save the calendar
         // alert("handleSave is called");
@@ -224,23 +249,12 @@ export default defineComponent({
           eventId: props.id,
           availability: calendar.value.blocks
         });
+        clearAllTimeouts();
         state.notificationVisible = true;
         state.notificationText = "Availability saved!";
-        setTimeout(() => (state.notificationVisible = false), 5000);
-      },
-
-      copyLink() {
-        // copy the link to the event
-        // alert("copyLink is called");
-        // and show notification with "Event link copied to clipboard!"
-        state.notificationVisible = true;
-        state.notificationText = "Event link copied to clipboard!";
-        setTimeout(() => (state.notificationVisible = false), 5000);
-      },
-
-      switchCalendar() {
-        // method to switch between user's calendar and group calendar
-        console.log("calendar switched");
+        timeoutIds.push(
+          setTimeout(() => (state.notificationVisible = false), 2000)
+        );
       }
     };
   }
