@@ -63,7 +63,7 @@
           required
         />
 
-        <LoginPage v-if="isModalVisible" :closable="true" @close="closeModal" />
+        <LoginCard v-if="isModalVisible" :closable="true" @close="closeModal" />
 
         <button
           v-if="isHidden"
@@ -126,7 +126,7 @@ import AppIcon from "@/common/AppIcon.vue";
 import DatePicker from "../components/DatePicker.vue";
 import DayPicker from "../components/DayPicker.vue";
 import TimePicker from "../components/TimePicker.vue";
-import LoginPage from "../../user/components/LoginPage.vue";
+import LoginCard from "../../user/components/LoginCard.vue";
 import { Auth } from "../../user/client";
 import { Event } from "../client";
 import client from "../client";
@@ -154,7 +154,7 @@ export default defineComponent({
     DayPicker,
     TimePicker,
     TextInput,
-    LoginPage
+    LoginCard
   },
   data: function() {
     return initialState();
