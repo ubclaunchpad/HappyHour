@@ -9,24 +9,30 @@ import UserDashboard from "./user/views/UserDashboard.vue";
 export const routes: Array<RouteRecordRaw> = [
   {
     path: "/",
-    component: CreateEventPage
+    component: CreateEventPage,
+    meta: { requiresAuth: true }
   },
   {
     path: "/event/:id",
     component: EventPage,
-    props: true
-  },
-  {
-    path: "/signup",
-    component: SignUpPage
-  },
-  {
-    path: "/login",
-    component: LoginPage
+    props: true,
+    meta: { requiresAuth: true }
   },
   {
     path: "/dashboard",
-    component: UserDashboard
+    component: UserDashboard,
+    name: "My Dashboard",
+    meta: { requiresAuth: true }
+  },
+  {
+    path: "/signup",
+    component: SignUpPage,
+    name: "Signup"
+  },
+  {
+    path: "/login",
+    component: LoginPage,
+    name: "Login"
   }
 ];
 
