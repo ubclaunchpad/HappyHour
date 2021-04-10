@@ -80,7 +80,7 @@
           <TextInput
             v-model="eventDescription"
             class="textarea"
-            type="textarea"
+            variant="textarea"
             placeholder="Enter Description"
             autofocus
             resize="vertical"
